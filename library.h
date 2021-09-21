@@ -1,6 +1,30 @@
 #ifndef AARU_CHECKSUMS_NATIVE_LIBRARY_H
 #define AARU_CHECKSUMS_NATIVE_LIBRARY_H
 
-void hello(void);
+#ifdef __cplusplus
+#define EXTERNC         extern "C"
+#else
+#define EXTERNC
+#endif
+
+#if defined(_WIN32)                   
+#define AARU_CALL            __stdcall
+#define AARU_EXPORT          EXTERNC __declspec(dllexport)
+#define AARU_LOCAL
+#else                 
+#define AARU_CALL
+#if defined(__APPLE__)
+#define AARU_EXPORT          EXTERNC __attribute__((visibility("default")))
+#define AARU_LOCAL       __attribute__((visibility("hidden")))
+#else  
+#if __GNUC__ >= 4
+#define AARU_EXPORT          EXTERNC __attribute__ ((visibility("default")))
+#define AARU_LOCAL       __attribute__((visibility("hidden")))
+#else
+#define AARU_EXPORT          EXTERNC
+#define idaAARU_LOCAL_local
+#endif
+#endif
+#endif
 
 #endif//AARU_CHECKSUMS_NATIVE_LIBRARY_H

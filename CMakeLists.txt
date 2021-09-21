@@ -3,4 +3,4 @@ project("Aaru.Checksums.Native" C)
 
 set(CMAKE_C_STANDARD 90)
 
-add_library("Aaru.Checksums.Native" SHARED library.c)
+add_library("Aaru.Checksums.Native" SHARED adler32.h adler32.c library.h)
