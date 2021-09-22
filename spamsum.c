@@ -22,14 +22,12 @@
 #include <string.h>
 
 #include "library.h"
-
 #include "spamsum.h"
 
-static uint8_t b64[] = {0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D,
-                         0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A,
-                         0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D,
-                         0x6E, 0x6F, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A,
-                         0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x2B, 0x2F};
+static uint8_t b64[] = {0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50,
+                        0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66,
+                        0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76,
+                        0x77, 0x78, 0x79, 0x7A, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x2B, 0x2F};
 
 AARU_EXPORT spamsum_ctx* AARU_CALL spamsum_init(void)
 {
@@ -39,7 +37,7 @@ AARU_EXPORT spamsum_ctx* AARU_CALL spamsum_init(void)
     memset(ctx, 0, sizeof(spamsum_ctx));
 
     ctx->bh_end       = 1;
-    ctx->bh[0].h     = HASH_INIT;
+    ctx->bh[0].h      = HASH_INIT;
     ctx->bh[0].half_h = HASH_INIT;
 
     return ctx;
@@ -62,7 +60,7 @@ AARU_EXPORT void AARU_CALL spamsum_free(spamsum_ctx* ctx)
 }
 
 #define ROLL_SUM(ctx) ((ctx)->roll.h1 + (ctx)->roll.h2 + (ctx)->roll.h3)
-#define SUM_HASH(c, h) (((h) * HASH_PRIME) ^ (c));
+#define SUM_HASH(c, h) (((h)*HASH_PRIME) ^ (c));
 #define SSDEEP_BS(index) (MIN_BLOCKSIZE << (index))
 
 AARU_LOCAL void fuzzy_engine_step(spamsum_ctx* ctx, uint8_t c)
@@ -76,7 +74,7 @@ AARU_LOCAL void fuzzy_engine_step(spamsum_ctx* ctx, uint8_t c)
 
     for(i = ctx->bh_start; i < ctx->bh_end; ++i)
     {
-        ctx->bh[i].h     = SUM_HASH(c, ctx->bh[i].h);
+        ctx->bh[i].h      = SUM_HASH(c, ctx->bh[i].h);
         ctx->bh[i].half_h = SUM_HASH(c, ctx->bh[i].half_h);
     }
 
@@ -95,7 +93,7 @@ AARU_LOCAL void fuzzy_engine_step(spamsum_ctx* ctx, uint8_t c)
         if(0 == ctx->bh[i].d_len) fuzzy_try_fork_blockhash(ctx);
 
         ctx->bh[i].digest[ctx->bh[i].d_len] = b64[ctx->bh[i].h % 64];
-        ctx->bh[i].half_digest             = b64[ctx->bh[i].half_h % 64];
+        ctx->bh[i].half_digest              = b64[ctx->bh[i].half_h % 64];
 
         if(ctx->bh[i].d_len < SPAMSUM_LENGTH - 1)
         {
@@ -106,11 +104,11 @@ AARU_LOCAL void fuzzy_engine_step(spamsum_ctx* ctx, uint8_t c)
              * last few pieces of the message into a single piece
              * */
             ctx->bh[i].digest[++ctx->bh[i].d_len] = 0;
-            ctx->bh[i].h                         = HASH_INIT;
+            ctx->bh[i].h                          = HASH_INIT;
 
             if(ctx->bh[i].d_len >= SPAMSUM_LENGTH / 2) continue;
 
-            ctx->bh[i].half_h     = HASH_INIT;
+            ctx->bh[i].half_h      = HASH_INIT;
             ctx->bh[i].half_digest = 0;
         }
         else
@@ -162,11 +160,11 @@ AARU_LOCAL void fuzzy_try_fork_blockhash(spamsum_ctx* ctx)
 
     assert(ctx->bh_end != 0);
 
-    uint32_t obh            = ctx->bh_end - 1;
-    uint32_t nbh            = ctx->bh_end;
-    ctx->bh[nbh].h          = ctx->bh[obh].h;
-    ctx->bh[nbh].half_h     = ctx->bh[obh].half_h;
-    ctx->bh[nbh].digest[0]  = 0;
+    uint32_t obh             = ctx->bh_end - 1;
+    uint32_t nbh             = ctx->bh_end;
+    ctx->bh[nbh].h           = ctx->bh[obh].h;
+    ctx->bh[nbh].half_h      = ctx->bh[obh].half_h;
+    ctx->bh[nbh].digest[0]   = 0;
     ctx->bh[nbh].half_digest = 0;
     ctx->bh[nbh].d_len       = 0;
     ++ctx->bh_end;

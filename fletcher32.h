@@ -21,14 +21,15 @@
 
 #define FLETCHER32_MODULE 0xFFFF
 
-typedef struct {
+typedef struct
+{
     uint16_t sum1;
     uint16_t sum2;
 } fletcher32_ctx;
 
 AARU_EXPORT fletcher32_ctx* AARU_CALL fletcher32_init();
-AARU_EXPORT int AARU_CALL fletcher32_update(fletcher32_ctx* ctx, const uint8_t* data, uint32_t len);
-AARU_EXPORT int AARU_CALL fletcher32_final(fletcher32_ctx* ctx, uint32_t* checksum);
-AARU_EXPORT void AARU_CALL fletcher32_free(fletcher32_ctx* ctx);
+AARU_EXPORT int AARU_CALL             fletcher32_update(fletcher32_ctx* ctx, const uint8_t* data, uint32_t len);
+AARU_EXPORT int AARU_CALL             fletcher32_final(fletcher32_ctx* ctx, uint32_t* checksum);
+AARU_EXPORT void AARU_CALL            fletcher32_free(fletcher32_ctx* ctx);
 
-#endif//AARU_CHECKSUMS_NATIVE_FLETCHER32_H
+#endif // AARU_CHECKSUMS_NATIVE_FLETCHER32_H

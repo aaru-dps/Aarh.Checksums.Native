@@ -20,7 +20,6 @@
 #include <stdlib.h>
 
 #include "library.h"
-
 #include "crc64.h"
 
 AARU_EXPORT crc64_ctx* AARU_CALL crc64_init(void)

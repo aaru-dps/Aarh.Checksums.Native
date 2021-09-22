@@ -21,14 +21,15 @@
 
 #define ADLER_MODULE 65521
 
-typedef struct {
+typedef struct
+{
     uint16_t sum1;
     uint16_t sum2;
 } adler32_ctx;
 
 AARU_EXPORT adler32_ctx* AARU_CALL adler32_init();
-AARU_EXPORT int AARU_CALL adler32_update(adler32_ctx* ctx, const uint8_t* data, uint32_t len);
-AARU_EXPORT int AARU_CALL adler32_final(adler32_ctx* ctx, uint32_t* checksum);
-AARU_EXPORT void AARU_CALL adler32_free(adler32_ctx* ctx);
+AARU_EXPORT int AARU_CALL          adler32_update(adler32_ctx* ctx, const uint8_t* data, uint32_t len);
+AARU_EXPORT int AARU_CALL          adler32_final(adler32_ctx* ctx, uint32_t* checksum);
+AARU_EXPORT void AARU_CALL         adler32_free(adler32_ctx* ctx);
 
-#endif //AARU_CHECKSUMS_NATIVE_ADLER32_H
+#endif // AARU_CHECKSUMS_NATIVE_ADLER32_H

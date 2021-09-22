@@ -20,7 +20,6 @@
 #include <stdlib.h>
 
 #include "library.h"
-
 #include "crc32.h"
 
 AARU_EXPORT crc32_ctx* AARU_CALL crc32_init(void)

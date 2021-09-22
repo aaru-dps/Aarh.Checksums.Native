@@ -20,7 +20,6 @@
 #include <stdlib.h>
 
 #include "library.h"
-
 #include "fletcher16.h"
 
 AARU_EXPORT fletcher16_ctx* AARU_CALL fletcher16_init()

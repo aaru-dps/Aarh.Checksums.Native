@@ -17,23 +17,23 @@
  */
 
 #define SPAMSUM_LENGTH 64
-#define NUM_BLOCKHASHES  31
-#define ROLLING_WINDOW   7
-#define HASH_INIT         0x28021967
-#define HASH_PRIME        0x01000193
-#define MIN_BLOCKSIZE    3
-#define FUZZY_MAX_RESULT  ((2 * SPAMSUM_LENGTH) + 20)
+#define NUM_BLOCKHASHES 31
+#define ROLLING_WINDOW 7
+#define HASH_INIT 0x28021967
+#define HASH_PRIME 0x01000193
+#define MIN_BLOCKSIZE 3
+#define FUZZY_MAX_RESULT ((2 * SPAMSUM_LENGTH) + 20)
 
-typedef        struct
+typedef struct
 {
-    uint32_t   h;
-    uint32_t   half_h;
-    uint8_t    digest[SPAMSUM_LENGTH];
-    uint8_t    half_digest;
-    uint32_t   d_len;
+    uint32_t h;
+    uint32_t half_h;
+    uint8_t  digest[SPAMSUM_LENGTH];
+    uint8_t  half_digest;
+    uint32_t d_len;
 } blockhash_ctx;
 
-typedef        struct
+typedef struct
 {
     uint8_t  window[ROLLING_WINDOW];
     uint32_t h1;
@@ -42,22 +42,21 @@ typedef        struct
     uint32_t n;
 } roll_state;
 
-typedef        struct
+typedef struct
 {
-    uint32_t               bh_start;
-    uint32_t               bh_end;
-    blockhash_ctx          bh[NUM_BLOCKHASHES];
-    uint64_t               total_size;
-    roll_state             roll;
+    uint32_t      bh_start;
+    uint32_t      bh_end;
+    blockhash_ctx bh[NUM_BLOCKHASHES];
+    uint64_t      total_size;
+    roll_state    roll;
 } spamsum_ctx;
 
 AARU_EXPORT spamsum_ctx* AARU_CALL spamsum_init(void);
-AARU_EXPORT int AARU_CALL spamsum_update(spamsum_ctx* ctx, const uint8_t* data, uint32_t len);
-AARU_EXPORT uint8_t* AARU_CALL spamsum_final(spamsum_ctx* ctx);
-AARU_EXPORT void AARU_CALL spamsum_free(spamsum_ctx* ctx);
+AARU_EXPORT int AARU_CALL          spamsum_update(spamsum_ctx* ctx, const uint8_t* data, uint32_t len);
+AARU_EXPORT uint8_t* AARU_CALL     spamsum_final(spamsum_ctx* ctx);
+AARU_EXPORT void AARU_CALL         spamsum_free(spamsum_ctx* ctx);
 
 AARU_LOCAL void fuzzy_engine_step(spamsum_ctx* ctx, uint8_t c);
 AARU_LOCAL void roll_hash(spamsum_ctx* ctx, uint8_t c);
 AARU_LOCAL void fuzzy_try_reduce_blockhash(spamsum_ctx* ctx);
 AARU_LOCAL void fuzzy_try_fork_blockhash(spamsum_ctx* ctx);
-

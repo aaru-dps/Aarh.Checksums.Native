@@ -20,7 +20,6 @@
 #include <stdlib.h>
 
 #include "library.h"
-
 #include "crc16_ccitt.h"
 
 AARU_EXPORT crc16_ccitt_ctx* AARU_CALL crc16_ccitt_init(void)
