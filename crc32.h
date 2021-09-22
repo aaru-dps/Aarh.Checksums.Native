@@ -21,7 +21,7 @@ typedef struct
     uint32_t crc;
 } crc32_ctx;
 
-const uint32_t crc32_table[8][256] = {
+static const uint32_t crc32_table[8][256] = {
     {0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3, 0x0EDB8832,
      0x79DCB8A4, 0xE0D5E91E, 0x97D2D988, 0x09B64C2B, 0x7EB17CBD, 0xE7B82D07, 0x90BF1D91, 0x1DB71064, 0x6AB020F2,
      0xF3B97148, 0x84BE41DE, 0x1ADAD47D, 0x6DDDE4EB, 0xF4D4B551, 0x83D385C7, 0x136C9856, 0x646BA8C0, 0xFD62F97A,
@@ -259,6 +259,10 @@ const uint32_t crc32_table[8][256] = {
 #define CRC32_ISO_POLY 0xEDB88320
 #define CRC32_ISO_SEED 0xFFFFFFFF
 
+#define CLMUL __attribute__((target("pclmul,sse4.1")))
+#define ALIGNED_(n) __attribute__((aligned(n)))
+
+CLMUL uint32_t                   crc32_clmul(const uint8_t* src, long len, uint32_t initial_crc);
 AARU_EXPORT crc32_ctx* AARU_CALL crc32_init();
 AARU_EXPORT int AARU_CALL        crc32_update(crc32_ctx* ctx, const uint8_t* data, uint32_t len);
 AARU_EXPORT int AARU_CALL        crc32_final(crc32_ctx* ctx, uint32_t* crc);

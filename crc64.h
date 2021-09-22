@@ -21,7 +21,7 @@ typedef struct
     uint64_t crc;
 } crc64_ctx;
 
-const uint64_t crc64_table[4][256] = {
+const static uint64_t crc64_table[4][256] = {
     {0x0000000000000000, 0xB32E4CBE03A75F6F, 0xF4843657A840A05B, 0x47AA7AE9ABE7FF34, 0x7BD0C384FF8F5E33,
      0xC8FE8F3AFC28015C, 0x8F54F5D357CFFE68, 0x3C7AB96D5468A107, 0xF7A18709FF1EBC66, 0x448FCBB7FCB9E309,
      0x0325B15E575E1C3D, 0xB00BFDE054F94352, 0x8C71448D0091E255, 0x3F5F08330336BD3A, 0x78F572DAA8D1420E,
@@ -234,6 +234,7 @@ const uint64_t crc64_table[4][256] = {
 #define CRC64_ECMA_POLY 0xC96C5795D7870F42
 #define CRC64_ECMA_SEED 0xFFFFFFFFFFFFFFFF
 
+uint64_t                         crc64_clmul(uint64_t crc, const uint8_t* data, size_t length);
 AARU_EXPORT crc64_ctx* AARU_CALL crc64_init();
 AARU_EXPORT int AARU_CALL        crc64_update(crc64_ctx* ctx, const uint8_t* data, uint32_t len);
 AARU_EXPORT int AARU_CALL        crc64_final(crc64_ctx* ctx, uint64_t* crc);

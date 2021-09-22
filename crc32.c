@@ -35,6 +35,9 @@ AARU_EXPORT crc32_ctx* AARU_CALL crc32_init(void)
 
 AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint32_t len)
 {
+    ctx->crc = ~crc32_clmul(data, (long)len, ~ctx->crc);
+    return 0;
+    /*
     // Unroll according to Intel slicing by uint8_t
     // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
     // http://sourceforge.net/projects/slicing-by-8/
@@ -81,6 +84,7 @@ AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint
 
     ctx->crc = crc;
     return 0;
+     */
 }
 
 AARU_EXPORT int AARU_CALL crc32_final(crc32_ctx* ctx, uint32_t* crc)
