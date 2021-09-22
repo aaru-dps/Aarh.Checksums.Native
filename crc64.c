@@ -24,24 +24,11 @@
 
 AARU_EXPORT crc64_ctx* AARU_CALL crc64_init(void)
 {
-    int i, j;
     crc64_ctx* ctx = (crc64_ctx*)malloc(sizeof(crc64_ctx));
 
     if(!ctx) return NULL;
 
     ctx->crc = CRC64_ECMA_SEED;
-
-    for(i = 0; i < 256; i++)
-    {
-        uint64_t entry = (uint64_t)i;
-
-        for(j = 0; j < 8; j++)
-            if(entry & 1) entry = (entry >> 1) ^ CRC64_ECMA_POLY;
-            else
-                entry >>= 1;
-
-        ctx->table[i]=entry;
-    }
 
     return ctx;
 }
@@ -51,7 +38,7 @@ AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx* ctx, const uint8_t* data, uint
     uint32_t i;
     if(!ctx || !data) return -1;
 
-    for( i = 0; i < len; i++) ctx->crc = (ctx->crc >> 8) ^ ctx->table[data[i] ^ (ctx->crc & 0xff)];
+    for(i = 0; i < len; i++) ctx->crc = (ctx->crc >> 8) ^ crc64_table[data[i] ^ (ctx->crc & 0xff)];
 
     return 0;
 }
