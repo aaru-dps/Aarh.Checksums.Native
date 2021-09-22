@@ -35,9 +35,10 @@ AARU_EXPORT crc16_ccitt_ctx* AARU_CALL crc16_ccitt_init(void)
 
 AARU_EXPORT int AARU_CALL crc16_ccitt_update(crc16_ccitt_ctx* ctx, const uint8_t* data, uint32_t len)
 {
+    uint32_t i;
     if(!ctx || !data) return -1;
 
-    for(uint32_t i = 0; i < len; i++) ctx->crc = crc16_ccitt_table[(ctx->crc >> 8) ^ data[i]] ^ (ctx->crc << 8);
+    for(i = 0; i < len; i++) ctx->crc = crc16_ccitt_table[(ctx->crc >> 8) ^ data[i]] ^ (ctx->crc << 8);
 
     return 0;
 }

@@ -38,9 +38,10 @@ AARU_EXPORT fletcher16_ctx* AARU_CALL fletcher16_init()
 
 AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx* ctx, const uint8_t* data, uint32_t len)
 {
+    uint32_t i;
     if(!ctx || !data) return -1;
 
-    for(uint32_t i = 0; i < len; i++)
+    for(i = 0; i < len; i++)
     {
         ctx->sum1 = (ctx->sum1 + data[i]) % FLETCHER16_MODULE;
         ctx->sum2 = (ctx->sum2 + ctx->sum1) % FLETCHER16_MODULE;

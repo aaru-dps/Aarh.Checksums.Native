@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "library.h"
 #include "spamsum.h"
@@ -45,9 +46,10 @@ AARU_EXPORT spamsum_ctx* AARU_CALL spamsum_init(void)
 
 AARU_EXPORT int AARU_CALL spamsum_update(spamsum_ctx* ctx, const uint8_t* data, uint32_t len)
 {
+    int i;
     if(!ctx || !data) return -1;
 
-    for(int i = 0; i < len; i++) fuzzy_engine_step(ctx, data[i]);
+    for( i = 0; i < len; i++) fuzzy_engine_step(ctx, data[i]);
 
     ctx->total_size += len;
 
