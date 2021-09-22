@@ -61,9 +61,9 @@ AARU_EXPORT void AARU_CALL spamsum_free(spamsum_ctx* ctx)
     if(ctx) free(ctx);
 }
 
-#define ROLL_SUM(ctx) (ctx->roll.h1 + ctx->roll.h2 + ctx->roll.h3)
-#define SUM_HASH(c, h) ((h * HASH_PRIME) ^ c);
-#define SSDEEP_BS(index) (MIN_BLOCKSIZE << index)
+#define ROLL_SUM(ctx) ((ctx)->roll.h1 + (ctx)->roll.h2 + (ctx)->roll.h3)
+#define SUM_HASH(c, h) (((h) * HASH_PRIME) ^ (c));
+#define SSDEEP_BS(index) (MIN_BLOCKSIZE << (index))
 
 AARU_LOCAL void fuzzy_engine_step(spamsum_ctx* ctx, uint8_t c)
 {
