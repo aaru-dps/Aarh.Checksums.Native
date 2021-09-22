@@ -26,29 +26,29 @@
 
 typedef        struct
 {
-    uint32_t   H;
-    uint32_t   Halfh;
-    uint8_t Digest[SPAMSUM_LENGTH];
-    uint8_t Halfdigest;
-    uint32_t Dlen;
-} BlockhashContext;
+    uint32_t   h;
+    uint32_t   half_h;
+    uint8_t    digest[SPAMSUM_LENGTH];
+    uint8_t    half_digest;
+    uint32_t   d_len;
+} blockhash_ctx;
 
 typedef        struct
 {
-    uint8_t Window[ROLLING_WINDOW];
-    uint32_t H1;
-    uint32_t H2;
-    uint32_t H3;
-    uint32_t N;
-}RollState;
+    uint8_t  window[ROLLING_WINDOW];
+    uint32_t h1;
+    uint32_t h2;
+    uint32_t h3;
+    uint32_t n;
+} roll_state;
 
 typedef        struct
 {
-    uint32_t               Bhstart;
-    uint32_t               Bhend;
-    BlockhashContext Bh[NUM_BLOCKHASHES];
-    uint64_t     TotalSize;
-    RollState Roll;
+    uint32_t               bh_start;
+    uint32_t               bh_end;
+    blockhash_ctx          bh[NUM_BLOCKHASHES];
+    uint64_t               total_size;
+    roll_state             roll;
 } spamsum_ctx;
 
 AARU_EXPORT spamsum_ctx* AARU_CALL spamsum_init(void);
