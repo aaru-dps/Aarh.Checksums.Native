@@ -20,6 +20,8 @@
 #define AARU_CHECKSUMS_NATIVE_ADLER32_H
 
 #define ADLER_MODULE 65521
+/* NMAX is the largest n such that 255n(n+1)/2 + (n+1)(ADLER_MODULE-1) <= 2^32-1 */
+#define NMAX 5552
 
 typedef struct
 {
