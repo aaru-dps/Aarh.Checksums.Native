@@ -16,11 +16,11 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include <assert.h>
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 
 #include "library.h"
 #include "spamsum.h"
@@ -49,7 +49,7 @@ AARU_EXPORT int AARU_CALL spamsum_update(spamsum_ctx* ctx, const uint8_t* data, 
     int i;
     if(!ctx || !data) return -1;
 
-    for( i = 0; i < len; i++) fuzzy_engine_step(ctx, data[i]);
+    for(i = 0; i < len; i++) fuzzy_engine_step(ctx, data[i]);
 
     ctx->total_size += len;
 
@@ -172,14 +172,13 @@ AARU_LOCAL void fuzzy_try_fork_blockhash(spamsum_ctx* ctx)
     ++ctx->bh_end;
 }
 
-AARU_EXPORT uint8_t* AARU_CALL spamsum_final(spamsum_ctx* ctx)
+AARU_EXPORT int AARU_CALL spamsum_final(spamsum_ctx* ctx, uint8_t* result)
 {
     uint32_t bi     = ctx->bh_start;
     uint32_t h      = ROLL_SUM(ctx);
     int      remain = (int)(FUZZY_MAX_RESULT - 1); /* Exclude terminating '\0'. */
-    uint8_t* result = (uint8_t*)malloc(FUZZY_MAX_RESULT);
 
-    if(!result) return NULL;
+    if(!result) return -1;
 
     /* Verify that our elimination was not overeager. */
     assert(bi == 0 || (uint64_t)SSDEEP_BS(bi) / 2 * SPAMSUM_LENGTH < ctx->total_size);
@@ -192,7 +191,7 @@ AARU_EXPORT uint8_t* AARU_CALL spamsum_final(spamsum_ctx* ctx)
         if(bi >= NUM_BLOCKHASHES)
         {
             errno = EOVERFLOW;
-            return NULL;
+            return -1;
         }
     }
 
@@ -206,7 +205,7 @@ AARU_EXPORT uint8_t* AARU_CALL spamsum_final(spamsum_ctx* ctx)
     int i = snprintf((char*)result, (size_t)remain, "%lu:", (unsigned long)SSDEEP_BS(bi));
 
     if(i <= 0) /* Maybe snprintf has set errno here? */
-        return NULL;
+        return -1;
 
     assert(i < remain);
 
@@ -308,5 +307,5 @@ AARU_EXPORT uint8_t* AARU_CALL spamsum_final(spamsum_ctx* ctx)
 
     *result = 0;
 
-    return result;
+    return 0;
 }
