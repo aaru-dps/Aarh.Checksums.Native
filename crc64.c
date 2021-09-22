@@ -19,11 +19,11 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "crc64.h"
-
 #include "library.h"
 
-crc64_ctx* crc64_init(void)
+#include "crc64.h"
+
+AARU_EXPORT crc64_ctx* AARU_CALL crc64_init(void)
 {
     crc64_ctx* ctx = (crc64_ctx*)malloc(sizeof(crc64_ctx));
 
@@ -44,7 +44,7 @@ crc64_ctx* crc64_init(void)
     return ctx;
 }
 
-int crc64_update(crc64_ctx* ctx, const uint8_t* data, uint32_t len)
+AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx* ctx, const uint8_t* data, uint32_t len)
 {
     if(!ctx || !data) return -1;
 
@@ -53,7 +53,7 @@ int crc64_update(crc64_ctx* ctx, const uint8_t* data, uint32_t len)
     return 0;
 }
 
-int crc64_final(crc64_ctx* ctx, uint64_t* crc)
+AARU_EXPORT int AARU_CALL crc64_final(crc64_ctx* ctx, uint64_t* crc)
 {
     if(!ctx) return -1;
 
@@ -62,7 +62,7 @@ int crc64_final(crc64_ctx* ctx, uint64_t* crc)
     return 0;
 }
 
-void crc64_free(crc64_ctx* ctx)
+AARU_EXPORT void AARU_CALL crc64_free(crc64_ctx* ctx)
 {
     if(ctx) free(ctx);
 }

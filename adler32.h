@@ -31,4 +31,4 @@ AARU_EXPORT int AARU_CALL adler32_update(adler32_ctx* ctx, const uint8_t* data, 
 AARU_EXPORT int AARU_CALL adler32_final(adler32_ctx* ctx, uint32_t* checksum);
 AARU_EXPORT void AARU_CALL adler32_free(adler32_ctx* ctx);
 
-#endif//AARU_CHECKSUMS_NATIVE_LIBRARY_H
+#endif //AARU_CHECKSUMS_NATIVE_ADLER32_H

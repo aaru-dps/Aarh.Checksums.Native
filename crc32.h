@@ -25,7 +25,7 @@ typedef struct
 #define CRC32_ISO_POLY 0xEDB88320
 #define CRC32_ISO_SEED 0xFFFFFFFF
 
-crc32_ctx* crc32_init();
-int crc32_update(crc32_ctx* ctx, const uint8_t* data, uint32_t len);
-int crc32_final(crc32_ctx* ctx, uint32_t* crc);
-void crc32_free(crc32_ctx* ctx);
+AARU_EXPORT crc32_ctx* AARU_CALL crc32_init();
+AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint32_t len);
+AARU_EXPORT int AARU_CALL crc32_final(crc32_ctx* ctx, uint32_t* crc);
+AARU_EXPORT void AARU_CALL crc32_free(crc32_ctx* ctx);

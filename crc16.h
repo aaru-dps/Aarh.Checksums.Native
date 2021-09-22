@@ -45,7 +45,7 @@ static uint16_t crc16_table[256] =
             0x8641, 0x8201, 0x42C0, 0x4380, 0x8341, 0x4100, 0x81C1, 0x8081, 0x4040
 };
 
-crc16_ctx* crc16_init();
-int crc16_update(crc16_ctx* ctx, const uint8_t* data, uint32_t len);
-int crc16_final(crc16_ctx* ctx, uint16_t* crc);
-void crc16_free(crc16_ctx* ctx);
+AARU_EXPORT crc16_ctx* AARU_CALL crc16_init();
+AARU_EXPORT int AARU_CALL crc16_update(crc16_ctx* ctx, const uint8_t* data, uint32_t len);
+AARU_EXPORT int AARU_CALL crc16_final(crc16_ctx* ctx, uint16_t* crc);
+AARU_EXPORT void AARU_CALL crc16_free(crc16_ctx* ctx);

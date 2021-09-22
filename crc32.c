@@ -19,11 +19,11 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "crc32.h"
-
 #include "library.h"
 
-crc32_ctx* crc32_init(void)
+#include "crc32.h"
+
+AARU_EXPORT crc32_ctx* AARU_CALL crc32_init(void)
 {
     crc32_ctx* ctx = (crc32_ctx*)malloc(sizeof(crc32_ctx));
 
@@ -44,7 +44,7 @@ crc32_ctx* crc32_init(void)
     return ctx;
 }
 
-int crc32_update(crc32_ctx* ctx, const uint8_t* data, uint32_t len)
+AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint32_t len)
 {
     if(!ctx || !data) return -1;
 
@@ -53,7 +53,7 @@ int crc32_update(crc32_ctx* ctx, const uint8_t* data, uint32_t len)
     return 0;
 }
 
-int crc32_final(crc32_ctx* ctx, uint32_t* crc)
+AARU_EXPORT int AARU_CALL crc32_final(crc32_ctx* ctx, uint32_t* crc)
 {
     if(!ctx) return -1;
 
@@ -62,7 +62,7 @@ int crc32_final(crc32_ctx* ctx, uint32_t* crc)
     return 0;
 }
 
-void crc32_free(crc32_ctx* ctx)
+AARU_EXPORT void AARU_CALL crc32_free(crc32_ctx* ctx)
 {
     if(ctx) free(ctx);
 }

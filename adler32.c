@@ -22,7 +22,7 @@
 #include "library.h"
 #include "adler32.h"
 
-adler32_ctx* adler32_init()
+AARU_EXPORT adler32_ctx* AARU_CALL adler32_init()
 {
     adler32_ctx* ctx;
 
@@ -36,7 +36,7 @@ adler32_ctx* adler32_init()
     return ctx;
 }
 
-int adler32_update(adler32_ctx* ctx, const uint8_t* data, uint32_t len)
+AARU_EXPORT int AARU_CALL adler32_update(adler32_ctx* ctx, const uint8_t* data, uint32_t len)
 {
     if(!ctx || !data) return -1;
 
@@ -49,7 +49,7 @@ int adler32_update(adler32_ctx* ctx, const uint8_t* data, uint32_t len)
     return 0;
 }
 
-int adler32_final(adler32_ctx* ctx, uint32_t* checksum)
+AARU_EXPORT int AARU_CALL adler32_final(adler32_ctx* ctx, uint32_t* checksum)
 {
     if(!ctx) return -1;
 
@@ -57,7 +57,7 @@ int adler32_final(adler32_ctx* ctx, uint32_t* checksum)
     return 0;
 }
 
-void adler32_free(adler32_ctx* ctx)
+AARU_EXPORT void AARU_CALL adler32_free(adler32_ctx* ctx)
 {
     if(!ctx) return;
 

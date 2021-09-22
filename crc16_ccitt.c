@@ -19,11 +19,11 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "crc16_ccitt.h"
-
 #include "library.h"
 
-crc16_ccitt_ctx* crc16_ccitt_init(void)
+#include "crc16_ccitt.h"
+
+AARU_EXPORT crc16_ccitt_ctx* AARU_CALL crc16_ccitt_init(void)
 {
     crc16_ccitt_ctx* ctx = (crc16_ccitt_ctx*)malloc(sizeof(crc16_ccitt_ctx));
 
@@ -34,7 +34,7 @@ crc16_ccitt_ctx* crc16_ccitt_init(void)
     return ctx;
 }
 
-int crc16_ccitt_update(crc16_ccitt_ctx* ctx, const uint8_t* data, uint32_t len)
+AARU_EXPORT int AARU_CALL crc16_ccitt_update(crc16_ccitt_ctx* ctx, const uint8_t* data, uint32_t len)
 {
     if(!ctx || !data) return -1;
 
@@ -43,7 +43,7 @@ int crc16_ccitt_update(crc16_ccitt_ctx* ctx, const uint8_t* data, uint32_t len)
     return 0;
 }
 
-int crc16_ccitt_final(crc16_ccitt_ctx* ctx, uint16_t* crc)
+AARU_EXPORT int AARU_CALL crc16_ccitt_final(crc16_ccitt_ctx* ctx, uint16_t* crc)
 {
     if(!ctx) return -1;
 
@@ -52,7 +52,7 @@ int crc16_ccitt_final(crc16_ccitt_ctx* ctx, uint16_t* crc)
     return 0;
 }
 
-void crc16_ccitt_free(crc16_ccitt_ctx* ctx)
+AARU_EXPORT void AARU_CALL crc16_ccitt_free(crc16_ccitt_ctx* ctx)
 {
     if(ctx) free(ctx);
 }

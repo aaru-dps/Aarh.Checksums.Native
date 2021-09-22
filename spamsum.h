@@ -51,13 +51,13 @@ typedef        struct
     RollState Roll;
 } spamsum_ctx;
 
-spamsum_ctx* spamsum_init(void);
-int spamsum_update(spamsum_ctx* ctx, const uint8_t* data, uint32_t len);
-uint8_t* spamsum_final(spamsum_ctx* ctx);
-void spamsum_free(spamsum_ctx* ctx);
+AARU_EXPORT spamsum_ctx* AARU_CALL spamsum_init(void);
+AARU_EXPORT int AARU_CALL spamsum_update(spamsum_ctx* ctx, const uint8_t* data, uint32_t len);
+AARU_EXPORT uint8_t* AARU_CALL spamsum_final(spamsum_ctx* ctx);
+AARU_EXPORT void AARU_CALL spamsum_free(spamsum_ctx* ctx);
 
-void fuzzy_engine_step(spamsum_ctx* ctx, uint8_t c);
-void roll_hash(spamsum_ctx* ctx, uint8_t c);
-void fuzzy_try_reduce_blockhash(spamsum_ctx* ctx);
-void fuzzy_try_fork_blockhash(spamsum_ctx* ctx);
+AARU_LOCAL void fuzzy_engine_step(spamsum_ctx* ctx, uint8_t c);
+AARU_LOCAL void roll_hash(spamsum_ctx* ctx, uint8_t c);
+AARU_LOCAL void fuzzy_try_reduce_blockhash(spamsum_ctx* ctx);
+AARU_LOCAL void fuzzy_try_fork_blockhash(spamsum_ctx* ctx);
 

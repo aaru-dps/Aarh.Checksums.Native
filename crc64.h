@@ -25,7 +25,7 @@ typedef struct
 #define CRC64_ECMA_POLY 0xC96C5795D7870F42
 #define CRC64_ECMA_SEED 0xFFFFFFFFFFFFFFFF
 
-crc64_ctx* crc64_init();
-int crc64_update(crc64_ctx* ctx, const uint8_t* data, uint32_t len);
-int crc64_final(crc64_ctx* ctx, uint64_t* crc);
-void crc64_free(crc64_ctx* ctx);
+AARU_EXPORT crc64_ctx* AARU_CALL crc64_init();
+AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx* ctx, const uint8_t* data, uint32_t len);
+AARU_EXPORT int AARU_CALL crc64_final(crc64_ctx* ctx, uint64_t* crc);
+AARU_EXPORT void AARU_CALL crc64_free(crc64_ctx* ctx);
