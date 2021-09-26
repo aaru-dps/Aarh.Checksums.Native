@@ -1,3 +1,6 @@
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+    defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
+
 #ifdef _MSC_VER
 #include <intrin.h>
 #else
@@ -44,3 +47,5 @@ int have_clmul(void)
 
     return has_pclmulqdq && has_sse41;
 }
+
+#endif
