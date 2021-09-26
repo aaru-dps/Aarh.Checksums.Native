@@ -170,3 +170,5 @@ mv libAaru.Checksums.Native.dll runtimes/win-x64/native/
 # TODO: "linux-musl-x86"
 # TODO: "osx-arm64"
 # TODO: "osx-x64"
+
+nuget pack
