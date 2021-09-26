@@ -32,59 +32,15 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+    defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
+
 #include <inttypes.h>
 #include <smmintrin.h>
 #include <wmmintrin.h>
 
-#ifdef _MSC_VER
-#include <intrin.h>
-#else
-/*
- * Newer versions of GCC and clang come with cpuid.h
- * (ftr GCC 4.7 in Debian Wheezy has this)
- */
-#include <cpuid.h>
-
-#endif
-
 #include "library.h"
 #include "crc32.h"
-
-static void cpuid(int info, unsigned* eax, unsigned* ebx, unsigned* ecx, unsigned* edx)
-{
-#ifdef _MSC_VER
-    unsigned int registers[4];
-    __cpuid(registers, info);
-    *eax = registers[0];
-    *ebx = registers[1];
-    *ecx = registers[2];
-    *edx = registers[3];
-#else
-    /* GCC, clang */
-    unsigned int _eax;
-    unsigned int _ebx;
-    unsigned int _ecx;
-    unsigned int _edx;
-    __cpuid(info, _eax, _ebx, _ecx, _edx);
-    *eax = _eax;
-    *ebx = _ebx;
-    *ecx = _ecx;
-    *edx = _edx;
-#endif
-}
-
-static int have_clmul(void)
-{
-    unsigned eax, ebx, ecx, edx;
-    int      has_pclmulqdq;
-    int      has_sse41;
-    cpuid(1 /* feature bits */, &eax, &ebx, &ecx, &edx);
-
-    has_pclmulqdq = ecx & 0x2;     /* bit 1 */
-    has_sse41     = ecx & 0x80000; /* bit 19 */
-
-    return has_pclmulqdq && has_sse41;
-}
 
 CLMUL
 static void fold_1(__m128i* xmm_crc0, __m128i* xmm_crc1, __m128i* xmm_crc2, __m128i* xmm_crc3)
@@ -532,3 +488,5 @@ done:
     crc = _mm_extract_epi32(xmm_crc3, 2);
     return ~crc;
 }
+
+#endif

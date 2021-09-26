@@ -1,3 +1,6 @@
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+    defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
+
 #include <inttypes.h>
 #include <smmintrin.h>
 #include <wmmintrin.h>
@@ -184,3 +187,5 @@ CLMUL uint64_t crc64_clmul(uint64_t crc, const uint8_t* data, size_t length)
     return ~(((uint64_t)(uint32_t)_mm_extract_epi32(T2, 3) << 32) | (uint64_t)(uint32_t)_mm_extract_epi32(T2, 2));
 #endif
 }
+
+#endif

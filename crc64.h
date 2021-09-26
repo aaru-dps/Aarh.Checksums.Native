@@ -234,8 +234,12 @@ const static uint64_t crc64_table[4][256] = {
 #define CRC64_ECMA_POLY 0xC96C5795D7870F42
 #define CRC64_ECMA_SEED 0xFFFFFFFFFFFFFFFF
 
-uint64_t                         crc64_clmul(uint64_t crc, const uint8_t* data, size_t length);
 AARU_EXPORT crc64_ctx* AARU_CALL crc64_init();
 AARU_EXPORT int AARU_CALL        crc64_update(crc64_ctx* ctx, const uint8_t* data, uint32_t len);
 AARU_EXPORT int AARU_CALL        crc64_final(crc64_ctx* ctx, uint64_t* crc);
 AARU_EXPORT void AARU_CALL       crc64_free(crc64_ctx* ctx);
+
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+    defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
+uint64_t crc64_clmul(uint64_t crc, const uint8_t* data, size_t length);
+#endif

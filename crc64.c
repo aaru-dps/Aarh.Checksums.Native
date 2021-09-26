@@ -20,6 +20,7 @@
 
 #include "library.h"
 #include "crc64.h"
+#include "simd.h"
 
 AARU_EXPORT crc64_ctx* AARU_CALL crc64_init(void)
 {
@@ -35,9 +36,15 @@ AARU_EXPORT crc64_ctx* AARU_CALL crc64_init(void)
 
 AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx* ctx, const uint8_t* data, uint32_t len)
 {
-    ctx->crc = ~crc64_clmul(~ctx->crc, data, len);
-    return 0;
-    /*
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+    defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
+    if(have_clmul())
+    {
+        ctx->crc = ~crc64_clmul(~ctx->crc, data, len);
+        return 0;
+    }
+#endif
+
     // Unroll according to Intel slicing by uint8_t
     // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
     // http://sourceforge.net/projects/slicing-by-8/
@@ -73,7 +80,6 @@ AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx* ctx, const uint8_t* data, uint
 
     ctx->crc = crc;
     return 0;
-     */
 }
 
 AARU_EXPORT int AARU_CALL crc64_final(crc64_ctx* ctx, uint64_t* crc)

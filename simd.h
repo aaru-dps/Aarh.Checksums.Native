@@ -1,0 +1,1 @@
+int have_clmul(void);

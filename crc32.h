@@ -259,11 +259,15 @@ static const uint32_t crc32_table[8][256] = {
 #define CRC32_ISO_POLY 0xEDB88320
 #define CRC32_ISO_SEED 0xFFFFFFFF
 
-#define CLMUL __attribute__((target("pclmul,sse4.1")))
-#define ALIGNED_(n) __attribute__((aligned(n)))
-
-CLMUL uint32_t                   crc32_clmul(const uint8_t* src, long len, uint32_t initial_crc);
 AARU_EXPORT crc32_ctx* AARU_CALL crc32_init();
 AARU_EXPORT int AARU_CALL        crc32_update(crc32_ctx* ctx, const uint8_t* data, uint32_t len);
 AARU_EXPORT int AARU_CALL        crc32_final(crc32_ctx* ctx, uint32_t* crc);
 AARU_EXPORT void AARU_CALL       crc32_free(crc32_ctx* ctx);
+
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+    defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
+#define CLMUL __attribute__((target("pclmul,sse4.1")))
+#define ALIGNED_(n) __attribute__((aligned(n)))
+
+CLMUL uint32_t crc32_clmul(const uint8_t* src, long len, uint32_t initial_crc);
+#endif
