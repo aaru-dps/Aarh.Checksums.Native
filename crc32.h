@@ -266,8 +266,14 @@ AARU_EXPORT void AARU_CALL       crc32_free(crc32_ctx* ctx);
 
 #if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
+
+#ifdef _MSC_VER
+#define CLMUL
+#define ALIGNED_(n) __declspec(align(n))
+#else
 #define CLMUL __attribute__((target("pclmul,sse4.1")))
 #define ALIGNED_(n) __attribute__((aligned(n)))
+#endif
 
 CLMUL uint32_t crc32_clmul(const uint8_t* src, long len, uint32_t initial_crc);
 #endif
