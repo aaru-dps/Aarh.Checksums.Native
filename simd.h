@@ -2,4 +2,5 @@
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 
 int have_clmul(void);
+int have_ssse3(void);
 #endif

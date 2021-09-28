@@ -34,4 +34,11 @@ AARU_EXPORT int AARU_CALL          adler32_update(adler32_ctx* ctx, const uint8_
 AARU_EXPORT int AARU_CALL          adler32_final(adler32_ctx* ctx, uint32_t* checksum);
 AARU_EXPORT void AARU_CALL         adler32_free(adler32_ctx* ctx);
 
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+    defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
+
+void adler32_ssse3(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, size_t len);
+
+#endif
+
 #endif // AARU_CHECKSUMS_NATIVE_ADLER32_H

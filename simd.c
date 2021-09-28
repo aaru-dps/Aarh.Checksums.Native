@@ -48,4 +48,12 @@ int have_clmul(void)
     return has_pclmulqdq && has_sse41;
 }
 
+int have_ssse3(void)
+{
+    unsigned eax, ebx, ecx, edx;
+    cpuid(1 /* feature bits */, &eax, &ebx, &ecx, &edx);
+
+    return ecx & 0x200;
+}
+
 #endif
