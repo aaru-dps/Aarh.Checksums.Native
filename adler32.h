@@ -38,6 +38,7 @@ AARU_EXPORT void AARU_CALL         adler32_free(adler32_ctx* ctx);
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 
 void adler32_ssse3(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, size_t len);
+void adler32_avx2(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, size_t len);
 
 #endif
 

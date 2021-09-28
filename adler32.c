@@ -51,6 +51,13 @@ AARU_EXPORT int AARU_CALL adler32_update(adler32_ctx* ctx, const uint8_t* data, 
 
 #if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
+    if(have_avx2())
+    {
+        adler32_avx2(&ctx->sum1, &ctx->sum2, data, len);
+
+        return 0;
+    }
+
     if(have_ssse3())
     {
         adler32_ssse3(&ctx->sum1, &ctx->sum2, data, len);

@@ -35,6 +35,29 @@ static void cpuid(int info, unsigned* eax, unsigned* ebx, unsigned* ecx, unsigne
 #endif
 }
 
+static void cpuidex(int info, int count, unsigned* eax, unsigned* ebx, unsigned* ecx, unsigned* edx)
+{
+#ifdef _MSC_VER
+    unsigned int registers[4];
+    __cpuidex(registers, info, count);
+    *eax = registers[0];
+    *ebx = registers[1];
+    *ecx = registers[2];
+    *edx = registers[3];
+#else
+    /* GCC, clang */
+    unsigned int _eax;
+    unsigned int _ebx;
+    unsigned int _ecx;
+    unsigned int _edx;
+    __cpuid_count(info, count, _eax, _ebx, _ecx, _edx);
+    *eax = _eax;
+    *ebx = _ebx;
+    *ecx = _ecx;
+    *edx = _edx;
+#endif
+}
+
 int have_clmul(void)
 {
     unsigned eax, ebx, ecx, edx;
@@ -56,4 +79,11 @@ int have_ssse3(void)
     return ecx & 0x200;
 }
 
+int have_avx2(void)
+{
+    unsigned eax, ebx, ecx, edx;
+    cpuidex(7 /* extended feature bits */, 0, &eax, &ebx, &ecx, &edx);
+
+    return ebx & 0x20;
+}
 #endif
