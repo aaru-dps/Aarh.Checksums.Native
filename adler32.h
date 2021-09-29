@@ -42,4 +42,10 @@ void adler32_avx2(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, size
 
 #endif
 
+#if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+
+void adler32_neon(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, uint32_t len);
+
+#endif
+
 #endif // AARU_CHECKSUMS_NATIVE_ADLER32_H

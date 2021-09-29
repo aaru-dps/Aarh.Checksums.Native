@@ -1,3 +1,5 @@
+#include "simd.h"
+
 #if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 
@@ -86,4 +88,19 @@ int have_avx2(void)
 
     return ebx & 0x20;
 }
+#endif
+
+#if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+#include <sys/auxv.h>
+#endif
+
+#if defined(__aarch64__) || defined(_M_ARM64)
+int have_neon(void)
+{
+    return 1; // ARMv8-A made it mandatory
+}
+#endif
+
+#if defined(__arm__) || defined(_M_ARM)
+int have_neon(void) { return getauxval(AT_HWCAP) & HWCAP_NEON; }
 #endif

@@ -2,6 +2,9 @@
 // Created by claunia on 28/9/21.
 //
 
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+    defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
+
 #include <immintrin.h>
 #include <stdint.h>
 
@@ -148,3 +151,5 @@ AVX2 void adler32_avx2(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf,
     *sum1 = s1 & 0xFFFF;
     *sum2 = s2 & 0xFFFF;
 }
+
+#endif

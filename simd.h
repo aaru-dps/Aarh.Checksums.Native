@@ -7,3 +7,15 @@ int have_clmul(void);
 int have_ssse3(void);
 int have_avx2(void);
 #endif
+
+#if defined(__arm__) || defined(_M_ARM)
+#define HWCAP_NEON (1 << 12)
+#endif
+
+#if defined(__aarch64__) || defined(_M_ARM64)
+#define HWCAP_NEON (1 << 1)
+#endif
+
+#if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+int have_neon(void);
+#endif
