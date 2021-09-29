@@ -14,7 +14,7 @@ if("${CMAKE_BUILD_TYPE}" MATCHES "Release")
             add_compile_options("/arch:SSE2")
         endif()
     else()
-        add_compile_options(-flto -ffast-math)
+        add_compile_options(-flto -ffast-math -O3)
 
         if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "i686" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "AMD64")
             add_compile_options(-march=core2 -mfpmath=sse -msse3 -mtune=westmere)
