@@ -10,12 +10,15 @@ int have_avx2(void);
 
 #if defined(__arm__) || defined(_M_ARM)
 #define HWCAP_NEON (1 << 12)
+#define HWCAP2_CRC32 (1 << 4)
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64)
 #define HWCAP_NEON (1 << 1)
+#define HWCAP_CRC32 (1 << 7)
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 int have_neon(void);
+int have_arm_crc32(void);
 #endif

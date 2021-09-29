@@ -277,3 +277,13 @@ AARU_EXPORT void AARU_CALL       crc32_free(crc32_ctx* ctx);
 
 CLMUL uint32_t crc32_clmul(const uint8_t* src, long len, uint32_t initial_crc);
 #endif
+
+#if defined(__aarch64__)
+#define TARGET_ARMV8_WITH_CRC __attribute__((target("+crc")))
+#else // !defined(__aarch64__)
+#define TARGET_ARMV8_WITH_CRC __attribute__((target("armv8-a,crc")))
+#endif // defined(__aarch64__)
+
+#if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t crc, const unsigned char* buf, uint32_t len);
+#endif

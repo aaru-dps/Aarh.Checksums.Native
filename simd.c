@@ -99,8 +99,13 @@ int have_neon(void)
 {
     return 1; // ARMv8-A made it mandatory
 }
+
+int have_arm_crc32(void) { return getauxval(AT_HWCAP) & HWCAP_CRC32; }
 #endif
 
 #if defined(__arm__) || defined(_M_ARM)
 int have_neon(void) { return getauxval(AT_HWCAP) & HWCAP_NEON; }
+
+int have_arm_crc32(void) { return getauxval(AT_HWCAP2) & HWCAP2_CRC32; }
+}
 #endif
