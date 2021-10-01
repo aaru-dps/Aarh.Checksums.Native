@@ -11,7 +11,7 @@
 
 TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t crc, const unsigned char* buf, uint32_t len)
 {
-    uint32_t c = (uint32_t)~crc;
+    uint32_t c = (uint32_t)crc;
 
 #if defined(__aarch64__) || defined(_M_ARM64)
     while(len && ((uintptr_t)buf & 7))
@@ -68,6 +68,6 @@ TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t crc, const unsigned c
 #endif
 
     while(len--) { c = __crc32b(c, *buf++); }
-    return ~c;
+    return c;
 }
 #endif
