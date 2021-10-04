@@ -27,4 +27,12 @@
 #endif
 #endif
 
+#ifdef _MSC_VER
+#define FORCE_INLINE static inline
+#else
+#define FORCE_INLINE static inline __attribute__((always_inline))
+#endif
+
+#include "simd.h"
+
 #endif // AARU_CHECKSUMS_NATIVE_LIBRARY_H
