@@ -22,7 +22,7 @@
 #define AARU_LOCAL __attribute__((visibility("hidden")))
 #else
 #define AARU_EXPORT EXTERNC
-#define idaAARU_LOCAL_local
+#define AARU_LOCAL
 #endif
 #endif
 #endif
