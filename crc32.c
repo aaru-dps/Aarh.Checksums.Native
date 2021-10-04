@@ -21,7 +21,6 @@
 
 #include "library.h"
 #include "crc32.h"
-#include "simd.h"
 
 AARU_EXPORT crc32_ctx* AARU_CALL crc32_init(void)
 {
@@ -53,6 +52,11 @@ AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint
     {
         ctx->crc = armv8_crc32_little(ctx->crc, data, len);
 
+        return 0;
+    }
+    if(have_neon())
+    {
+        ctx->crc = ~crc32_vmull(data, len, ~ctx->crc);
         return 0;
     }
 #endif

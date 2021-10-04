@@ -271,4 +271,5 @@ CLMUL uint32_t crc32_clmul(const uint8_t* src, long len, uint32_t initial_crc);
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t crc, const unsigned char* buf, uint32_t len);
+TARGET_WITH_SIMD uint32_t      crc32_vmull(const uint8_t* src, long len, uint32_t initial_crc);
 #endif
