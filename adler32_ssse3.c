@@ -51,7 +51,7 @@
 #include "library.h"
 #include "adler32.h"
 
-void adler32_ssse3(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, size_t len)
+SSSE3 void adler32_ssse3(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, size_t len)
 {
     uint32_t s1 = *sum1;
     uint32_t s2 = *sum2;
