@@ -101,11 +101,14 @@ int have_neon(void)
 }
 
 int have_arm_crc32(void) { return getauxval(AT_HWCAP) & HWCAP_CRC32; }
+
+int have_arm_crypto(void) { return getauxval(AT_HWCAP) & HWCAP_AES; }
 #endif
 
 #if defined(__arm__) || defined(_M_ARM)
 int have_neon(void) { return getauxval(AT_HWCAP) & HWCAP_NEON; }
 
 int have_arm_crc32(void) { return getauxval(AT_HWCAP2) & HWCAP2_CRC32; }
-}
+
+int have_arm_crypto(void) { return getauxval(AT_HWCAP2) & HWCAP2_AES; }
 #endif
