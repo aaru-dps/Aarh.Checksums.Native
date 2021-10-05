@@ -2,7 +2,7 @@
 // Created by claunia on 29/9/21.
 //
 
-#if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+#if(defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)) && __ARM_ARCH >= 8
 
 #include <arm_acle.h>
 

@@ -112,7 +112,7 @@ FORCE_INLINE TARGET_WITH_SIMD uint64x2_t sse2neon_vmull_p64(uint64x1_t _a, uint6
     return vreinterpretq_u64_u8(r);
 }
 
-FORCE_INLINE uint64x2_t mm_shuffle_epi8(uint64x2_t a, uint64x2_t b)
+FORCE_INLINE TARGET_WITH_SIMD uint64x2_t mm_shuffle_epi8(uint64x2_t a, uint64x2_t b)
 {
     uint8x16_t tbl        = vreinterpretq_u8_u64(a);         // input a
     uint8x16_t idx        = vreinterpretq_u8_u64(b);         // input b

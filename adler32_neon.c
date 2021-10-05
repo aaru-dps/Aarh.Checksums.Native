@@ -10,7 +10,7 @@
 #include "adler32.h"
 #include "simd.h"
 
-void adler32_neon(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, uint32_t len)
+TARGET_WITH_SIMD void adler32_neon(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, uint32_t len)
 {
     /*
      * Split Adler-32 into component sums.

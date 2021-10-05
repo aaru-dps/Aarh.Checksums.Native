@@ -81,6 +81,7 @@ TEST_F(crc32Fixture, crc32_clmul)
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+#if __ARM_ARCH >= 8
 TEST_F(crc32Fixture, crc32_arm_crc32)
 {
     if(!have_arm_crc32()) return;
@@ -93,6 +94,7 @@ TEST_F(crc32Fixture, crc32_arm_crc32)
 
     EXPECT_EQ(crc, EXPECTED_CRC32);
 }
+#endif
 
 TEST_F(crc32Fixture, crc32_vmull)
 {

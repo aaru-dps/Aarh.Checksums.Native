@@ -41,20 +41,57 @@ AARU_EXPORT int have_arm_crypto(void);
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 
+#ifndef __ARM_FEATURE_CRC32
+#define __ARM_FEATURE_CRC32 1
+#endif
+
 #ifdef _MSC_VER
 
 #define TARGET_ARMV8_WITH_CRC
+#define TARGET_WITH_CRYPTO
+#define TARGET_WITH_SIMD
 
 #else // _MSC_VER
 
 #if defined(__aarch64__) || defined(_M_ARM64)
+
+#ifdef __clang__
+#define TARGET_ARMV8_WITH_CRC __attribute__((target("crc")))
+#else
 #define TARGET_ARMV8_WITH_CRC __attribute__((target("+crc")))
+#endif
+
+#ifdef __clang__
+#define TARGET_WITH_CRYPTO __attribute__((target("crypto")))
+#else
 #define TARGET_WITH_CRYPTO __attribute__((target("+crypto")))
+#endif
+
 #define TARGET_WITH_SIMD
 #else
+
+#if __ARM_ARCH >= 8
+
+#ifdef __clang__
 #define TARGET_ARMV8_WITH_CRC __attribute__((target("armv8-a,crc")))
-#define TARGET_WITH_CRYPTO __attribute__((target("+crc")))
-#define TARGET_WITH_SIMD __attribute__((target("+neon")))
+#else
+#define TARGET_ARMV8_WITH_CRC __attribute__((target("arch=armv8-a+crc")))
+#endif
+
+#endif // __ARM_ARCH >= 8
+
+#ifdef __clang__
+#define TARGET_WITH_CRYPTO __attribute__((target("armv8-a,crypto")))
+#else
+#define TARGET_WITH_CRYPTO __attribute__((target("fpu=crypto-neon-fp-armv8")))
+#endif
+
+#ifdef __clang__
+#define TARGET_WITH_SIMD __attribute__((target("neon")))
+#else
+#define TARGET_WITH_SIMD __attribute__((target("fpu=neon")))
+#endif
+
 #endif // __aarch64__ || _M_ARM64
 
 #endif // _MSC_VER

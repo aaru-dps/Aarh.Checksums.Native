@@ -48,12 +48,14 @@ AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+#if __ARM_ARCH >= 8
     if(have_arm_crc32())
     {
         ctx->crc = armv8_crc32_little(ctx->crc, data, len);
 
         return 0;
     }
+#endif
     if(have_neon())
     {
         ctx->crc = ~crc32_vmull(data, len, ~ctx->crc);
