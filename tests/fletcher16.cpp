@@ -2,6 +2,7 @@
 // Created by claunia on 5/10/21.
 //
 
+#include <climits>
 #include <cstdint>
 
 #include "../library.h"
@@ -24,7 +25,13 @@ class fletcher16Fixture : public ::testing::Test
   protected:
     void SetUp()
     {
-        FILE* file = fopen("/home/claunia/random", "rb");
+        char path[PATH_MAX];
+        char filename[PATH_MAX];
+
+        getcwd(path, PATH_MAX);
+        snprintf(filename, PATH_MAX, "%s/data/random", path);
+
+        FILE* file = fopen(filename, "rb");
         buffer     = (const uint8_t*)malloc(1048576);
         fread((void*)buffer, 1, 1048576, file);
         fclose(file);
