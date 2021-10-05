@@ -36,6 +36,8 @@ AARU_EXPORT crc64_ctx* AARU_CALL crc64_init(void)
 
 AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx* ctx, const uint8_t* data, uint32_t len)
 {
+    if(!ctx || !data) return -1;
+
 #if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
     if(have_clmul())
@@ -49,9 +51,14 @@ AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx* ctx, const uint8_t* data, uint
     // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
     // http://sourceforge.net/projects/slicing-by-8/
 
-    if(!ctx || !data) return -1;
+    crc64_slicing(&ctx->crc, data, len);
 
-    uint64_t crc = ctx->crc;
+    return 0;
+}
+
+AARU_EXPORT void AARU_CALL crc64_slicing(uint64_t* crc, const uint8_t* data, uint32_t len)
+{
+    uint64_t c = *crc;
 
     if(len > 4)
     {
@@ -59,7 +66,7 @@ AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx* ctx, const uint8_t* data, uint
 
         while((uintptr_t)(data)&3)
         {
-            crc = crc64_table[0][*data++ ^ ((crc)&0xFF)] ^ ((crc) >> 8);
+            c = crc64_table[0][*data++ ^ ((c)&0xFF)] ^ ((c) >> 8);
             --len;
         }
 
@@ -68,18 +75,17 @@ AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx* ctx, const uint8_t* data, uint
 
         while(data < limit)
         {
-            const uint32_t tmp = crc ^ *(const uint32_t*)(data);
+            const uint32_t tmp = c ^ *(const uint32_t*)(data);
             data += 4;
 
-            crc = crc64_table[3][((tmp)&0xFF)] ^ crc64_table[2][(((tmp) >> 8) & 0xFF)] ^ ((crc) >> 32) ^
-                  crc64_table[1][(((tmp) >> 16) & 0xFF)] ^ crc64_table[0][((tmp) >> 24)];
+            c = crc64_table[3][((tmp)&0xFF)] ^ crc64_table[2][(((tmp) >> 8) & 0xFF)] ^ ((c) >> 32) ^
+                crc64_table[1][(((tmp) >> 16) & 0xFF)] ^ crc64_table[0][((tmp) >> 24)];
         }
     }
 
-    while(len-- != 0) crc = crc64_table[0][*data++ ^ ((crc)&0xFF)] ^ ((crc) >> 8);
+    while(len-- != 0) c = crc64_table[0][*data++ ^ ((c)&0xFF)] ^ ((c) >> 8);
 
-    ctx->crc = crc;
-    return 0;
+    *crc = c;
 }
 
 AARU_EXPORT int AARU_CALL crc64_final(crc64_ctx* ctx, uint64_t* crc)

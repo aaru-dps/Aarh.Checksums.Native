@@ -64,7 +64,7 @@ CLMUL static __m128i fold(__m128i in, __m128i foldConstants)
     return _mm_xor_si128(_mm_clmulepi64_si128(in, foldConstants, 0x00), _mm_clmulepi64_si128(in, foldConstants, 0x11));
 }
 
-CLMUL uint64_t crc64_clmul(uint64_t crc, const uint8_t* data, size_t length)
+CLMUL uint64_t crc64_clmul(uint64_t crc, const uint8_t* data, long length)
 {
     const uint64_t k1 = 0xe05dd497ca393ae4; // bitReflect(expMod65(128 + 64, poly, 1)) << 1;
     const uint64_t k2 = 0xdabe95afc7875f40; // bitReflect(expMod65(128, poly, 1)) << 1;
