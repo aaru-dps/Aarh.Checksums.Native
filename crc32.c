@@ -61,21 +61,27 @@ AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint
     }
 #endif
 
+    crc32_slicing(&ctx->crc, data, len);
+    return 0;
+}
+
+void crc32_slicing(uint32_t* crc, const unsigned char* data, long len)
+{
     // Unroll according to Intel slicing by uint8_t
     // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
     // http://sourceforge.net/projects/slicing-by-8/
-    uint32_t        crc;
+    uint32_t        c;
     const uint32_t* current;
     const uint8_t*  current_char     = (const uint8_t*)data;
     const size_t    unroll           = 4;
     const size_t    bytes_at_once    = 8 * unroll;
     uintptr_t       unaligned_length = (4 - (((uintptr_t)current_char) & 3)) & 3;
 
-    crc = ctx->crc;
+    c = *crc;
 
     while((len != 0) && (unaligned_length != 0))
     {
-        crc = (crc >> 8) ^ crc32_table[0][(crc & 0xFF) ^ *current_char++];
+        c = (c >> 8) ^ crc32_table[0][(c & 0xFF) ^ *current_char++];
         len--;
         unaligned_length--;
     }
@@ -87,12 +93,12 @@ AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint
         size_t unrolling;
         for(unrolling = 0; unrolling < unroll; unrolling++)
         {
-            uint32_t one = *current++ ^ crc;
+            uint32_t one = *current++ ^ c;
             uint32_t two = *current++;
             // TODO: Big endian!
-            crc = crc32_table[0][(two >> 24) & 0xFF] ^ crc32_table[1][(two >> 16) & 0xFF] ^
-                  crc32_table[2][(two >> 8) & 0xFF] ^ crc32_table[3][two & 0xFF] ^ crc32_table[4][(one >> 24) & 0xFF] ^
-                  crc32_table[5][(one >> 16) & 0xFF] ^ crc32_table[6][(one >> 8) & 0xFF] ^ crc32_table[7][one & 0xFF];
+            c = crc32_table[0][(two >> 24) & 0xFF] ^ crc32_table[1][(two >> 16) & 0xFF] ^
+                crc32_table[2][(two >> 8) & 0xFF] ^ crc32_table[3][two & 0xFF] ^ crc32_table[4][(one >> 24) & 0xFF] ^
+                crc32_table[5][(one >> 16) & 0xFF] ^ crc32_table[6][(one >> 8) & 0xFF] ^ crc32_table[7][one & 0xFF];
         }
 
         len -= bytes_at_once;
@@ -100,10 +106,9 @@ AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint
 
     current_char = (const uint8_t*)current;
 
-    while(len-- != 0) crc = (crc >> 8) ^ crc32_table[0][(crc & 0xFF) ^ *current_char++];
+    while(len-- != 0) c = (c >> 8) ^ crc32_table[0][(c & 0xFF) ^ *current_char++];
 
-    ctx->crc = crc;
-    return 0;
+    *crc = c;
 }
 
 AARU_EXPORT int AARU_CALL crc32_final(crc32_ctx* ctx, uint32_t* crc)
