@@ -1,3 +1,4 @@
+#include "library.h"
 #include "simd.h"
 
 #if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \

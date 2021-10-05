@@ -2,7 +2,7 @@
 // Created by claunia on 5/10/21.
 //
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "../library.h"
 #include "../crc32.h"
@@ -10,7 +10,7 @@
 
 #define EXPECTED_CRC32 0x2B6E6854
 
-const uint8_t* buffer;
+static const uint8_t* buffer;
 
 class crc32Fixture : public ::testing::Test
 {

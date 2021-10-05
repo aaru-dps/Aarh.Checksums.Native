@@ -51,7 +51,7 @@
 #include "library.h"
 #include "adler32.h"
 
-SSSE3 void adler32_ssse3(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, size_t len)
+SSSE3 void adler32_ssse3(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, long len)
 {
     uint32_t s1 = *sum1;
     uint32_t s2 = *sum2;
@@ -60,7 +60,7 @@ SSSE3 void adler32_ssse3(uint16_t* sum1, uint16_t* sum2, const unsigned char* bu
      * Process the data in blocks.
      */
     const unsigned BLOCK_SIZE = 1 << 5;
-    size_t         blocks     = len / BLOCK_SIZE;
+    long           blocks     = len / BLOCK_SIZE;
     len -= blocks * BLOCK_SIZE;
     while(blocks)
     {

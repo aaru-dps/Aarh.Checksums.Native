@@ -16,9 +16,9 @@
 #define CLMUL __attribute__((target("pclmul,sse4.1")))
 #endif
 
-int have_clmul(void);
-int have_ssse3(void);
-int have_avx2(void);
+AARU_EXPORT int have_clmul(void);
+AARU_EXPORT int have_ssse3(void);
+AARU_EXPORT int have_avx2(void);
 #endif
 
 #if defined(__arm__) || defined(_M_ARM)
@@ -34,9 +34,9 @@ int have_avx2(void);
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
-int have_neon(void);
-int have_arm_crc32(void);
-int have_arm_crypto(void);
+AARU_EXPORT int have_neon(void);
+AARU_EXPORT int have_arm_crc32(void);
+AARU_EXPORT int have_arm_crypto(void);
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
