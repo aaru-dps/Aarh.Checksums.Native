@@ -10,6 +10,10 @@
 #include "gtest/gtest.h"
 
 #define EXPECTED_CRC32 0x2B6E6854
+#define EXPECTED_CRC32_15BYTES 0xad6da727
+#define EXPECTED_CRC32_31BYTES 0xa2ad2faa
+#define EXPECTED_CRC32_63BYTES 0xbff6a341
+#define EXPECTED_CRC32_2352BYTES 0x08ba93ea
 
 static const uint8_t* buffer;
 
@@ -71,6 +75,102 @@ TEST_F(crc32Fixture, crc32_slicing)
     EXPECT_EQ(crc, EXPECTED_CRC32);
 }
 
+TEST_F(crc32Fixture, crc32_auto_15bytes)
+{
+    crc32_ctx* ctx = crc32_init();
+    uint32_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc32_update(ctx, buffer, 15);
+    crc32_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_15BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_slicing_15bytes)
+{
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc32_slicing(&crc, buffer, 15);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_15BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_auto_31bytes)
+{
+    crc32_ctx* ctx = crc32_init();
+    uint32_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc32_update(ctx, buffer, 31);
+    crc32_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_31BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_slicing_31bytes)
+{
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc32_slicing(&crc, buffer, 31);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_31BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_auto_63bytes)
+{
+    crc32_ctx* ctx = crc32_init();
+    uint32_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc32_update(ctx, buffer, 63);
+    crc32_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_63BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_slicing_63bytes)
+{
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc32_slicing(&crc, buffer, 63);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_63BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_auto_2352bytes)
+{
+    crc32_ctx* ctx = crc32_init();
+    uint32_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc32_update(ctx, buffer, 2352);
+    crc32_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_2352BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_slicing_2352bytes)
+{
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc32_slicing(&crc, buffer, 2352);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_2352BYTES);
+}
+
 #if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 TEST_F(crc32Fixture, crc32_clmul)
@@ -84,6 +184,58 @@ TEST_F(crc32Fixture, crc32_clmul)
     crc ^= CRC32_ISO_SEED;
 
     EXPECT_EQ(crc, EXPECTED_CRC32);
+}
+
+TEST_F(crc32Fixture, crc32_clmul_15bytes)
+{
+    if(!have_clmul()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = ~crc32_clmul(buffer, 15, ~crc);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_15BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_clmul_31bytes)
+{
+    if(!have_clmul()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = ~crc32_clmul(buffer, 31, ~crc);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_31BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_clmul_63bytes)
+{
+    if(!have_clmul()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = ~crc32_clmul(buffer, 63, ~crc);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_63BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_clmul_2352bytes)
+{
+    if(!have_clmul()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = ~crc32_clmul(buffer, 2352, ~crc);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_2352BYTES);
 }
 #endif
 
@@ -101,6 +253,58 @@ TEST_F(crc32Fixture, crc32_arm_crc32)
 
     EXPECT_EQ(crc, EXPECTED_CRC32);
 }
+
+TEST_F(crc32Fixture, crc32_arm_crc32_15bytes)
+{
+    if(!have_arm_crc32()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = armv8_crc32_little(crc, buffer, 15);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_15BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_arm_crc32_31bytes)
+{
+    if(!have_arm_crc32()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = armv8_crc32_little(crc, buffer, 31);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_31BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_arm_crc32_63bytes)
+{
+    if(!have_arm_crc32()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = armv8_crc32_little(crc, buffer, 63);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_63BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_arm_crc32_2352bytes)
+{
+    if(!have_arm_crc32()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = armv8_crc32_little(crc, buffer, 2352);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_2352BYTES);
+}
 #endif
 
 TEST_F(crc32Fixture, crc32_vmull)
@@ -114,5 +318,57 @@ TEST_F(crc32Fixture, crc32_vmull)
     crc ^= CRC32_ISO_SEED;
 
     EXPECT_EQ(crc, EXPECTED_CRC32);
+}
+
+TEST_F(crc32Fixture, crc32_vmull_15bytes)
+{
+    if(!have_neon()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = ~crc32_vmull(buffer, 15, ~crc);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_15BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_vmull_31bytes)
+{
+    if(!have_neon()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = ~crc32_vmull(buffer, 31, ~crc);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_31BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_vmull_63bytes)
+{
+    if(!have_neon()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = ~crc32_vmull(buffer, 63, ~crc);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_63BYTES);
+}
+
+TEST_F(crc32Fixture, crc32_vmull_2352bytes)
+{
+    if(!have_neon()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = ~crc32_vmull(buffer, 2352, ~crc);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32_2352BYTES);
 }
 #endif

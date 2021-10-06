@@ -10,6 +10,10 @@
 #include "gtest/gtest.h"
 
 #define EXPECTED_CRC16 0x2d6d
+#define EXPECTED_CRC16_15BYTES 0x72a6
+#define EXPECTED_CRC16_31BYTES 0xF49E
+#define EXPECTED_CRC16_63BYTES 0xFBD9
+#define EXPECTED_CRC16_2352BYTES 0x23F4
 
 static const uint8_t* buffer;
 
@@ -58,4 +62,56 @@ TEST_F(crc16Fixture, crc16_auto)
     crc16_final(ctx, &crc);
 
     EXPECT_EQ(crc, EXPECTED_CRC16);
+}
+
+TEST_F(crc16Fixture, crc16_auto_15bytes)
+{
+    crc16_ctx* ctx = crc16_init();
+    uint16_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc16_update(ctx, buffer, 15);
+    crc16_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC16_15BYTES);
+}
+
+TEST_F(crc16Fixture, crc16_auto_31bytes)
+{
+    crc16_ctx* ctx = crc16_init();
+    uint16_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc16_update(ctx, buffer, 31);
+    crc16_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC16_31BYTES);
+}
+
+TEST_F(crc16Fixture, crc16_auto_63bytes)
+{
+    crc16_ctx* ctx = crc16_init();
+    uint16_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc16_update(ctx, buffer, 63);
+    crc16_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC16_63BYTES);
+}
+
+TEST_F(crc16Fixture, crc16_auto_2352bytes)
+{
+    crc16_ctx* ctx = crc16_init();
+    uint16_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc16_update(ctx, buffer, 2352);
+    crc16_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC16_2352BYTES);
 }

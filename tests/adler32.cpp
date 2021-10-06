@@ -10,6 +10,10 @@
 #include "gtest/gtest.h"
 
 #define EXPECTED_ADLER32 0x3728d186
+#define EXPECTED_ADLER32_15BYTES 0x34DC067D
+#define EXPECTED_ADLER32_31BYTES 0xD8F10EAA
+#define EXPECTED_ADLER32_63BYTES 0xD8AC2081
+#define EXPECTED_ADLER32_2352BYTES 0xECD1738B
 
 static const uint8_t* buffer;
 
@@ -37,7 +41,9 @@ class adler32Fixture : public ::testing::Test
         fclose(file);
     }
 
-    void TearDown() { free((void*)buffer); }
+    void TearDown() {
+        free((void*)buffer);
+    }
 
     ~adler32Fixture()
     {
@@ -76,6 +82,122 @@ TEST_F(adler32Fixture, adler32_slicing)
     EXPECT_EQ(adler32, EXPECTED_ADLER32);
 }
 
+TEST_F(adler32Fixture, adler32_auto_15bytes)
+{
+    adler32_ctx* ctx = adler32_init();
+    uint32_t     adler32;
+
+    EXPECT_NE(ctx, nullptr);
+
+    adler32_update(ctx, buffer, 15);
+    adler32_final(ctx, &adler32);
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_15BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_slicing_15bytes)
+{
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_slicing(&sum1, &sum2, buffer, 15);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_15BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_auto_31bytes)
+{
+    adler32_ctx* ctx = adler32_init();
+    uint32_t     adler32;
+
+    EXPECT_NE(ctx, nullptr);
+
+    adler32_update(ctx, buffer, 31);
+    adler32_final(ctx, &adler32);
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_31BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_slicing_31bytes)
+{
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_slicing(&sum1, &sum2, buffer, 31);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_31BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_auto_63bytes)
+{
+    adler32_ctx* ctx = adler32_init();
+    uint32_t     adler32;
+
+    EXPECT_NE(ctx, nullptr);
+
+    adler32_update(ctx, buffer, 63);
+    adler32_final(ctx, &adler32);
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_63BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_slicing_63bytes)
+{
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_slicing(&sum1, &sum2, buffer, 63);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_63BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_auto_2352bytes)
+{
+    adler32_ctx* ctx = adler32_init();
+    uint32_t     adler32;
+
+    EXPECT_NE(ctx, nullptr);
+
+    adler32_update(ctx, buffer, 2352);
+    adler32_final(ctx, &adler32);
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_2352BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_slicing_2352bytes)
+{
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_slicing(&sum1, &sum2, buffer, 2352);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_2352BYTES);
+}
+
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 TEST_F(adler32Fixture, adler32_neon)
 {
@@ -93,6 +215,78 @@ TEST_F(adler32Fixture, adler32_neon)
     adler32 = (sum2 << 16) | sum1;
 
     EXPECT_EQ(adler32, EXPECTED_ADLER32);
+}
+
+TEST_F(adler32Fixture, adler32_neon_15bytes)
+{
+    if(!have_neon()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_neon(&sum1, &sum2, buffer, 15);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_15BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_neon_31bytes)
+{
+    if(!have_neon()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_neon(&sum1, &sum2, buffer, 31);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_31BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_neon_63bytes)
+{
+    if(!have_neon()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_neon(&sum1, &sum2, buffer, 63);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_63BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_neon_2352bytes)
+{
+    if(!have_neon()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_neon(&sum1, &sum2, buffer, 2352);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_2352BYTES);
 }
 #endif
 
@@ -133,5 +327,149 @@ TEST_F(adler32Fixture, adler32_ssse3)
     adler32 = (sum2 << 16) | sum1;
 
     EXPECT_EQ(adler32, EXPECTED_ADLER32);
+}
+
+TEST_F(adler32Fixture, adler32_avx2_15bytes)
+{
+    if(!have_avx2()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_avx2(&sum1, &sum2, buffer, 15);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_15BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_ssse3_15bytes)
+{
+    if(!have_ssse3()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_ssse3(&sum1, &sum2, buffer, 15);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_15BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_avx2_31bytes)
+{
+    if(!have_avx2()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_avx2(&sum1, &sum2, buffer, 31);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_31BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_ssse3_31bytes)
+{
+    if(!have_ssse3()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_ssse3(&sum1, &sum2, buffer, 31);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_31BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_avx2_63bytes)
+{
+    if(!have_avx2()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_avx2(&sum1, &sum2, buffer, 63);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_63BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_ssse3_63bytes)
+{
+    if(!have_ssse3()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_ssse3(&sum1, &sum2, buffer, 63);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_63BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_avx2_2352bytes)
+{
+    if(!have_avx2()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_avx2(&sum1, &sum2, buffer, 2352);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_2352BYTES);
+}
+
+TEST_F(adler32Fixture, adler32_ssse3_2352bytes)
+{
+    if(!have_ssse3()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_ssse3(&sum1, &sum2, buffer, 2352);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32_2352BYTES);
 }
 #endif

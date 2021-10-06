@@ -10,6 +10,10 @@
 #include "gtest/gtest.h"
 
 #define EXPECTED_CRC64 0xbf09992cc5ede38e
+#define EXPECTED_CRC64_15BYTES 0x797F3766FD93975B
+#define EXPECTED_CRC64_31BYTES 0xCD9201905A7937FD
+#define EXPECTED_CRC64_63BYTES 0x29F331FC90702BF4
+#define EXPECTED_CRC64_2352BYTES 0x126435DB43477623
 
 static const uint8_t* buffer;
 
@@ -71,6 +75,102 @@ TEST_F(crc64Fixture, crc64_slicing)
     EXPECT_EQ(crc, EXPECTED_CRC64);
 }
 
+TEST_F(crc64Fixture, crc64_auto_15bytes)
+{
+    crc64_ctx* ctx = crc64_init();
+    uint64_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc64_update(ctx, buffer, 15);
+    crc64_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_15BYTES);
+}
+
+TEST_F(crc64Fixture, crc64_slicing_15bytes)
+{
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc64_slicing(&crc, buffer, 15);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_15BYTES);
+}
+
+TEST_F(crc64Fixture, crc64_auto_31bytes)
+{
+    crc64_ctx* ctx = crc64_init();
+    uint64_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc64_update(ctx, buffer, 31);
+    crc64_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_31BYTES);
+}
+
+TEST_F(crc64Fixture, crc64_slicing_31bytes)
+{
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc64_slicing(&crc, buffer, 31);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_31BYTES);
+}
+
+TEST_F(crc64Fixture, crc64_auto_63bytes)
+{
+    crc64_ctx* ctx = crc64_init();
+    uint64_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc64_update(ctx, buffer, 63);
+    crc64_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_63BYTES);
+}
+
+TEST_F(crc64Fixture, crc64_slicing_63bytes)
+{
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc64_slicing(&crc, buffer, 63);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_63BYTES);
+}
+
+TEST_F(crc64Fixture, crc64_auto_2352bytes)
+{
+    crc64_ctx* ctx = crc64_init();
+    uint64_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc64_update(ctx, buffer, 2352);
+    crc64_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_2352BYTES);
+}
+
+TEST_F(crc64Fixture, crc64_slicing_2352bytes)
+{
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc64_slicing(&crc, buffer, 2352);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_2352BYTES);
+}
+
 #if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 TEST_F(crc64Fixture, crc64_clmul)
@@ -84,5 +184,57 @@ TEST_F(crc64Fixture, crc64_clmul)
     crc ^= CRC64_ECMA_SEED;
 
     EXPECT_EQ(crc, EXPECTED_CRC64);
+}
+
+TEST_F(crc64Fixture, crc64_clmul_15bytes)
+{
+    if(!have_clmul()) return;
+
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc = ~crc64_clmul(~crc, buffer, 15);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_15BYTES);
+}
+
+TEST_F(crc64Fixture, crc64_clmul_31bytes)
+{
+    if(!have_clmul()) return;
+
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc = ~crc64_clmul(~crc, buffer, 31);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_31BYTES);
+}
+
+TEST_F(crc64Fixture, crc64_clmul_63bytes)
+{
+    if(!have_clmul()) return;
+
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc = ~crc64_clmul(~crc, buffer, 63);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_63BYTES);
+}
+
+TEST_F(crc64Fixture, crc64_clmul_2352bytes)
+{
+    if(!have_clmul()) return;
+
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc = ~crc64_clmul(~crc, buffer, 2352);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_2352BYTES);
 }
 #endif
