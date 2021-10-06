@@ -4,6 +4,7 @@
 
 #include <climits>
 #include <cstdint>
+#include <cstring>
 
 #include "../library.h"
 #include "../fletcher32.h"
@@ -16,6 +17,7 @@
 #define EXPECTED_FLETCHER32_2352BYTES 0xCB3E7352
 
 static const uint8_t* buffer;
+static const uint8_t* buffer_misaligned;
 
 class fletcher32Fixture : public ::testing::Test
 {
@@ -39,9 +41,15 @@ class fletcher32Fixture : public ::testing::Test
         buffer     = (const uint8_t*)malloc(1048576);
         fread((void*)buffer, 1, 1048576, file);
         fclose(file);
+
+        buffer_misaligned = (const uint8_t*)malloc(1048577);
+        memcpy((void*)(buffer_misaligned + 1), buffer, 1048576);
     }
 
-    void TearDown() { free((void*)buffer); }
+    void TearDown() {
+        free((void*)buffer);
+        free((void*)buffer_misaligned);
+    }
 
     ~fletcher32Fixture()
     {
@@ -59,6 +67,19 @@ TEST_F(fletcher32Fixture, fletcher32_auto)
     EXPECT_NE(ctx, nullptr);
 
     fletcher32_update(ctx, buffer, 1048576);
+    fletcher32_final(ctx, &fletcher);
+
+    EXPECT_EQ(fletcher, EXPECTED_FLETCHER32);
+}
+
+TEST_F(fletcher32Fixture, fletcher32_auto_misaligned)
+{
+    fletcher32_ctx* ctx = fletcher32_init();
+    uint32_t        fletcher;
+
+    EXPECT_NE(ctx, nullptr);
+
+    fletcher32_update(ctx, buffer_misaligned+1, 1048576);
     fletcher32_final(ctx, &fletcher);
 
     EXPECT_EQ(fletcher, EXPECTED_FLETCHER32);

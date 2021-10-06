@@ -4,6 +4,7 @@
 
 #include <climits>
 #include <cstdint>
+#include <cstring>
 
 #include "../library.h"
 #include "../fletcher16.h"
@@ -16,6 +17,7 @@
 #define EXPECTED_FLETCHER16_2352BYTES 0x0AC5
 
 static const uint8_t* buffer;
+static const uint8_t* buffer_misaligned;
 
 class fletcher16Fixture : public ::testing::Test
 {
@@ -39,9 +41,15 @@ class fletcher16Fixture : public ::testing::Test
         buffer     = (const uint8_t*)malloc(1048576);
         fread((void*)buffer, 1, 1048576, file);
         fclose(file);
+
+        buffer_misaligned = (const uint8_t*)malloc(1048577);
+        memcpy((void*)(buffer_misaligned + 1), buffer, 1048576);
     }
 
-    void TearDown() { free((void*)buffer); }
+    void TearDown() {
+        free((void*)buffer);
+        free((void*)buffer_misaligned);
+    }
 
     ~fletcher16Fixture()
     {
@@ -59,6 +67,19 @@ TEST_F(fletcher16Fixture, fletcher16_auto)
     EXPECT_NE(ctx, nullptr);
 
     fletcher16_update(ctx, buffer, 1048576);
+    fletcher16_final(ctx, &fletcher);
+
+    EXPECT_EQ(fletcher, EXPECTED_FLETCHER16);
+}
+
+TEST_F(fletcher16Fixture, fletcher16_auto_misaligned)
+{
+    fletcher16_ctx* ctx = fletcher16_init();
+    uint16_t        fletcher;
+
+    EXPECT_NE(ctx, nullptr);
+
+    fletcher16_update(ctx, buffer_misaligned+1, 1048576);
     fletcher16_final(ctx, &fletcher);
 
     EXPECT_EQ(fletcher, EXPECTED_FLETCHER16);

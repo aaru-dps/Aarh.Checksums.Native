@@ -4,6 +4,7 @@
 
 #include <climits>
 #include <cstdint>
+#include <cstring>
 
 #include "../library.h"
 #include "../adler32.h"
@@ -16,6 +17,7 @@
 #define EXPECTED_ADLER32_2352BYTES 0xECD1738B
 
 static const uint8_t* buffer;
+static const uint8_t* buffer_misaligned;
 
 class adler32Fixture : public ::testing::Test
 {
@@ -39,10 +41,14 @@ class adler32Fixture : public ::testing::Test
         buffer     = (const uint8_t*)malloc(1048576);
         fread((void*)buffer, 1, 1048576, file);
         fclose(file);
+
+        buffer_misaligned = (const uint8_t*)malloc(1048577);
+        memcpy((void*)(buffer_misaligned + 1), buffer, 1048576);
     }
 
     void TearDown() {
         free((void*)buffer);
+        free((void*)buffer_misaligned);
     }
 
     ~adler32Fixture()
@@ -76,6 +82,35 @@ TEST_F(adler32Fixture, adler32_slicing)
     sum2 = 0;
 
     adler32_slicing(&sum1, &sum2, buffer, 1048576);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32);
+}
+
+TEST_F(adler32Fixture, adler32_auto_misaligned)
+{
+    adler32_ctx* ctx = adler32_init();
+    uint32_t     adler32;
+
+    EXPECT_NE(ctx, nullptr);
+
+    adler32_update(ctx, buffer_misaligned+1, 1048576);
+    adler32_final(ctx, &adler32);
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32);
+}
+
+TEST_F(adler32Fixture, adler32_slicing_misaligned)
+{
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_slicing(&sum1, &sum2, buffer_misaligned+1, 1048576);
 
     adler32 = (sum2 << 16) | sum1;
 
@@ -217,6 +252,24 @@ TEST_F(adler32Fixture, adler32_neon)
     EXPECT_EQ(adler32, EXPECTED_ADLER32);
 }
 
+TEST_F(adler32Fixture, adler32_neon_misaligned)
+{
+    if(!have_neon()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_neon(&sum1, &sum2, buffer_misaligned+1, 1048576);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32);
+}
+
 TEST_F(adler32Fixture, adler32_neon_15bytes)
 {
     if(!have_neon()) return;
@@ -323,6 +376,42 @@ TEST_F(adler32Fixture, adler32_ssse3)
     sum2 = 0;
 
     adler32_ssse3(&sum1, &sum2, buffer, 1048576);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32);
+}
+
+TEST_F(adler32Fixture, adler32_avx2_misaligned)
+{
+    if(!have_avx2()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_avx2(&sum1, &sum2, buffer_misaligned+1, 1048576);
+
+    adler32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(adler32, EXPECTED_ADLER32);
+}
+
+TEST_F(adler32Fixture, adler32_ssse3_misaligned)
+{
+    if(!have_ssse3()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t adler32;
+
+    sum1 = 1;
+    sum2 = 0;
+
+    adler32_ssse3(&sum1, &sum2, buffer_misaligned+1, 1048576);
 
     adler32 = (sum2 << 16) | sum1;
 

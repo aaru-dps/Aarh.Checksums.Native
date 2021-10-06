@@ -4,6 +4,7 @@
 
 #include <climits>
 #include <cstdint>
+#include <cstring>
 
 #include "../library.h"
 #include "../spamsum.h"
@@ -16,6 +17,7 @@
 #define EXPECTED_SPAMSUM_2352BYTES "48:pasCLoANDXmjCz1p2OpPm+Gek3xmZfJJ5DD4BacmmlodQMQa/58Z:csK1Nxz7XFGeJS/flHMQu2Z"
 
 static const uint8_t* buffer;
+static const uint8_t* buffer_misaligned;
 
 class spamsumFixture : public ::testing::Test
 {
@@ -39,9 +41,15 @@ class spamsumFixture : public ::testing::Test
         buffer     = (const uint8_t*)malloc(1048576);
         fread((void*)buffer, 1, 1048576, file);
         fclose(file);
+
+        buffer_misaligned = (const uint8_t*)malloc(1048577);
+        memcpy((void*)(buffer_misaligned + 1), buffer, 1048576);
     }
 
-    void TearDown() { free((void*)buffer); }
+    void TearDown() {
+        free((void*)buffer);
+        free((void*)buffer_misaligned);
+    }
 
     ~spamsumFixture()
     {
@@ -60,6 +68,22 @@ TEST_F(spamsumFixture, spamsum_auto)
     EXPECT_NE(spamsum, nullptr);
 
     spamsum_update(ctx, buffer, 1048576);
+    spamsum_final(ctx, (uint8_t*)spamsum);
+
+    EXPECT_STREQ(spamsum, EXPECTED_SPAMSUM);
+
+    free((void*)spamsum);
+}
+
+TEST_F(spamsumFixture, spamsum_auto_misaligned)
+{
+    spamsum_ctx* ctx     = spamsum_init();
+    const char*  spamsum = (const char*)malloc(FUZZY_MAX_RESULT);
+
+    EXPECT_NE(ctx, nullptr);
+    EXPECT_NE(spamsum, nullptr);
+
+    spamsum_update(ctx, buffer_misaligned+1, 1048576);
     spamsum_final(ctx, (uint8_t*)spamsum);
 
     EXPECT_STREQ(spamsum, EXPECTED_SPAMSUM);

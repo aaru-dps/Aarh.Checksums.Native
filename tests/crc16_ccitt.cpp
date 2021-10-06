@@ -4,6 +4,7 @@
 
 #include <climits>
 #include <cstdint>
+#include <cstring>
 
 #include "../library.h"
 #include "../crc16_ccitt.h"
@@ -16,6 +17,7 @@
 #define EXPECTED_CRC16_CCITT_2352BYTES 0x1946
 
 static const uint8_t* buffer;
+static const uint8_t* buffer_misaligned;
 
 class crc16_ccittFixture : public ::testing::Test
 {
@@ -39,9 +41,15 @@ class crc16_ccittFixture : public ::testing::Test
         buffer     = (const uint8_t*)malloc(1048576);
         fread((void*)buffer, 1, 1048576, file);
         fclose(file);
+
+        buffer_misaligned = (const uint8_t*)malloc(1048577);
+        memcpy((void*)(buffer_misaligned + 1), buffer, 1048576);
     }
 
-    void TearDown() { free((void*)buffer); }
+    void TearDown() {
+        free((void*)buffer);
+        free((void*)buffer_misaligned);
+    }
 
     ~crc16_ccittFixture()
     {
@@ -59,6 +67,19 @@ TEST_F(crc16_ccittFixture, crc16_ccitt_auto)
     EXPECT_NE(ctx, nullptr);
 
     crc16_ccitt_update(ctx, buffer, 1048576);
+    crc16_ccitt_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC16_CCITT);
+}
+
+TEST_F(crc16_ccittFixture, crc16_ccitt_auto_misaligned)
+{
+    crc16_ccitt_ctx* ctx = crc16_ccitt_init();
+    uint16_t         crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc16_ccitt_update(ctx, buffer_misaligned+1, 1048576);
     crc16_ccitt_final(ctx, &crc);
 
     EXPECT_EQ(crc, EXPECTED_CRC16_CCITT);

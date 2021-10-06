@@ -4,6 +4,7 @@
 
 #include <climits>
 #include <cstdint>
+#include <cstring>
 
 #include "../library.h"
 #include "../crc32.h"
@@ -16,6 +17,7 @@
 #define EXPECTED_CRC32_2352BYTES 0x08ba93ea
 
 static const uint8_t* buffer;
+static const uint8_t* buffer_misaligned;
 
 class crc32Fixture : public ::testing::Test
 {
@@ -39,9 +41,15 @@ class crc32Fixture : public ::testing::Test
         buffer     = (const uint8_t*)malloc(1048576);
         fread((void*)buffer, 1, 1048576, file);
         fclose(file);
+
+        buffer_misaligned = (const uint8_t*)malloc(1048577);
+        memcpy((void*)(buffer_misaligned + 1), buffer, 1048576);
     }
 
-    void TearDown() { free((void*)buffer); }
+    void TearDown() {
+        free((void*)buffer);
+        free((void*)buffer_misaligned);
+    }
 
     ~crc32Fixture()
     {
@@ -69,6 +77,30 @@ TEST_F(crc32Fixture, crc32_slicing)
     uint32_t crc = CRC32_ISO_SEED;
 
     crc32_slicing(&crc, buffer, 1048576);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32);
+}
+
+TEST_F(crc32Fixture, crc32_auto_misaligned)
+{
+    crc32_ctx* ctx = crc32_init();
+    uint32_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc32_update(ctx, buffer_misaligned+1, 1048576);
+    crc32_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC32);
+}
+
+TEST_F(crc32Fixture, crc32_slicing_misaligned)
+{
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc32_slicing(&crc, buffer_misaligned+1, 1048576);
 
     crc ^= CRC32_ISO_SEED;
 
@@ -186,6 +218,19 @@ TEST_F(crc32Fixture, crc32_clmul)
     EXPECT_EQ(crc, EXPECTED_CRC32);
 }
 
+TEST_F(crc32Fixture, crc32_clmul_misaligned)
+{
+    if(!have_clmul()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = ~crc32_clmul(buffer_misaligned+1, 1048576, ~crc);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32);
+}
+
 TEST_F(crc32Fixture, crc32_clmul_15bytes)
 {
     if(!have_clmul()) return;
@@ -254,6 +299,19 @@ TEST_F(crc32Fixture, crc32_arm_crc32)
     EXPECT_EQ(crc, EXPECTED_CRC32);
 }
 
+TEST_F(crc32Fixture, crc32_arm_crc32_misaligned)
+{
+    if(!have_arm_crc32()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = armv8_crc32_little(crc, buffer_misaligned+1, 1048576);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32);
+}
+
 TEST_F(crc32Fixture, crc32_arm_crc32_15bytes)
 {
     if(!have_arm_crc32()) return;
@@ -314,6 +372,19 @@ TEST_F(crc32Fixture, crc32_vmull)
     uint32_t crc = CRC32_ISO_SEED;
 
     crc = ~crc32_vmull(buffer, 1048576, ~crc);
+
+    crc ^= CRC32_ISO_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC32);
+}
+
+TEST_F(crc32Fixture, crc32_vmull_misaligned)
+{
+    if(!have_neon()) return;
+
+    uint32_t crc = CRC32_ISO_SEED;
+
+    crc = ~crc32_vmull(buffer_misaligned+1, 1048576, ~crc);
 
     crc ^= CRC32_ISO_SEED;
 

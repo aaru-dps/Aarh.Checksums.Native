@@ -4,6 +4,7 @@
 
 #include <climits>
 #include <cstdint>
+#include <cstring>
 
 #include "../library.h"
 #include "../crc64.h"
@@ -16,6 +17,7 @@
 #define EXPECTED_CRC64_2352BYTES 0x126435DB43477623
 
 static const uint8_t* buffer;
+static const uint8_t* buffer_misaligned;
 
 class crc64Fixture : public ::testing::Test
 {
@@ -39,9 +41,15 @@ class crc64Fixture : public ::testing::Test
         buffer     = (const uint8_t*)malloc(1048576);
         fread((void*)buffer, 1, 1048576, file);
         fclose(file);
+
+        buffer_misaligned = (const uint8_t*)malloc(1048577);
+        memcpy((void*)(buffer_misaligned + 1), buffer, 1048576);
     }
 
-    void TearDown() { free((void*)buffer); }
+    void TearDown() {
+        free((void*)buffer);
+        free((void*)buffer_misaligned);
+    }
 
     ~crc64Fixture()
     {
@@ -69,6 +77,30 @@ TEST_F(crc64Fixture, crc64_slicing)
     uint64_t crc = CRC64_ECMA_SEED;
 
     crc64_slicing(&crc, buffer, 1048576);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64);
+}
+
+TEST_F(crc64Fixture, crc64_auto_misaligned)
+{
+    crc64_ctx* ctx = crc64_init();
+    uint64_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc64_update(ctx, buffer_misaligned+1, 1048576);
+    crc64_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC64);
+}
+
+TEST_F(crc64Fixture, crc64_slicing_misaligned)
+{
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc64_slicing(&crc, buffer_misaligned+1, 1048576);
 
     crc ^= CRC64_ECMA_SEED;
 
@@ -180,6 +212,19 @@ TEST_F(crc64Fixture, crc64_clmul)
     uint64_t crc = CRC64_ECMA_SEED;
 
     crc = ~crc64_clmul(~crc, buffer, 1048576);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64);
+}
+
+TEST_F(crc64Fixture, crc64_clmul_misaligned)
+{
+    if(!have_clmul()) return;
+
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc = ~crc64_clmul(~crc, buffer_misaligned+1, 1048576);
 
     crc ^= CRC64_ECMA_SEED;
 

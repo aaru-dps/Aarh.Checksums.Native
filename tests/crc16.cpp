@@ -4,6 +4,7 @@
 
 #include <climits>
 #include <cstdint>
+#include <cstring>
 
 #include "../library.h"
 #include "../crc16.h"
@@ -16,6 +17,7 @@
 #define EXPECTED_CRC16_2352BYTES 0x23F4
 
 static const uint8_t* buffer;
+static const uint8_t* buffer_misaligned;
 
 class crc16Fixture : public ::testing::Test
 {
@@ -39,9 +41,15 @@ class crc16Fixture : public ::testing::Test
         buffer     = (const uint8_t*)malloc(1048576);
         fread((void*)buffer, 1, 1048576, file);
         fclose(file);
+
+        buffer_misaligned = (const uint8_t*)malloc(1048577);
+        memcpy((void*)(buffer_misaligned + 1), buffer, 1048576);
     }
 
-    void TearDown() { free((void*)buffer); }
+    void TearDown() {
+        free((void*)buffer);
+        free((void*)buffer_misaligned);
+    }
 
     ~crc16Fixture()
     {
@@ -59,6 +67,19 @@ TEST_F(crc16Fixture, crc16_auto)
     EXPECT_NE(ctx, nullptr);
 
     crc16_update(ctx, buffer, 1048576);
+    crc16_final(ctx, &crc);
+
+    EXPECT_EQ(crc, EXPECTED_CRC16);
+}
+
+TEST_F(crc16Fixture, crc16_auto_misaligned)
+{
+    crc16_ctx* ctx = crc16_init();
+    uint16_t   crc;
+
+    EXPECT_NE(ctx, nullptr);
+
+    crc16_update(ctx, buffer_misaligned+1, 1048576);
     crc16_final(ctx, &crc);
 
     EXPECT_EQ(crc, EXPECTED_CRC16);
