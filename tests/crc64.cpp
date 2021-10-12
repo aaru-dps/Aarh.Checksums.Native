@@ -283,3 +283,83 @@ TEST_F(crc64Fixture, crc64_clmul_2352bytes)
     EXPECT_EQ(crc, EXPECTED_CRC64_2352BYTES);
 }
 #endif
+
+#if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+TEST_F(crc64Fixture, crc64_vmull)
+{
+    if(!have_neon()) return;
+    
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc = ~crc64_vmull(~crc, buffer, 1048576);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64);
+}
+
+TEST_F(crc64Fixture, crc64_vmull_misaligned)
+{
+    if(!have_neon()) return;
+
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc = ~crc64_vmull(~crc, buffer_misaligned+1, 1048576);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64);
+}
+
+TEST_F(crc64Fixture, crc64_vmull_15bytes)
+{
+    if(!have_neon()) return;
+
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc = ~crc64_vmull(~crc, buffer, 15);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_15BYTES);
+}
+
+TEST_F(crc64Fixture, crc64_vmull_31bytes)
+{
+    if(!have_neon()) return;
+
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc = ~crc64_vmull(~crc, buffer, 31);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_31BYTES);
+}
+
+TEST_F(crc64Fixture, crc64_vmull_63bytes)
+{
+    if(!have_neon()) return;
+
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc = ~crc64_vmull(~crc, buffer, 63);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_63BYTES);
+}
+
+TEST_F(crc64Fixture, crc64_vmull_2352bytes)
+{
+    if(!have_neon()) return;
+
+    uint64_t crc = CRC64_ECMA_SEED;
+
+    crc = ~crc64_vmull(~crc, buffer, 2352);
+
+    crc ^= CRC64_ECMA_SEED;
+
+    EXPECT_EQ(crc, EXPECTED_CRC64_2352BYTES);
+}
+#endif

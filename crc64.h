@@ -244,3 +244,7 @@ AARU_EXPORT void AARU_CALL       crc64_slicing(uint64_t* crc, const uint8_t* dat
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 AARU_EXPORT uint64_t AARU_CALL crc64_clmul(uint64_t crc, const uint8_t* data, long length);
 #endif
+
+#if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+AARU_EXPORT TARGET_WITH_SIMD uint64_t AARU_CALL crc64_vmull(uint64_t crc, const uint8_t* data, long length);
+#endif

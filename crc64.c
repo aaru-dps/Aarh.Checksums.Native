@@ -47,6 +47,14 @@ AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx* ctx, const uint8_t* data, uint
     }
 #endif
 
+#if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+    if(have_neon())
+    {
+        ctx->crc = ~crc64_vmull(~ctx->crc, data, len);
+        return 0;
+    }
+#endif
+
     // Unroll according to Intel slicing by uint8_t
     // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
     // http://sourceforge.net/projects/slicing-by-8/
