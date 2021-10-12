@@ -9,6 +9,7 @@
 
 #ifdef _MSC_VER
 #define AVX2
+#define SSSE3
 #define CLMUL
 #else
 #define AVX2 __attribute__((target("avx2")))

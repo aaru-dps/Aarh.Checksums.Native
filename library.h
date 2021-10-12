@@ -11,6 +11,9 @@
 #define AARU_CALL __stdcall
 #define AARU_EXPORT EXTERNC __declspec(dllexport)
 #define AARU_LOCAL
+#ifndef PATH_MAX
+#define PATH_MAX _MAX_PATH
+#endif
 #else
 #define AARU_CALL
 #if defined(__APPLE__)
