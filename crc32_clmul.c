@@ -237,8 +237,7 @@ static void partial_fold(const size_t len,
  */
 #define XOR_INITIAL(where) ONCE(where = _mm_xor_si128(where, xmm_initial))
 
-CLMUL
-uint32_t crc32_clmul(const uint8_t* src, long len, uint32_t initial_crc)
+AARU_EXPORT CLMUL uint32_t AARU_CALL crc32_clmul(const uint8_t* src, long len, uint32_t initial_crc)
 {
     unsigned long algn_diff;
     __m128i       xmm_t0, xmm_t1, xmm_t2, xmm_t3;

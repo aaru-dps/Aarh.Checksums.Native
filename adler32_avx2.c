@@ -12,7 +12,7 @@
 #include "adler32.h"
 #include "simd.h"
 
-AVX2 void adler32_avx2(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, long len)
+AARU_EXPORT AVX2 void AARU_CALL adler32_avx2(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, long len)
 {
     uint32_t s1 = *sum1;
     uint32_t s2 = *sum2;

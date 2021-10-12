@@ -78,7 +78,7 @@ AARU_EXPORT int AARU_CALL adler32_update(adler32_ctx* ctx, const uint8_t* data, 
     return 0;
 }
 
-void adler32_slicing(uint16_t* sum1, uint16_t* sum2, const unsigned char* data, long len)
+AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t* sum1, uint16_t* sum2, const unsigned char* data, long len)
 {
     uint32_t s1 = *sum1;
     uint32_t s2 = *sum2;
