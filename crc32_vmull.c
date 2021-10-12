@@ -5,7 +5,6 @@
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 
 #include <arm_neon.h>
-#include <glob.h>
 #include <stdint.h>
 
 #include "library.h"

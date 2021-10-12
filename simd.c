@@ -92,7 +92,12 @@ int have_avx2(void)
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+#if defined(_WIN32)
+#include <windows.h>
+#include <processthreadsapi.h>
+#else
 #include <sys/auxv.h>
+#endif
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64)
@@ -101,15 +106,50 @@ int have_neon(void)
     return 1; // ARMv8-A made it mandatory
 }
 
-int have_arm_crc32(void) { return getauxval(AT_HWCAP) & HWCAP_CRC32; }
+int have_arm_crc32(void)
+{
+#if defined(_WIN32)
+    return IsProcessorFeaturePresent(PF_ARM_V8_CRC32_INSTRUCTIONS_AVAILABLE) != 0;
+#else
+    return getauxval(AT_HWCAP) & HWCAP_CRC32;
+#endif
+}
 
-int have_arm_crypto(void) { return getauxval(AT_HWCAP) & HWCAP_AES; }
+int have_arm_crypto(void)
+{
+#if defined(_WIN32)
+    return IsProcessorFeaturePresent(PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE) != 0;
+#else
+    return getauxval(AT_HWCAP) & HWCAP_AES;
+#endif
+}
 #endif
 
 #if defined(__arm__) || defined(_M_ARM)
-int have_neon(void) { return getauxval(AT_HWCAP) & HWCAP_NEON; }
+int have_neon(void)
+{
+#if defined(_WIN32)
+    return IsProcessorFeaturePresent(PF_ARM_VFP_32_REGISTERS_AVAILABLE) != 0;
+#else
+    return getauxval(AT_HWCAP) & HWCAP_NEON;
+#endif
+}
 
-int have_arm_crc32(void) { return getauxval(AT_HWCAP2) & HWCAP2_CRC32; }
+int have_arm_crc32(void)
+{
+#if defined(_WIN32)
+    return IsProcessorFeaturePresent(PF_ARM_V8_CRC32_INSTRUCTIONS_AVAILABLE) != 0;
+#else
+    return getauxval(AT_HWCAP2) & HWCAP2_CRC32;
+#endif
+}
 
-int have_arm_crypto(void) { return getauxval(AT_HWCAP2) & HWCAP2_AES; }
+int have_arm_crypto(void)
+{
+#if defined(_WIN32)
+    return IsProcessorFeaturePresent(PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE) != 0;
+#else
+    return getauxval(AT_HWCAP2) & HWCAP2_AES;
+#endif
+}
 #endif

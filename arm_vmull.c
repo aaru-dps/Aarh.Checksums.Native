@@ -10,17 +10,21 @@
 #include "arm_vmull.h"
 #include "simd.h"
 
+#if !defined(_WIN32)
 TARGET_WITH_CRYPTO static uint64x2_t sse2neon_vmull_p64_crypto(uint64x1_t _a, uint64x1_t _b)
 {
     poly64_t a = vget_lane_p64(vreinterpret_p64_u64(_a), 0);
     poly64_t b = vget_lane_p64(vreinterpret_p64_u64(_b), 0);
     return vreinterpretq_u64_p128(vmull_p64(a, b));
 }
+#endif
 
 TARGET_WITH_SIMD uint64x2_t sse2neon_vmull_p64(uint64x1_t _a, uint64x1_t _b)
 {
+#if !defined(_WIN32)
     // Wraps vmull_p64
     if(have_arm_crypto()) return sse2neon_vmull_p64_crypto(_a, _b);
+#endif
 
     // ARMv7 polyfill
     // ARMv7/some A64 lacks vmull_p64, but it has vmull_p8.

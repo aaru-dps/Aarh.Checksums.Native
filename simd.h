@@ -22,13 +22,13 @@ AARU_EXPORT int have_ssse3(void);
 AARU_EXPORT int have_avx2(void);
 #endif
 
-#if defined(__arm__) || defined(_M_ARM)
+#if(defined(__arm__) || defined(_M_ARM)) && !defined(_WIN32)
 #define HWCAP_NEON (1 << 12)
 #define HWCAP2_AES (1 << 0)
 #define HWCAP2_CRC32 (1 << 4)
 #endif
 
-#if defined(__aarch64__) || defined(_M_ARM64)
+#if(defined(__aarch64__) || defined(_M_ARM64)) && !defined(_WIN32)
 #define HWCAP_NEON (1 << 1)
 #define HWCAP_AES (1 << 3)
 #define HWCAP_CRC32 (1 << 7)

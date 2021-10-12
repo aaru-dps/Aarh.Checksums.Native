@@ -1,9 +1,21 @@
 cmake_minimum_required(VERSION 3.15)
+
+IF(APPLE)
+    IF("${CMAKE_OSX_ARCHITECTURES}" STREQUAL "")
+        SET(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "Build architectures for Mac OS X" FORCE)
+    ENDIF()
+ENDIF(APPLE)
+
 project("Aaru.Checksums.Native" C)
 
-set(CMAKE_C_STANDARD 90)
+if("${CMAKE_C_COMPILER_ID}" MATCHES "MSVC" AND "${CMAKE_C_COMPILER_ARCHITECTURE_ID}" MATCHES "ARMV7")
+    set(CMAKE_C_STANDARD 11)
+else()
+    set(CMAKE_C_STANDARD 90)
+endif()
 
 message("Detected system processor: ${CMAKE_SYSTEM_PROCESSOR}")
+message("Detected vs platform name: ${CMAKE_C_COMPILER_ARCHITECTURE_ID}")
 message("Detected compiler: ${CMAKE_C_COMPILER_ID}")
 message("Detected build type: ${CMAKE_BUILD_TYPE}")
 

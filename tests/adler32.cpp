@@ -233,7 +233,7 @@ TEST_F(adler32Fixture, adler32_slicing_2352bytes)
     EXPECT_EQ(adler32, EXPECTED_ADLER32_2352BYTES);
 }
 
-#if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+#if defined(__aarch64__) || defined(_M_ARM64) || ((defined(__arm__) || defined(_M_ARM)) && !defined(_WIN32))
 TEST_F(adler32Fixture, adler32_neon)
 {
     if(!have_neon()) return;
