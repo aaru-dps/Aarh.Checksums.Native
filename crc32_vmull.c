@@ -26,13 +26,13 @@
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 
 #include <arm_neon.h>
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include "library.h"
+#include "arm_vmull.h"
 #include "crc32.h"
 #include "crc32_simd.h"
-#include "arm_vmull.h"
 
 /*
  * somewhat surprisingly the "naive" way of doing this, ie. with a flag and a cond. branch,

@@ -1,16 +1,16 @@
 /*
-* This file is part of the Aaru Data Preservation Suite.
-* Copyright (c) 2019-2021 Natalia Portillo.
-*
-* This file is under the public domain:
-* https://github.com/rawrunprotected/crc
-*/
+ * This file is part of the Aaru Data Preservation Suite.
+ * Copyright (c) 2019-2021 Natalia Portillo.
+ *
+ * This file is under the public domain:
+ * https://github.com/rawrunprotected/crc
+ */
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 
 #include <arm_neon.h>
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include "library.h"
 #include "arm_vmull.h"
@@ -26,7 +26,7 @@ TARGET_WITH_SIMD FORCE_INLINE void shiftRight128(uint64x2_t in, size_t n, uint64
     const uint64x2_t maskA =
         vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)(const uint64x2_t*)(shuffleMasks + (16 - n))));
     uint64x2_t       b     = vreinterpretq_u64_u8(vceqq_u8(vreinterpretq_u8_u64(vreinterpretq_u64_u32(vdupq_n_u32(0))),
-                                                           vreinterpretq_u8_u64(vreinterpretq_u64_u32(vdupq_n_u32(0)))));
+                                                 vreinterpretq_u8_u64(vreinterpretq_u64_u32(vdupq_n_u32(0)))));
     const uint64x2_t maskB = vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(maskA), vreinterpretq_u32_u64(b)));
 
     *outLeft  = mm_shuffle_epi8(in, maskB);
@@ -84,7 +84,7 @@ AARU_EXPORT TARGET_WITH_SIMD uint64_t AARU_CALL crc64_vmull(uint64_t previous_cr
 
         const uint64x2_t P = veorq_u64(A, crc0);
         R                  = veorq_u64(sse2neon_vmull_p64(vget_low_u64(P), vget_high_u64(foldConstants1)),
-                                       veorq_u64(mm_srli_si128(P, 8), mm_slli_si128(crc1, 8)));
+                      veorq_u64(mm_srli_si128(P, 8), mm_slli_si128(crc1, 8)));
     }
     else if(alignedLength == 2)
     {
@@ -102,7 +102,7 @@ AARU_EXPORT TARGET_WITH_SIMD uint64_t AARU_CALL crc64_vmull(uint64_t previous_cr
 
             const uint64x2_t P = veorq_u64(veorq_u64(B, C), crc0);
             R                  = veorq_u64(sse2neon_vmull_p64(vget_low_u64(P), vget_high_u64(foldConstants1)),
-                                           veorq_u64(mm_srli_si128(P, 8), mm_slli_si128(crc1, 8)));
+                          veorq_u64(mm_srli_si128(P, 8), mm_slli_si128(crc1, 8)));
         }
         else
         {

@@ -141,7 +141,7 @@ AARU_LOCAL inline void roll_hash(spamsum_ctx* ctx, uint8_t c)
 
 AARU_LOCAL inline void fuzzy_try_reduce_blockhash(spamsum_ctx* ctx)
 {
-    //assert(ctx->bh_start < ctx->bh_end);
+    // assert(ctx->bh_start < ctx->bh_end);
 
     if(ctx->bh_end - ctx->bh_start < 2) /* Need at least two working hashes. */
         return;
@@ -163,7 +163,7 @@ AARU_LOCAL inline void fuzzy_try_fork_blockhash(spamsum_ctx* ctx)
 {
     if(ctx->bh_end >= NUM_BLOCKHASHES) return;
 
-    //assert(ctx->bh_end != 0);
+    // assert(ctx->bh_end != 0);
 
     uint32_t obh             = ctx->bh_end - 1;
     uint32_t nbh             = ctx->bh_end;
@@ -184,7 +184,7 @@ AARU_EXPORT int AARU_CALL spamsum_final(spamsum_ctx* ctx, uint8_t* result)
     if(!result) return -1;
 
     /* Verify that our elimination was not overeager. */
-    //assert(bi == 0 || (uint64_t)SSDEEP_BS(bi) / 2 * SPAMSUM_LENGTH < ctx->total_size);
+    // assert(bi == 0 || (uint64_t)SSDEEP_BS(bi) / 2 * SPAMSUM_LENGTH < ctx->total_size);
 
     /* Initial blocksize guess. */
     while((uint64_t)SSDEEP_BS(bi) * SPAMSUM_LENGTH < ctx->total_size)
@@ -203,21 +203,21 @@ AARU_EXPORT int AARU_CALL spamsum_final(spamsum_ctx* ctx, uint8_t* result)
 
     while(bi > ctx->bh_start && ctx->bh[bi].d_len < SPAMSUM_LENGTH / 2) --bi;
 
-    //assert(!(bi > 0 && ctx->bh[bi].d_len < SPAMSUM_LENGTH / 2));
+    // assert(!(bi > 0 && ctx->bh[bi].d_len < SPAMSUM_LENGTH / 2));
 
     int i = snprintf((char*)result, (size_t)remain, "%lu:", (unsigned long)SSDEEP_BS(bi));
 
     if(i <= 0) /* Maybe snprintf has set errno here? */
         return -1;
 
-    //assert(i < remain);
+    // assert(i < remain);
 
     remain -= i;
     result += i;
 
     i = (int)ctx->bh[bi].d_len;
 
-    //assert(i <= remain);
+    // assert(i <= remain);
 
     memcpy(result, ctx->bh[bi].digest, (size_t)i);
     result += i;
@@ -225,7 +225,7 @@ AARU_EXPORT int AARU_CALL spamsum_final(spamsum_ctx* ctx, uint8_t* result)
 
     if(h != 0)
     {
-        //assert(remain > 0);
+        // assert(remain > 0);
 
         *result = b64[ctx->bh[bi].h % 64];
 
@@ -237,7 +237,7 @@ AARU_EXPORT int AARU_CALL spamsum_final(spamsum_ctx* ctx, uint8_t* result)
     }
     else if(ctx->bh[bi].digest[i] != 0)
     {
-        //assert(remain > 0);
+        // assert(remain > 0);
 
         *result = ctx->bh[bi].digest[i];
 
@@ -248,7 +248,7 @@ AARU_EXPORT int AARU_CALL spamsum_final(spamsum_ctx* ctx, uint8_t* result)
         }
     }
 
-    //assert(remain > 0);
+    // assert(remain > 0);
 
     *result++ = ':';
     --remain;
@@ -267,7 +267,7 @@ AARU_EXPORT int AARU_CALL spamsum_final(spamsum_ctx* ctx, uint8_t* result)
 
         if(h != 0)
         {
-            //assert(remain > 0);
+            // assert(remain > 0);
 
             h       = ctx->bh[bi].half_h;
             *result = b64[h % 64];
@@ -284,7 +284,7 @@ AARU_EXPORT int AARU_CALL spamsum_final(spamsum_ctx* ctx, uint8_t* result)
 
             if(i != 0)
             {
-                //assert(remain > 0);
+                // assert(remain > 0);
 
                 *result = (uint8_t)i;
 
@@ -298,9 +298,9 @@ AARU_EXPORT int AARU_CALL spamsum_final(spamsum_ctx* ctx, uint8_t* result)
     }
     else if(h != 0)
     {
-        //assert(ctx->bh[bi].d_len == 0);
+        // assert(ctx->bh[bi].d_len == 0);
 
-        //assert(remain > 0);
+        // assert(remain > 0);
 
         *result++ = b64[ctx->bh[bi].h % 64];
         /* No need to bother with FUZZY_FLAG_ELIMSEQ, because this

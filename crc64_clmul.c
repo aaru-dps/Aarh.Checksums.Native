@@ -114,7 +114,7 @@ AARU_EXPORT CLMUL uint64_t AARU_CALL crc64_clmul(uint64_t crc, const uint8_t* da
 
         const __m128i P = _mm_xor_si128(A, crc0);
         R               = _mm_xor_si128(_mm_clmulepi64_si128(P, foldConstants1, 0x10),
-                                        _mm_xor_si128(_mm_srli_si128(P, 8), _mm_slli_si128(crc1, 8)));
+                          _mm_xor_si128(_mm_srli_si128(P, 8), _mm_slli_si128(crc1, 8)));
     }
     else if(alignedLength == 2)
     {
@@ -132,7 +132,7 @@ AARU_EXPORT CLMUL uint64_t AARU_CALL crc64_clmul(uint64_t crc, const uint8_t* da
 
             const __m128i P = _mm_xor_si128(_mm_xor_si128(B, C), crc0);
             R               = _mm_xor_si128(_mm_clmulepi64_si128(P, foldConstants1, 0x10),
-                                            _mm_xor_si128(_mm_srli_si128(P, 8), _mm_slli_si128(crc1, 8)));
+                              _mm_xor_si128(_mm_srli_si128(P, 8), _mm_slli_si128(crc1, 8)));
         }
         else
         {

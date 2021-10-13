@@ -77,8 +77,8 @@ TARGET_WITH_SIMD void adler32_neon(uint16_t* sum1, uint16_t* sum2, const uint8_t
         uint32x4_t v_s2 = {.n128_u32 = {0, 0, 0, s1 * n}};
         uint32x4_t v_s1 = {.n128_u32 = {0, 0, 0, 0}};
 #else
-        uint32x4_t v_s2           = (uint32x4_t){0, 0, 0, s1 * n};
-        uint32x4_t v_s1           = (uint32x4_t){0, 0, 0, 0};
+        uint32x4_t v_s2 = (uint32x4_t){0, 0, 0, s1 * n};
+        uint32x4_t v_s1 = (uint32x4_t){0, 0, 0, 0};
 #endif
         uint16x8_t v_column_sum_1 = vdupq_n_u16(0);
         uint16x8_t v_column_sum_2 = vdupq_n_u16(0);
@@ -112,23 +112,23 @@ TARGET_WITH_SIMD void adler32_neon(uint16_t* sum1, uint16_t* sum2, const uint8_t
          * Multiply-add bytes by [ 32, 31, 30, ... ] for s2.
          */
 #ifdef _WIN32
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_1), neon_ld1m_16((uint16_t[]) {32, 31, 30, 29}));
+        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_1), neon_ld1m_16((uint16_t[]){32, 31, 30, 29}));
         v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_1), neon_ld1m_16((uint16_t[]){28, 27, 26, 25}));
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_2), neon_ld1m_16((uint16_t[]) {24, 23, 22, 21}));
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_2), neon_ld1m_16((uint16_t[]) {20, 19, 18, 17}));
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_3), neon_ld1m_16((uint16_t[]) {16, 15, 14, 13}));
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_3), neon_ld1m_16((uint16_t[]) {12, 11, 10, 9}));
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_4), neon_ld1m_16((uint16_t[]) {8, 7, 6, 5}));
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_4), neon_ld1m_16((uint16_t[]) {4, 3, 2, 1}));
+        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_2), neon_ld1m_16((uint16_t[]){24, 23, 22, 21}));
+        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_2), neon_ld1m_16((uint16_t[]){20, 19, 18, 17}));
+        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_3), neon_ld1m_16((uint16_t[]){16, 15, 14, 13}));
+        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_3), neon_ld1m_16((uint16_t[]){12, 11, 10, 9}));
+        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_4), neon_ld1m_16((uint16_t[]){8, 7, 6, 5}));
+        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_4), neon_ld1m_16((uint16_t[]){4, 3, 2, 1}));
 #else
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_1), (uint16x4_t){32, 31, 30, 29});
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_1), (uint16x4_t){28, 27, 26, 25});
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_2), (uint16x4_t){24, 23, 22, 21});
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_2), (uint16x4_t){20, 19, 18, 17});
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_3), (uint16x4_t){16, 15, 14, 13});
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_3), (uint16x4_t){12, 11, 10, 9});
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_4), (uint16x4_t){8, 7, 6, 5});
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_4), (uint16x4_t){4, 3, 2, 1});
+        v_s2            = vmlal_u16(v_s2, vget_low_u16(v_column_sum_1), (uint16x4_t){32, 31, 30, 29});
+        v_s2            = vmlal_u16(v_s2, vget_high_u16(v_column_sum_1), (uint16x4_t){28, 27, 26, 25});
+        v_s2            = vmlal_u16(v_s2, vget_low_u16(v_column_sum_2), (uint16x4_t){24, 23, 22, 21});
+        v_s2            = vmlal_u16(v_s2, vget_high_u16(v_column_sum_2), (uint16x4_t){20, 19, 18, 17});
+        v_s2            = vmlal_u16(v_s2, vget_low_u16(v_column_sum_3), (uint16x4_t){16, 15, 14, 13});
+        v_s2            = vmlal_u16(v_s2, vget_high_u16(v_column_sum_3), (uint16x4_t){12, 11, 10, 9});
+        v_s2            = vmlal_u16(v_s2, vget_low_u16(v_column_sum_4), (uint16x4_t){8, 7, 6, 5});
+        v_s2            = vmlal_u16(v_s2, vget_high_u16(v_column_sum_4), (uint16x4_t){4, 3, 2, 1});
 #endif
         /*
          * Sum epi32 ints v_s1(s2) and accumulate in s1(s2).

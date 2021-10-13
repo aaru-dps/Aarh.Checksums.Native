@@ -275,9 +275,9 @@ AARU_EXPORT CLMUL uint32_t AARU_CALL crc32_clmul(uint32_t previous_crc, const ui
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 #if __ARM_ARCH >= 8
-AARU_EXPORT TARGET_ARMV8_WITH_CRC uint32_t AARU_CALL armv8_crc32_little(uint32_t             previous_crc,
+AARU_EXPORT TARGET_ARMV8_WITH_CRC uint32_t AARU_CALL armv8_crc32_little(uint32_t       previous_crc,
                                                                         const uint8_t* data,
-                                                                        uint32_t             len);
+                                                                        uint32_t       len);
 #endif
 AARU_EXPORT TARGET_WITH_SIMD uint32_t AARU_CALL crc32_vmull(uint32_t previous_crc, const uint8_t* data, long len);
 #endif

@@ -1,20 +1,20 @@
 /*
-* This file is part of the Aaru Data Preservation Suite.
-* Copyright (c) 2019-2021 Natalia Portillo.
-*
-* This library is free software; you can redistribute it and/or modify
-* it under the terms of the GNU Lesser General Public License as
-* published by the Free Software Foundation; either version 2.1 of the
-* License, or (at your option) any later version.
-*
-* This library is distributed in the hope that it will be useful, but
-* WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-* Lesser General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public
-* License along with this library; if not, see <http://www.gnu.org/licenses/>.
-*/
+ * This file is part of the Aaru Data Preservation Suite.
+ * Copyright (c) 2019-2021 Natalia Portillo.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "library.h"
 #include "simd.h"
@@ -112,6 +112,7 @@ int have_avx2(void)
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 #if defined(_WIN32)
 #include <windows.h>
+
 #include <processthreadsapi.h>
 #elif defined(__APPLE__)
 #include <sys/sysctl.h>
@@ -120,29 +121,25 @@ int have_avx2(void)
 #endif
 #endif
 
-#if (defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)) && defined(__APPLE__)
+#if(defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)) && defined(__APPLE__)
 int have_neon_apple()
 {
-    int value;
+    int    value;
     size_t len = sizeof(int);
-    int ret=
-        sysctlbyname("hw.optional.neon", &value, &len, NULL, 0);
+    int    ret = sysctlbyname("hw.optional.neon", &value, &len, NULL, 0);
 
-    if(ret != 0)
-        return 0;
+    if(ret != 0) return 0;
 
     return value == 1;
 }
 
 int have_crc32_apple()
 {
-    int value;
+    int    value;
     size_t len = sizeof(int);
-    int ret=
-        sysctlbyname("hw.optional.crc32", &value, &len, NULL, 0);
+    int    ret = sysctlbyname("hw.optional.crc32", &value, &len, NULL, 0);
 
-    if(ret != 0)
-        return 0;
+    if(ret != 0) return 0;
 
     return value == 1;
 }
