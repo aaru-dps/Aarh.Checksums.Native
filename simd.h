@@ -16,6 +16,9 @@
 * License along with this library; if not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef AARU_CHECKSUMS_NATIVE_SIMD_H
+#define AARU_CHECKSUMS_NATIVE_SIMD_H
+
 #ifdef _MSC_VER
 #define ALIGNED_(n) __declspec(align(n))
 #else
@@ -116,3 +119,5 @@ AARU_EXPORT int have_arm_crypto(void);
 #endif // _MSC_VER
 
 #endif // __aarch64__ || _M_ARM64 || __arm__ || _M_ARM
+
+#endif // AARU_CHECKSUMS_NATIVE_CRC32_SIMD_H

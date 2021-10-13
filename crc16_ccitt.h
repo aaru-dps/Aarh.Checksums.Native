@@ -16,6 +16,9 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef AARU_CHECKSUMS_NATIVE_CRC16_CCITT_H
+#define AARU_CHECKSUMS_NATIVE_CRC16_CCITT_H
+
 typedef struct
 {
     uint16_t crc;
@@ -178,3 +181,5 @@ AARU_EXPORT crc16_ccitt_ctx* AARU_CALL crc16_ccitt_init();
 AARU_EXPORT int AARU_CALL              crc16_ccitt_update(crc16_ccitt_ctx* ctx, const uint8_t* data, uint32_t len);
 AARU_EXPORT int AARU_CALL              crc16_ccitt_final(crc16_ccitt_ctx* ctx, uint16_t* crc);
 AARU_EXPORT void AARU_CALL             crc16_ccitt_free(crc16_ccitt_ctx* ctx);
+
+#endif // AARU_CHECKSUMS_NATIVE_CRC16_H

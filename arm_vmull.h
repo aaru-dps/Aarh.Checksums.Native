@@ -16,8 +16,8 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef AARU_CHECKSUMS_NATIVE__ARM_VMULL_H_
-#define AARU_CHECKSUMS_NATIVE__ARM_VMULL_H_
+#ifndef AARU_CHECKSUMS_NATIVE_ARM_VMULL_H
+#define AARU_CHECKSUMS_NATIVE_ARM_VMULL_H
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 
@@ -29,4 +29,4 @@ TARGET_WITH_SIMD uint64x2_t          mm_slli_si128(uint64x2_t a, int imm);
 
 #endif
 
-#endif // AARU_CHECKSUMS_NATIVE__ARM_VMULL_H_
+#endif // AARU_CHECKSUMS_NATIVE_ARM_VMULL_H

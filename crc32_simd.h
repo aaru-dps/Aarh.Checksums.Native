@@ -16,8 +16,8 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef AARU_CHECKSUMS_NATIVE__CRC32_SIMD_H_
-#define AARU_CHECKSUMS_NATIVE__CRC32_SIMD_H_
+#ifndef AARU_CHECKSUMS_NATIVE_CRC32_SIMD_H
+#define AARU_CHECKSUMS_NATIVE_CRC32_SIMD_H
 
 static const unsigned ALIGNED_(32) pshufb_shf_table[60] = {
     0x84838281, 0x88878685, 0x8c8b8a89, 0x008f8e8d, /* shl 15 (16 - 1)/shr1 */
@@ -63,4 +63,4 @@ static const unsigned ALIGNED_(16) crc_mask2[4] = {0x00000000, 0xFFFFFFFF, 0xFFF
         (op);                                                                                                          \
     }
 
-#endif // AARU_CHECKSUMS_NATIVE__CRC32_SIMD_H_
+#endif // AARU_CHECKSUMS_NATIVE_CRC32_SIMD_H

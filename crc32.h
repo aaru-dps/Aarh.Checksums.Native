@@ -16,6 +16,9 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef AARU_CHECKSUMS_NATIVE_CRC32_H
+#define AARU_CHECKSUMS_NATIVE_CRC32_H
+
 typedef struct
 {
     uint32_t crc;
@@ -278,3 +281,5 @@ AARU_EXPORT TARGET_ARMV8_WITH_CRC uint32_t AARU_CALL armv8_crc32_little(uint32_t
 #endif
 AARU_EXPORT TARGET_WITH_SIMD uint32_t AARU_CALL crc32_vmull(uint32_t previous_crc, const uint8_t* data, long len);
 #endif
+
+#endif // AARU_CHECKSUMS_NATIVE_CRC32_H

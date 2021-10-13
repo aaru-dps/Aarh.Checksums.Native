@@ -16,6 +16,9 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef AARU_CHECKSUMS_NATIVE_CRC64_H
+#define AARU_CHECKSUMS_NATIVE_CRC64_H
+
 typedef struct
 {
     uint64_t crc;
@@ -248,3 +251,5 @@ AARU_EXPORT CLMUL uint64_t AARU_CALL crc64_clmul(uint64_t crc, const uint8_t* da
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 AARU_EXPORT TARGET_WITH_SIMD uint64_t AARU_CALL crc64_vmull(uint64_t previous_crc, const uint8_t* data, long len);
 #endif
+
+#endif // AARU_CHECKSUMS_NATIVE_CRC64_H

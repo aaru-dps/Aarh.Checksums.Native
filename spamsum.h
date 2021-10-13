@@ -16,6 +16,9 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef AARU_CHECKSUMS_NATIVE_SPAMSUM_H
+#define AARU_CHECKSUMS_NATIVE_SPAMSUM_H
+
 #define SPAMSUM_LENGTH 64
 #define NUM_BLOCKHASHES 31
 #define ROLLING_WINDOW 7
@@ -60,3 +63,5 @@ AARU_LOCAL void fuzzy_engine_step(spamsum_ctx* ctx, uint8_t c);
 AARU_LOCAL void roll_hash(spamsum_ctx* ctx, uint8_t c);
 AARU_LOCAL void fuzzy_try_reduce_blockhash(spamsum_ctx* ctx);
 AARU_LOCAL void fuzzy_try_fork_blockhash(spamsum_ctx* ctx);
+
+#endif // AARU_CHECKSUMS_NATIVE_SPAMSUM_H
