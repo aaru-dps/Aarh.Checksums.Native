@@ -95,9 +95,41 @@ int have_avx2(void)
 #if defined(_WIN32)
 #include <windows.h>
 #include <processthreadsapi.h>
+#elif defined(__APPLE__)
+#include <sys/sysctl.h>
 #else
 #include <sys/auxv.h>
 #endif
+#endif
+
+#if (defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)) && defined(__APPLE__)
+int have_neon_apple()
+{
+    int value;
+    size_t len = sizeof(int);
+    int ret=
+        sysctlbyname("hw.optional.neon", &value, &len, NULL, 0);
+
+    if(ret != 0)
+        return 0;
+
+    return value == 1;
+}
+
+int have_crc32_apple()
+{
+    int value;
+    size_t len = sizeof(int);
+    int ret=
+        sysctlbyname("hw.optional.crc32", &value, &len, NULL, 0);
+
+    if(ret != 0)
+        return 0;
+
+    return value == 1;
+}
+
+int have_crypto_apple() { return 0; }
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64)
@@ -110,6 +142,8 @@ int have_arm_crc32(void)
 {
 #if defined(_WIN32)
     return IsProcessorFeaturePresent(PF_ARM_V8_CRC32_INSTRUCTIONS_AVAILABLE) != 0;
+#elif defined(__APPLE__)
+    return have_crc32_apple();
 #else
     return getauxval(AT_HWCAP) & HWCAP_CRC32;
 #endif
@@ -119,6 +153,8 @@ int have_arm_crypto(void)
 {
 #if defined(_WIN32)
     return IsProcessorFeaturePresent(PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE) != 0;
+#elif defined(__APPLE__)
+    return have_crypto_apple();
 #else
     return getauxval(AT_HWCAP) & HWCAP_AES;
 #endif
@@ -130,6 +166,8 @@ int have_neon(void)
 {
 #if defined(_WIN32)
     return IsProcessorFeaturePresent(PF_ARM_VFP_32_REGISTERS_AVAILABLE) != 0;
+#elif defined(__APPLE__)
+    return have_neon_apple();
 #else
     return getauxval(AT_HWCAP) & HWCAP_NEON;
 #endif
@@ -139,6 +177,8 @@ int have_arm_crc32(void)
 {
 #if defined(_WIN32)
     return IsProcessorFeaturePresent(PF_ARM_V8_CRC32_INSTRUCTIONS_AVAILABLE) != 0;
+#elif defined(__APPLE__)
+    return have_crc32_apple();
 #else
     return getauxval(AT_HWCAP2) & HWCAP2_CRC32;
 #endif
@@ -148,6 +188,8 @@ int have_arm_crypto(void)
 {
 #if defined(_WIN32)
     return IsProcessorFeaturePresent(PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE) != 0;
+#elif defined(__APPLE__)
+    return have_crypto_apple();
 #else
     return getauxval(AT_HWCAP2) & HWCAP2_AES;
 #endif
