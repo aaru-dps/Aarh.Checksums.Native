@@ -32,6 +32,10 @@
 
 #if(defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)) && __ARM_ARCH >= 8
 
+#if defined(__MINGW32__) && !defined(__ARM_FEATURE_CRC32)
+#define __ARM_FEATURE_CRC32 1
+#endif
+
 #include <arm_acle.h>
 
 #include "library.h"
@@ -68,12 +72,12 @@ TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t previous_crc, const u
 
     data = (const uint8_t*)buf8;
 #else // AARCH64
-    while(len && ((uintptr_t)buf & 3))
+    while(len && ((uintptr_t)data & 3))
     {
-        c = __crc32b(c, *buf++);
+        c = __crc32b(c, *data++);
         --len;
     }
-    const uint32_t* buf4 = (const uint32_t*)buf;
+    const uint32_t* buf4 = (const uint32_t*)data;
     while(len >= 32)
     {
         c = __crc32w(c, *buf4++);
@@ -92,7 +96,7 @@ TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t previous_crc, const u
         len -= 4;
     }
 
-    buf = (const uint8_t*)buf4;
+    data = (const uint8_t*)buf4;
 #endif
 
     while(len--) { c = __crc32b(c, *data++); }
