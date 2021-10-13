@@ -1,45 +1,33 @@
-/* adler32_simd.c
- *
+/*
+ * This file is part of the Aaru Data Preservation Suite.
+ * Copyright (c) 2019-2021 Natalia Portillo.
  * Copyright 2017 The Chromium Authors. All rights reserved.
- * Use of this source code is governed by a BSD-style license that can be
- * found in the Chromium source repository LICENSE file.
  *
- * Per http://en.wikipedia.org/wiki/Adler-32 the adler32 A value (aka s1) is
- * the sum of N input data bytes D1 ... DN,
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
  *
- *   A = A0 + D1 + D2 + ... + DN
+ *    * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *    * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *    * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
  *
- * where A0 is the initial value.
- *
- * SSE2 _mm_sad_epu8() can be used for byte sums (see http://bit.ly/2wpUOeD,
- * for example) and accumulating the byte sums can use SSE shuffle-adds (see
- * the "Integer" section of http://bit.ly/2erPT8t for details). Arm NEON has
- * similar instructions.
- *
- * The adler32 B value (aka s2) sums the A values from each step:
- *
- *   B0 + (A0 + D1) + (A0 + D1 + D2) + ... + (A0 + D1 + D2 + ... + DN) or
- *
- *       B0 + N.A0 + N.D1 + (N-1).D2 + (N-2).D3 + ... + (N-(N-1)).DN
- *
- * B0 being the initial value. For 32 bytes (ideal for garden-variety SIMD):
- *
- *   B = B0 + 32.A0 + [D1 D2 D3 ... D32] x [32 31 30 ... 1].
- *
- * Adjacent blocks of 32 input bytes can be iterated with the expressions to
- * compute the adler32 s1 s2 of M >> 32 input bytes [1].
- *
- * As M grows, the s1 s2 sums grow. If left unchecked, they would eventually
- * overflow the precision of their integer representation (bad). However, s1
- * and s2 also need to be computed modulo the adler BASE value (reduced). If
- * at most NMAX bytes are processed before a reduce, s1 s2 _cannot_ overflow
- * a uint32_t type (the NMAX constraint) [2].
- *
- * [1] the iterative equations for s2 contain constant factors; these can be
- * hoisted from the n-blocks do loop of the SIMD code.
- *
- * [2] zlib adler32_z() uses this fact to implement NMAX-block-based updates
- * of the adler s1 s2 of uint32_t type (see adler32.c).
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \

@@ -1,6 +1,10 @@
-//
-// Created by claunia on 12/10/21.
-//
+/*
+* This file is part of the Aaru Data Preservation Suite.
+* Copyright (c) 2019-2021 Natalia Portillo.
+*
+* This file is under the public domain:
+* https://github.com/rawrunprotected/crc
+*/
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 

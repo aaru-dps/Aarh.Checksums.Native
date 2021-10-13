@@ -1,6 +1,9 @@
 /*
  * This file is part of the Aaru Data Preservation Suite.
  * Copyright (c) 2019-2021 Natalia Portillo.
+ * Copyright (C) 2002 Andrew Tridgell <tridge@samba.org>
+ * Copyright (C) 2006 ManTech International Corporation
+ * Copyright (C) 2013 Helmut Grohne <helmut@subdivi.de>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -15,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include <assert.h>
+
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
