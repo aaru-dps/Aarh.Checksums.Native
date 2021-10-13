@@ -128,14 +128,13 @@ mv libAaru.Checksums.Native.so runtimes/linux-x64/native/
 
 ## Linux (x86)
 # Detected system processor: i686
-# TODO: xmmintrin.h:258:1: error: inlining failed in call to 'always_inline' '_mm_xor_ps': target specific option mismatch
-#rm -f CMakeCache.txt
-#mkdir -p runtimes/linux-x86/native
-#docker run --rm dockcross/linux-x86 > docker/dockcross-linux-x86
-#chmod +x docker/dockcross-linux-x86
-#docker/dockcross-linux-x86 cmake -DCMAKE_BUILD_TYPE=Release
-#docker/dockcross-linux-x86 make
-#mv libAaru.Checksums.Native.so runtimes/linux-x86/native/
+rm -f CMakeCache.txt
+mkdir -p runtimes/linux-x86/native
+docker run --rm dockcross/linux-x86 > docker/dockcross-linux-x86
+chmod +x docker/dockcross-linux-x86
+docker/dockcross-linux-x86 cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-linux-x86 make
+mv libAaru.Checksums.Native.so runtimes/linux-x86/native/
 
 ## Windows (ARM)
 # Detected system processor: arm
@@ -173,14 +172,22 @@ mv libAaru.Checksums.Native.dll runtimes/win-x64/native/
 ## Windows (x86)
 # Detected system processor: i686
 # TODO: Requires MSVCRT.DLL
-# TODO: xmmintrin.h:258:1: error: inlining failed in call to 'always_inline' '_mm_xor_ps': target specific option mismatch
-#rm -f CMakeCache.txt
-#mkdir -p runtimes/win-x86/native
-#docker run --rm dockcross/windows-shared-x86 > docker/dockcross-win-x86
-#chmod +x docker/dockcross-win-x86
-#docker/dockcross-win-x86 cmake -DCMAKE_BUILD_TYPE=Release
-#docker/dockcross-win-x86 make
-#mv libAaru.Checksums.Native.dll runtimes/win-x86/native/
+rm -f CMakeCache.txt
+mkdir -p runtimes/win-x86/native
+docker run --rm dockcross/windows-shared-x86 > docker/dockcross-win-x86
+chmod +x docker/dockcross-win-x86
+docker/dockcross-win-x86 cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-win-x86 make
+mv libAaru.Checksums.Native.dll runtimes/win-x86/native/
+
+## Mac OS X (arm64 and x64
+rm -f CMakeCache.txt
+cmake -DCMAKE_BUILD_TYPE=Release .
+make
+mkdir -p runtimes/osx-arm64/native
+mkdir -p runtimes/osx-x64/native
+lipo libAaru.Checksums.Native.dylib -thin arm64 -output runtimes/osx-arm64/native/libAaru.Checksums.Native.dylib
+lipo libAaru.Checksums.Native.dylib -thin x86_64 -output runtimes/osx-x64/native/libAaru.Checksums.Native.dylib
 
 # TODO: "linux-musl-x64"
 # TODO: "linux-musl-x86"
