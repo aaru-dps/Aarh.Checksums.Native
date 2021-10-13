@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
+OS_NAME=`uname`
+
 ## Android (ARM)
 # Detected system processor: armv7-a
 rm -f CMakeCache.txt
@@ -190,18 +192,18 @@ docker/dockcross-win-x86 cmake -DCMAKE_BUILD_TYPE=Release
 docker/dockcross-win-x86 make
 mv libAaru.Checksums.Native.dll runtimes/win-x86/native/
 
-## Mac OS X (arm64 and x64
-rm -f CMakeCache.txt
-cmake -DCMAKE_BUILD_TYPE=Release .
-make
-mkdir -p runtimes/osx-arm64/native
-mkdir -p runtimes/osx-x64/native
-lipo libAaru.Checksums.Native.dylib -thin arm64 -output runtimes/osx-arm64/native/libAaru.Checksums.Native.dylib
-lipo libAaru.Checksums.Native.dylib -thin x86_64 -output runtimes/osx-x64/native/libAaru.Checksums.Native.dylib
+## Mac OS X (arm64 and x64)
+if [[ ${OS_NAME} == Darwin ]]; then
+  rm -f CMakeCache.txt
+  cmake -DCMAKE_BUILD_TYPE=Release .
+  make
+  mkdir -p runtimes/osx-arm64/native
+  mkdir -p runtimes/osx-x64/native
+  lipo libAaru.Checksums.Native.dylib -thin arm64 -output runtimes/osx-arm64/native/libAaru.Checksums.Native.dylib
+  lipo libAaru.Checksums.Native.dylib -thin x86_64 -output runtimes/osx-x64/native/libAaru.Checksums.Native.dylib
+fi
 
 # TODO: "linux-musl-x64"
 # TODO: "linux-musl-x86"
-# TODO: "osx-arm64"
-# TODO: "osx-x64"
 
 nuget pack
