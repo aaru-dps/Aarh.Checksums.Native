@@ -16,6 +16,9 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "library.h"
 #include "simd.h"
 
