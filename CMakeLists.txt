@@ -60,7 +60,7 @@ if("${CMAKE_BUILD_TYPE}" MATCHES "Release")
                 add_compile_options(-march=armv8-a)
             endif()
 
-            if(NOT "${CMAKE_C_PLATFORM_ID}" NOT MATCHES "MinGW")
+            if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW")
                 add_compile_options(-flto)
             endif()
         elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "armv7l")
