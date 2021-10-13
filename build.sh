@@ -138,25 +138,35 @@ mv libAaru.Checksums.Native.so runtimes/linux-x86/native/
 
 ## Windows (ARM)
 # Detected system processor: arm
-# TODO: clang-12: error: unsupported option '-fPIC' for target 'armv7-w64-windows-gnu'
-#rm -f CMakeCache.txt
-#mkdir -p runtimes/win-arm/native
-#docker run --rm dockcross/windows-armv7 > docker/dockcross-win-arm
-#chmod +x docker/dockcross-win-arm
-#docker/dockcross-win-arm cmake -DCMAKE_BUILD_TYPE=Release
-#docker/dockcross-win-arm make
-#mv libAaru.Checksums.Native.dll runtimes/win-arm/native/
+rm -f CMakeCache.txt
+mkdir -p runtimes/win-arm/native
+docker run --rm dockcross/windows-armv7 > docker/dockcross-win-arm
+chmod +x docker/dockcross-win-arm
+docker/dockcross-win-arm cmake -DCMAKE_BUILD_TYPE=Release
+sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt > link.txt
+mv link.txt ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt
+sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Checksums.Native.dir/flags.make > flags.make
+mv flags.make ./CMakeFiles/Aaru.Checksums.Native.dir/flags.make
+sed -e 's/\-soname,libAaru\.Checksums\.Native\.so//g' ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt > link.txt
+mv link.txt ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt
+docker/dockcross-win-arm make
+mv libAaru.Checksums.Native.so runtimes/win-arm/native/libAaru.Checksums.Native.dll
 
 ## Windows (ARM64)
 # Detected system processor: aarch64
-# TODO: clang-12: error: unsupported option '-fPIC' for target 'aarch64-w64-windows-gnu'
-#rm -f CMakeCache.txt
-#mkdir -p runtimes/win-arm64/native
-#docker run --rm dockcross/windows-arm64 > docker/dockcross-win-arm64
-#chmod +x docker/dockcross-win-arm64
-#docker/dockcross-win-arm64 cmake -DCMAKE_BUILD_TYPE=Release
-#docker/dockcross-win-arm64 make
-#mv libAaru.Checksums.Native.dll runtimes/win-arm64/native/
+rm -f CMakeCache.txt
+mkdir -p runtimes/win-arm64/native
+docker run --rm dockcross/windows-arm64 > docker/dockcross-win-arm64
+chmod +x docker/dockcross-win-arm64
+docker/dockcross-win-arm64 cmake -DCMAKE_BUILD_TYPE=Release
+sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt > link.txt
+mv link.txt ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt
+sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Checksums.Native.dir/flags.make > flags.make
+mv flags.make ./CMakeFiles/Aaru.Checksums.Native.dir/flags.make
+sed -e 's/\-soname,libAaru\.Checksums\.Native\.so//g' ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt > link.txt
+mv link.txt ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt
+docker/dockcross-win-arm64 make
+mv libAaru.Checksums.Native.so runtimes/win-arm64/native/libAaru.Checksums.Native.dll
 
 ## Windows (AMD64)
 # Detected system processor: x86_64
