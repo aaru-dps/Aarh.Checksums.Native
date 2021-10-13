@@ -24,7 +24,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/android-arm/native
 docker run --rm dockcross/android-arm >docker/dockcross-android-arm
 chmod +x docker/dockcross-android-arm
-docker/dockcross-android-arm cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-android-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-android-arm make
 mv libAaru.Checksums.Native.so runtimes/android-arm/native/
 
@@ -34,7 +34,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/android-arm64/native
 docker run --rm dockcross/android-arm64 >docker/dockcross-android-arm64
 chmod +x docker/dockcross-android-arm64
-docker/dockcross-android-arm64 cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-android-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-android-arm64 make
 mv libAaru.Checksums.Native.so runtimes/android-arm64/native/
 
@@ -44,7 +44,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/android-x64/native
 docker run --rm dockcross/android-x86_64 >docker/dockcross-android-x64
 chmod +x docker/dockcross-android-x64
-docker/dockcross-android-x64 cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-android-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-android-x64 make
 mv libAaru.Checksums.Native.so runtimes/android-x64/native/
 
@@ -54,7 +54,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/android-x86/native
 docker run --rm dockcross/android-x86 >docker/dockcross-android-x86
 chmod +x docker/dockcross-android-x86
-docker/dockcross-android-x86 cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-android-x86 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-android-x86 make
 mv libAaru.Checksums.Native.so runtimes/android-x86/native/
 
@@ -64,7 +64,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-arm/native
 docker run --rm dockcross/linux-armv7a >docker/dockcross-linux-arm
 chmod +x docker/dockcross-linux-arm
-docker/dockcross-linux-arm cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-linux-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-arm make
 mv libAaru.Checksums.Native.so runtimes/linux-arm/native/
 
@@ -74,7 +74,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-arm64/native
 docker run --rm dockcross/linux-arm64-lts >docker/dockcross-linux-arm64
 chmod +x docker/dockcross-linux-arm64
-docker/dockcross-linux-arm64 cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-linux-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-arm64 make
 mv libAaru.Checksums.Native.so runtimes/linux-arm64/native/
 
@@ -84,7 +84,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-mips64/native
 docker run --rm dockcross/linux-mips >docker/dockcross-linux-mips64
 chmod +x docker/dockcross-linux-mips64
-docker/dockcross-linux-mips64 cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-linux-mips64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-mips64 make
 mv libAaru.Checksums.Native.so runtimes/linux-mips64/native/
 
@@ -94,7 +94,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-musl-arm/native
 docker run --rm dockcross/linux-armv7l-musl >docker/dockcross-linux-musl-arm
 chmod +x docker/dockcross-linux-musl-arm
-docker/dockcross-linux-musl-arm cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-linux-musl-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-musl-arm make
 mv libAaru.Checksums.Native.so runtimes/linux-musl-arm/native/
 
@@ -104,7 +104,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-musl-arm64/native
 docker run --rm dockcross/linux-arm64-musl >docker/dockcross-linux-musl-arm64
 chmod +x docker/dockcross-linux-musl-arm64
-docker/dockcross-linux-musl-arm64 cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-linux-musl-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-musl-arm64 make
 mv libAaru.Checksums.Native.so runtimes/linux-musl-arm64/native/
 
@@ -114,7 +114,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-s390x/native
 docker run --rm dockcross/linux-s390x >docker/dockcross-linux-s390x
 chmod +x docker/dockcross-linux-s390x
-docker/dockcross-linux-s390x cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-linux-s390x cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-s390x make
 mv libAaru.Checksums.Native.so runtimes/linux-s390x/native/
 
@@ -124,7 +124,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-x64/native
 docker run --rm dockcross/linux-x64 >docker/dockcross-linux-x64
 chmod +x docker/dockcross-linux-x64
-docker/dockcross-linux-x64 cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-linux-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-x64 make
 mv libAaru.Checksums.Native.so runtimes/linux-x64/native/
 
@@ -134,7 +134,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-x86/native
 docker run --rm dockcross/linux-x86 > docker/dockcross-linux-x86
 chmod +x docker/dockcross-linux-x86
-docker/dockcross-linux-x86 cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-linux-x86 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-x86 make
 mv libAaru.Checksums.Native.so runtimes/linux-x86/native/
 
@@ -144,7 +144,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/win-arm/native
 docker run --rm dockcross/windows-armv7 > docker/dockcross-win-arm
 chmod +x docker/dockcross-win-arm
-docker/dockcross-win-arm cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-win-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt > link.txt
 mv link.txt ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt
 sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Checksums.Native.dir/flags.make > flags.make
@@ -160,7 +160,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/win-arm64/native
 docker run --rm dockcross/windows-arm64 > docker/dockcross-win-arm64
 chmod +x docker/dockcross-win-arm64
-docker/dockcross-win-arm64 cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-win-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt > link.txt
 mv link.txt ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt
 sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Checksums.Native.dir/flags.make > flags.make
@@ -177,7 +177,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/win-x64/native
 docker run --rm dockcross/windows-shared-x64 >docker/dockcross-win-x64
 chmod +x docker/dockcross-win-x64
-docker/dockcross-win-x64 cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-win-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-win-x64 make
 mv libAaru.Checksums.Native.dll runtimes/win-x64/native/
 
@@ -188,14 +188,14 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/win-x86/native
 docker run --rm dockcross/windows-shared-x86 > docker/dockcross-win-x86
 chmod +x docker/dockcross-win-x86
-docker/dockcross-win-x86 cmake -DCMAKE_BUILD_TYPE=Release
+docker/dockcross-win-x86 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-win-x86 make
 mv libAaru.Checksums.Native.dll runtimes/win-x86/native/
 
 ## Mac OS X (arm64 and x64)
 if [[ ${OS_NAME} == Darwin ]]; then
   rm -f CMakeCache.txt
-  cmake -DCMAKE_BUILD_TYPE=Release .
+  cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 . .
   make
   mkdir -p runtimes/osx-arm64/native
   mkdir -p runtimes/osx-x64/native
