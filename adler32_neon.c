@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(__aarch64__) || defined(_M_ARM64) || ((defined(__arm__) || defined(_M_ARM)) && !defined(_WIN32))
+#if defined(__aarch64__) || defined(_M_ARM64) || ((defined(__arm__) || defined(_M_ARM)) && !defined(_MSC_VER))
 
 #include <arm_neon.h>
 
@@ -73,7 +73,7 @@ TARGET_WITH_SIMD void adler32_neon(uint16_t* sum1, uint16_t* sum2, const uint8_t
          * Process n blocks of data. At most NMAX data bytes can be
          * processed before s2 must be reduced modulo ADLER_MODULE.
          */
-#ifdef _WIN32
+#ifdef _MSC_VER
         uint32x4_t v_s2 = {.n128_u32 = {0, 0, 0, s1 * n}};
         uint32x4_t v_s1 = {.n128_u32 = {0, 0, 0, 0}};
 #else
@@ -111,7 +111,7 @@ TARGET_WITH_SIMD void adler32_neon(uint16_t* sum1, uint16_t* sum2, const uint8_t
         /*
          * Multiply-add bytes by [ 32, 31, 30, ... ] for s2.
          */
-#ifdef _WIN32
+#ifdef _MSC_VER
         v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_1), neon_ld1m_16((uint16_t[]){32, 31, 30, 29}));
         v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_1), neon_ld1m_16((uint16_t[]){28, 27, 26, 25}));
         v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_2), neon_ld1m_16((uint16_t[]){24, 23, 22, 21}));

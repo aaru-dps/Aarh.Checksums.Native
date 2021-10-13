@@ -46,7 +46,7 @@ AARU_EXPORT adler32_ctx* AARU_CALL adler32_init()
 AARU_EXPORT int AARU_CALL adler32_update(adler32_ctx* ctx, const uint8_t* data, uint32_t len)
 {
     if(!ctx || !data) return -1;
-#if defined(__aarch64__) || defined(_M_ARM64) || ((defined(__arm__) || defined(_M_ARM)) && !defined(_WIN32))
+#if defined(__aarch64__) || defined(_M_ARM64) || ((defined(__arm__) || defined(_M_ARM)) && !defined(__MINGW32__))
     if(have_neon())
     {
         adler32_neon(&ctx->sum1, &ctx->sum2, data, len);
