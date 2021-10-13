@@ -12,7 +12,7 @@
 #include "adler32.h"
 #include "simd.h"
 
-AARU_EXPORT AVX2 void AARU_CALL adler32_avx2(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, long len)
+AARU_EXPORT AVX2 void AARU_CALL adler32_avx2(uint16_t* sum1, uint16_t* sum2, const uint8_t* data, long len)
 {
     uint32_t s1 = *sum1;
     uint32_t s2 = *sum2;
@@ -77,7 +77,7 @@ AARU_EXPORT AVX2 void AARU_CALL adler32_avx2(uint16_t* sum1, uint16_t* sum2, con
             /*
              * Load 32 input bytes.
              */
-            const __m256i bytes = _mm256_lddqu_si256((__m256i*)(buf));
+            const __m256i bytes = _mm256_lddqu_si256((__m256i*)(data));
 
             /*
              * Add previous block byte sum to v_ps.
@@ -91,7 +91,7 @@ AARU_EXPORT AVX2 void AARU_CALL adler32_avx2(uint16_t* sum1, uint16_t* sum2, con
             const __m256i mad = _mm256_maddubs_epi16(bytes, tap);
             v_s2              = _mm256_add_epi32(v_s2, _mm256_madd_epi16(mad, ones));
 
-            buf += BLOCK_SIZE;
+            data += BLOCK_SIZE;
         } while(--n);
 
         __m128i sum = _mm_add_epi32(_mm256_castsi256_si128(v_s1), _mm256_extracti128_si256(v_s1, 1));
@@ -123,25 +123,25 @@ AARU_EXPORT AVX2 void AARU_CALL adler32_avx2(uint16_t* sum1, uint16_t* sum2, con
     {
         if(len >= 16)
         {
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
             len -= 16;
         }
-        while(len--) { s2 += (s1 += *buf++); }
+        while(len--) { s2 += (s1 += *data++); }
         if(s1 >= ADLER_MODULE) s1 -= ADLER_MODULE;
         s2 %= ADLER_MODULE;
     }

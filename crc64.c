@@ -64,9 +64,9 @@ AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx* ctx, const uint8_t* data, uint
     return 0;
 }
 
-AARU_EXPORT void AARU_CALL crc64_slicing(uint64_t* crc, const uint8_t* data, uint32_t len)
+AARU_EXPORT void AARU_CALL crc64_slicing(uint64_t* previous_crc, const uint8_t* data, uint32_t len)
 {
-    uint64_t c = *crc;
+    uint64_t c = *previous_crc;
 
     if(len > 4)
     {
@@ -93,7 +93,7 @@ AARU_EXPORT void AARU_CALL crc64_slicing(uint64_t* crc, const uint8_t* data, uin
 
     while(len-- != 0) c = crc64_table[0][*data++ ^ ((c)&0xFF)] ^ ((c) >> 8);
 
-    *crc = c;
+    *previous_crc = c;
 }
 
 AARU_EXPORT int AARU_CALL crc64_final(crc64_ctx* ctx, uint64_t* crc)

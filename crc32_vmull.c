@@ -212,14 +212,14 @@ TARGET_WITH_SIMD FORCE_INLINE void partial_fold(const size_t len,
     *q_crc3 = vreinterpretq_u64_u32(ps_res);
 }
 
-TARGET_WITH_SIMD uint32_t crc32_vmull(const uint8_t* src, long len, uint32_t initial_crc)
+TARGET_WITH_SIMD uint32_t crc32_vmull(uint32_t previous_crc, const uint8_t* data, long len)
 {
     unsigned long algn_diff;
     uint64x2_t    q_t0;
     uint64x2_t    q_t1;
     uint64x2_t    q_t2;
     uint64x2_t    q_t3;
-    uint64x2_t    q_initial = vreinterpretq_u64_u32(vsetq_lane_u32(initial_crc, vdupq_n_u32(0), 0));
+    uint64x2_t    q_initial = vreinterpretq_u64_u32(vsetq_lane_u32(previous_crc, vdupq_n_u32(0), 0));
     uint64x2_t    q_crc0    = vreinterpretq_u64_u32(vsetq_lane_u32(0x9db42487, vdupq_n_u32(0), 0));
     uint64x2_t    q_crc1    = vreinterpretq_u64_u32(vdupq_n_u32(0));
     uint64x2_t    q_crc2    = vreinterpretq_u64_u32(vdupq_n_u32(0));
@@ -240,34 +240,34 @@ TARGET_WITH_SIMD uint32_t crc32_vmull(const uint8_t* src, long len, uint32_t ini
 
     if(len < 16)
     {
-        if(len == 0) return initial_crc;
+        if(len == 0) return previous_crc;
         if(len < 4)
         {
             /*
              * no idea how to do this for <4 bytes, delegate to classic impl.
              */
-            uint32_t crc = ~initial_crc;
+            uint32_t crc = ~previous_crc;
             switch(len)
             {
-                case 3: crc = (crc >> 8) ^ crc32_table[0][(crc & 0xFF) ^ *src++];
-                case 2: crc = (crc >> 8) ^ crc32_table[0][(crc & 0xFF) ^ *src++];
-                case 1: crc = (crc >> 8) ^ crc32_table[0][(crc & 0xFF) ^ *src++];
+                case 3: crc = (crc >> 8) ^ crc32_table[0][(crc & 0xFF) ^ *data++];
+                case 2: crc = (crc >> 8) ^ crc32_table[0][(crc & 0xFF) ^ *data++];
+                case 1: crc = (crc >> 8) ^ crc32_table[0][(crc & 0xFF) ^ *data++];
             }
             return ~crc;
         }
-        q_crc_part = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src));
+        q_crc_part = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data));
         XOR_INITIAL(q_crc_part);
         goto partial;
     }
 
     /* this alignment computation would be wrong for len<16 handled above */
-    algn_diff = (0 - (uintptr_t)src) & 0xF;
+    algn_diff = (0 - (uintptr_t)data) & 0xF;
     if(algn_diff)
     {
-        q_crc_part = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src));
+        q_crc_part = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data));
         XOR_INITIAL(q_crc_part);
 
-        src += algn_diff;
+        data += algn_diff;
         len -= algn_diff;
 
         partial_fold(algn_diff, &q_crc0, &q_crc1, &q_crc2, &q_crc3, &q_crc_part);
@@ -275,10 +275,10 @@ TARGET_WITH_SIMD uint32_t crc32_vmull(const uint8_t* src, long len, uint32_t ini
 
     while((len -= 64) >= 0)
     {
-        q_t0 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src));
-        q_t1 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src + 4));
-        q_t2 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src + 8));
-        q_t3 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src + 12));
+        q_t0 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data));
+        q_t1 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data + 4));
+        q_t2 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data + 8));
+        q_t3 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data + 12));
 
         XOR_INITIAL(q_t0);
 
@@ -289,7 +289,7 @@ TARGET_WITH_SIMD uint32_t crc32_vmull(const uint8_t* src, long len, uint32_t ini
         q_crc2 = vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(q_crc2), vreinterpretq_u32_u64(q_t2)));
         q_crc3 = vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(q_crc3), vreinterpretq_u32_u64(q_t3)));
 
-        src += 64;
+        data += 64;
     }
 
     /*
@@ -299,9 +299,9 @@ TARGET_WITH_SIMD uint32_t crc32_vmull(const uint8_t* src, long len, uint32_t ini
     {
         len += 16;
 
-        q_t0 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src));
-        q_t1 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src + 4));
-        q_t2 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src + 8));
+        q_t0 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data));
+        q_t1 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data + 4));
+        q_t2 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data + 8));
 
         XOR_INITIAL(q_t0);
 
@@ -313,14 +313,14 @@ TARGET_WITH_SIMD uint32_t crc32_vmull(const uint8_t* src, long len, uint32_t ini
 
         if(len == 0) goto done;
 
-        q_crc_part = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src + 12));
+        q_crc_part = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data + 12));
     }
     else if(len + 32 >= 0)
     {
         len += 32;
 
-        q_t0 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src));
-        q_t1 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src + 4));
+        q_t0 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data));
+        q_t1 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data + 4));
 
         XOR_INITIAL(q_t0);
 
@@ -331,13 +331,13 @@ TARGET_WITH_SIMD uint32_t crc32_vmull(const uint8_t* src, long len, uint32_t ini
 
         if(len == 0) goto done;
 
-        q_crc_part = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src + 8));
+        q_crc_part = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data + 8));
     }
     else if(len + 48 >= 0)
     {
         len += 48;
 
-        q_t0 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src));
+        q_t0 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data));
 
         XOR_INITIAL(q_t0);
 
@@ -347,13 +347,13 @@ TARGET_WITH_SIMD uint32_t crc32_vmull(const uint8_t* src, long len, uint32_t ini
 
         if(len == 0) goto done;
 
-        q_crc_part = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src + 4));
+        q_crc_part = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data + 4));
     }
     else
     {
         len += 64;
         if(len == 0) goto done;
-        q_crc_part = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)src));
+        q_crc_part = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)data));
         XOR_INITIAL(q_crc_part);
     }
 

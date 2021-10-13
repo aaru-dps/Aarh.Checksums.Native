@@ -238,7 +238,7 @@ AARU_EXPORT crc64_ctx* AARU_CALL crc64_init();
 AARU_EXPORT int AARU_CALL        crc64_update(crc64_ctx* ctx, const uint8_t* data, uint32_t len);
 AARU_EXPORT int AARU_CALL        crc64_final(crc64_ctx* ctx, uint64_t* crc);
 AARU_EXPORT void AARU_CALL       crc64_free(crc64_ctx* ctx);
-AARU_EXPORT void AARU_CALL       crc64_slicing(uint64_t* crc, const uint8_t* data, uint32_t len);
+AARU_EXPORT void AARU_CALL       crc64_slicing(uint64_t* previous_crc, const uint8_t* data, uint32_t len);
 
 #if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
@@ -246,5 +246,5 @@ AARU_EXPORT CLMUL uint64_t AARU_CALL crc64_clmul(uint64_t crc, const uint8_t* da
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
-AARU_EXPORT TARGET_WITH_SIMD uint64_t AARU_CALL crc64_vmull(uint64_t crc, const uint8_t* data, long length);
+AARU_EXPORT TARGET_WITH_SIMD uint64_t AARU_CALL crc64_vmull(uint64_t previous_crc, const uint8_t* data, long len);
 #endif

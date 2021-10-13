@@ -10,7 +10,7 @@
 #include "adler32.h"
 #include "simd.h"
 
-TARGET_WITH_SIMD void adler32_neon(uint16_t* sum1, uint16_t* sum2, const unsigned char* buf, uint32_t len)
+TARGET_WITH_SIMD void adler32_neon(uint16_t* sum1, uint16_t* sum2, const uint8_t* data, uint32_t len)
 {
     /*
      * Split Adler-32 into component sums.
@@ -20,11 +20,11 @@ TARGET_WITH_SIMD void adler32_neon(uint16_t* sum1, uint16_t* sum2, const unsigne
     /*
      * Serially compute s1 & s2, until the data is 16-byte aligned.
      */
-    if((uintptr_t)buf & 15)
+    if((uintptr_t)data & 15)
     {
-        while((uintptr_t)buf & 15)
+        while((uintptr_t)data & 15)
         {
-            s2 += (s1 += *buf++);
+            s2 += (s1 += *data++);
             --len;
         }
         if(s1 >= ADLER_MODULE) s1 -= ADLER_MODULE;
@@ -60,8 +60,8 @@ TARGET_WITH_SIMD void adler32_neon(uint16_t* sum1, uint16_t* sum2, const unsigne
             /*
              * Load 32 input bytes.
              */
-            const uint8x16_t bytes1 = vld1q_u8((uint8_t*)(buf));
-            const uint8x16_t bytes2 = vld1q_u8((uint8_t*)(buf + 16));
+            const uint8x16_t bytes1 = vld1q_u8((uint8_t*)(data));
+            const uint8x16_t bytes2 = vld1q_u8((uint8_t*)(data + 16));
             /*
              * Add previous block byte sum to v_s2.
              */
@@ -77,7 +77,7 @@ TARGET_WITH_SIMD void adler32_neon(uint16_t* sum1, uint16_t* sum2, const unsigne
             v_column_sum_2 = vaddw_u8(v_column_sum_2, vget_high_u8(bytes1));
             v_column_sum_3 = vaddw_u8(v_column_sum_3, vget_low_u8(bytes2));
             v_column_sum_4 = vaddw_u8(v_column_sum_4, vget_high_u8(bytes2));
-            buf += BLOCK_SIZE;
+            data += BLOCK_SIZE;
         } while(--n);
         v_s2 = vshlq_n_u32(v_s2, 5);
         /*
@@ -123,25 +123,25 @@ TARGET_WITH_SIMD void adler32_neon(uint16_t* sum1, uint16_t* sum2, const unsigne
     {
         if(len >= 16)
         {
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
-            s2 += (s1 += *buf++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
+            s2 += (s1 += *data++);
             len -= 16;
         }
-        while(len--) { s2 += (s1 += *buf++); }
+        while(len--) { s2 += (s1 += *data++); }
         if(s1 >= ADLER_MODULE) s1 -= ADLER_MODULE;
         s2 %= ADLER_MODULE;
     }

@@ -237,11 +237,11 @@ static void partial_fold(const size_t len,
  */
 #define XOR_INITIAL(where) ONCE(where = _mm_xor_si128(where, xmm_initial))
 
-AARU_EXPORT CLMUL uint32_t AARU_CALL crc32_clmul(const uint8_t* src, long len, uint32_t initial_crc)
+AARU_EXPORT CLMUL uint32_t AARU_CALL crc32_clmul(uint32_t previous_crc, const uint8_t* data, long len)
 {
     unsigned long algn_diff;
     __m128i       xmm_t0, xmm_t1, xmm_t2, xmm_t3;
-    __m128i       xmm_initial = _mm_cvtsi32_si128(initial_crc);
+    __m128i       xmm_initial = _mm_cvtsi32_si128(previous_crc);
     __m128i       xmm_crc0    = _mm_cvtsi32_si128(0x9db42487);
     __m128i       xmm_crc1    = _mm_setzero_si128();
     __m128i       xmm_crc2    = _mm_setzero_si128();
@@ -259,34 +259,34 @@ AARU_EXPORT CLMUL uint32_t AARU_CALL crc32_clmul(const uint8_t* src, long len, u
 
     if(len < 16)
     {
-        if(len == 0) return initial_crc;
+        if(len == 0) return previous_crc;
         if(len < 4)
         {
             /*
              * no idea how to do this for <4 bytes, delegate to classic impl.
              */
-            uint32_t crc = ~initial_crc;
+            uint32_t crc = ~previous_crc;
             switch(len)
             {
-                case 3: crc = (crc >> 8) ^ crc32_table[0][(crc & 0xFF) ^ *src++];
-                case 2: crc = (crc >> 8) ^ crc32_table[0][(crc & 0xFF) ^ *src++];
-                case 1: crc = (crc >> 8) ^ crc32_table[0][(crc & 0xFF) ^ *src++];
+                case 3: crc = (crc >> 8) ^ crc32_table[0][(crc & 0xFF) ^ *data++];
+                case 2: crc = (crc >> 8) ^ crc32_table[0][(crc & 0xFF) ^ *data++];
+                case 1: crc = (crc >> 8) ^ crc32_table[0][(crc & 0xFF) ^ *data++];
             }
             return ~crc;
         }
-        xmm_crc_part = _mm_loadu_si128((__m128i*)src);
+        xmm_crc_part = _mm_loadu_si128((__m128i*)data);
         XOR_INITIAL(xmm_crc_part);
         goto partial;
     }
 
     /* this alignment computation would be wrong for len<16 handled above */
-    algn_diff = (0 - (uintptr_t)src) & 0xF;
+    algn_diff = (0 - (uintptr_t)data) & 0xF;
     if(algn_diff)
     {
-        xmm_crc_part = _mm_loadu_si128((__m128i*)src);
+        xmm_crc_part = _mm_loadu_si128((__m128i*)data);
         XOR_INITIAL(xmm_crc_part);
 
-        src += algn_diff;
+        data += algn_diff;
         len -= algn_diff;
 
         partial_fold(algn_diff, &xmm_crc0, &xmm_crc1, &xmm_crc2, &xmm_crc3, &xmm_crc_part);
@@ -294,10 +294,10 @@ AARU_EXPORT CLMUL uint32_t AARU_CALL crc32_clmul(const uint8_t* src, long len, u
 
     while((len -= 64) >= 0)
     {
-        xmm_t0 = _mm_load_si128((__m128i*)src);
-        xmm_t1 = _mm_load_si128((__m128i*)src + 1);
-        xmm_t2 = _mm_load_si128((__m128i*)src + 2);
-        xmm_t3 = _mm_load_si128((__m128i*)src + 3);
+        xmm_t0 = _mm_load_si128((__m128i*)data);
+        xmm_t1 = _mm_load_si128((__m128i*)data + 1);
+        xmm_t2 = _mm_load_si128((__m128i*)data + 2);
+        xmm_t3 = _mm_load_si128((__m128i*)data + 3);
 
         XOR_INITIAL(xmm_t0);
 
@@ -308,7 +308,7 @@ AARU_EXPORT CLMUL uint32_t AARU_CALL crc32_clmul(const uint8_t* src, long len, u
         xmm_crc2 = _mm_xor_si128(xmm_crc2, xmm_t2);
         xmm_crc3 = _mm_xor_si128(xmm_crc3, xmm_t3);
 
-        src += 64;
+        data += 64;
     }
 
     /*
@@ -318,9 +318,9 @@ AARU_EXPORT CLMUL uint32_t AARU_CALL crc32_clmul(const uint8_t* src, long len, u
     {
         len += 16;
 
-        xmm_t0 = _mm_load_si128((__m128i*)src);
-        xmm_t1 = _mm_load_si128((__m128i*)src + 1);
-        xmm_t2 = _mm_load_si128((__m128i*)src + 2);
+        xmm_t0 = _mm_load_si128((__m128i*)data);
+        xmm_t1 = _mm_load_si128((__m128i*)data + 1);
+        xmm_t2 = _mm_load_si128((__m128i*)data + 2);
 
         XOR_INITIAL(xmm_t0);
 
@@ -332,14 +332,14 @@ AARU_EXPORT CLMUL uint32_t AARU_CALL crc32_clmul(const uint8_t* src, long len, u
 
         if(len == 0) goto done;
 
-        xmm_crc_part = _mm_load_si128((__m128i*)src + 3);
+        xmm_crc_part = _mm_load_si128((__m128i*)data + 3);
     }
     else if(len + 32 >= 0)
     {
         len += 32;
 
-        xmm_t0 = _mm_load_si128((__m128i*)src);
-        xmm_t1 = _mm_load_si128((__m128i*)src + 1);
+        xmm_t0 = _mm_load_si128((__m128i*)data);
+        xmm_t1 = _mm_load_si128((__m128i*)data + 1);
 
         XOR_INITIAL(xmm_t0);
 
@@ -350,13 +350,13 @@ AARU_EXPORT CLMUL uint32_t AARU_CALL crc32_clmul(const uint8_t* src, long len, u
 
         if(len == 0) goto done;
 
-        xmm_crc_part = _mm_load_si128((__m128i*)src + 2);
+        xmm_crc_part = _mm_load_si128((__m128i*)data + 2);
     }
     else if(len + 48 >= 0)
     {
         len += 48;
 
-        xmm_t0 = _mm_load_si128((__m128i*)src);
+        xmm_t0 = _mm_load_si128((__m128i*)data);
 
         XOR_INITIAL(xmm_t0);
 
@@ -366,13 +366,13 @@ AARU_EXPORT CLMUL uint32_t AARU_CALL crc32_clmul(const uint8_t* src, long len, u
 
         if(len == 0) goto done;
 
-        xmm_crc_part = _mm_load_si128((__m128i*)src + 1);
+        xmm_crc_part = _mm_load_si128((__m128i*)data + 1);
     }
     else
     {
         len += 64;
         if(len == 0) goto done;
-        xmm_crc_part = _mm_load_si128((__m128i*)src);
+        xmm_crc_part = _mm_load_si128((__m128i*)data);
         XOR_INITIAL(xmm_crc_part);
     }
 

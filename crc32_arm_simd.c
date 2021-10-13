@@ -9,17 +9,17 @@
 #include "library.h"
 #include "crc32.h"
 
-TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t crc, const unsigned char* buf, uint32_t len)
+TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t previous_crc, const uint8_t* data, uint32_t len)
 {
-    uint32_t c = (uint32_t)crc;
+    uint32_t c = (uint32_t)previous_crc;
 
 #if defined(__aarch64__) || defined(_M_ARM64)
-    while(len && ((uintptr_t)buf & 7))
+    while(len && ((uintptr_t)data & 7))
     {
-        c = __crc32b(c, *buf++);
+        c = __crc32b(c, *data++);
         --len;
     }
-    const uint64_t* buf8 = (const uint64_t*)buf;
+    const uint64_t* buf8 = (const uint64_t*)data;
     while(len >= 64)
     {
         c = __crc32d(c, *buf8++);
@@ -38,7 +38,7 @@ TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t crc, const unsigned c
         len -= 8;
     }
 
-    buf = (const unsigned char*)buf8;
+    data = (const uint8_t*)buf8;
 #else // AARCH64
     while(len && ((uintptr_t)buf & 3))
     {
@@ -64,10 +64,10 @@ TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t crc, const unsigned c
         len -= 4;
     }
 
-    buf = (const unsigned char*)buf4;
+    buf = (const uint8_t*)buf4;
 #endif
 
-    while(len--) { c = __crc32b(c, *buf++); }
+    while(len--) { c = __crc32b(c, *data++); }
     return c;
 }
 #endif

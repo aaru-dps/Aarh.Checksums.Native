@@ -211,7 +211,7 @@ TEST_F(crc32Fixture, crc32_clmul)
 
     uint32_t crc = CRC32_ISO_SEED;
 
-    crc = ~crc32_clmul(buffer, 1048576, ~crc);
+    crc = ~crc32_clmul(~crc, buffer, 1048576);
 
     crc ^= CRC32_ISO_SEED;
 
@@ -224,7 +224,7 @@ TEST_F(crc32Fixture, crc32_clmul_misaligned)
 
     uint32_t crc = CRC32_ISO_SEED;
 
-    crc = ~crc32_clmul(buffer_misaligned+1, 1048576, ~crc);
+    crc = ~crc32_clmul(~crc, buffer_misaligned + 1, 1048576);
 
     crc ^= CRC32_ISO_SEED;
 
@@ -237,7 +237,7 @@ TEST_F(crc32Fixture, crc32_clmul_15bytes)
 
     uint32_t crc = CRC32_ISO_SEED;
 
-    crc = ~crc32_clmul(buffer, 15, ~crc);
+    crc = ~crc32_clmul(~crc, buffer, 15);
 
     crc ^= CRC32_ISO_SEED;
 
@@ -250,7 +250,7 @@ TEST_F(crc32Fixture, crc32_clmul_31bytes)
 
     uint32_t crc = CRC32_ISO_SEED;
 
-    crc = ~crc32_clmul(buffer, 31, ~crc);
+    crc = ~crc32_clmul(~crc, buffer, 31);
 
     crc ^= CRC32_ISO_SEED;
 
@@ -263,7 +263,7 @@ TEST_F(crc32Fixture, crc32_clmul_63bytes)
 
     uint32_t crc = CRC32_ISO_SEED;
 
-    crc = ~crc32_clmul(buffer, 63, ~crc);
+    crc = ~crc32_clmul(~crc, buffer, 63);
 
     crc ^= CRC32_ISO_SEED;
 
@@ -276,7 +276,7 @@ TEST_F(crc32Fixture, crc32_clmul_2352bytes)
 
     uint32_t crc = CRC32_ISO_SEED;
 
-    crc = ~crc32_clmul(buffer, 2352, ~crc);
+    crc = ~crc32_clmul(~crc, buffer, 2352);
 
     crc ^= CRC32_ISO_SEED;
 
@@ -371,7 +371,7 @@ TEST_F(crc32Fixture, crc32_vmull)
 
     uint32_t crc = CRC32_ISO_SEED;
 
-    crc = ~crc32_vmull(buffer, 1048576, ~crc);
+    crc = ~crc32_vmull(~crc, buffer, 1048576);
 
     crc ^= CRC32_ISO_SEED;
 
@@ -384,7 +384,7 @@ TEST_F(crc32Fixture, crc32_vmull_misaligned)
 
     uint32_t crc = CRC32_ISO_SEED;
 
-    crc = ~crc32_vmull(buffer_misaligned+1, 1048576, ~crc);
+    crc = ~crc32_vmull(~crc, buffer_misaligned + 1, 1048576);
 
     crc ^= CRC32_ISO_SEED;
 
@@ -397,7 +397,7 @@ TEST_F(crc32Fixture, crc32_vmull_15bytes)
 
     uint32_t crc = CRC32_ISO_SEED;
 
-    crc = ~crc32_vmull(buffer, 15, ~crc);
+    crc = ~crc32_vmull(~crc, buffer, 15);
 
     crc ^= CRC32_ISO_SEED;
 
@@ -410,7 +410,7 @@ TEST_F(crc32Fixture, crc32_vmull_31bytes)
 
     uint32_t crc = CRC32_ISO_SEED;
 
-    crc = ~crc32_vmull(buffer, 31, ~crc);
+    crc = ~crc32_vmull(~crc, buffer, 31);
 
     crc ^= CRC32_ISO_SEED;
 
@@ -423,7 +423,7 @@ TEST_F(crc32Fixture, crc32_vmull_63bytes)
 
     uint32_t crc = CRC32_ISO_SEED;
 
-    crc = ~crc32_vmull(buffer, 63, ~crc);
+    crc = ~crc32_vmull(~crc, buffer, 63);
 
     crc ^= CRC32_ISO_SEED;
 
@@ -436,7 +436,7 @@ TEST_F(crc32Fixture, crc32_vmull_2352bytes)
 
     uint32_t crc = CRC32_ISO_SEED;
 
-    crc = ~crc32_vmull(buffer, 2352, ~crc);
+    crc = ~crc32_vmull(~crc, buffer, 2352);
 
     crc ^= CRC32_ISO_SEED;
 

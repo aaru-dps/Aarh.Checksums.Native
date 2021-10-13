@@ -41,7 +41,7 @@ AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
     if(have_clmul())
     {
-        ctx->crc = ~crc32_clmul(data, (long)len, ~ctx->crc);
+        ctx->crc = ~crc32_clmul(~ctx->crc, data, (long)len);
 
         return 0;
     }
@@ -58,7 +58,7 @@ AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint
 #endif
     if(have_neon())
     {
-        ctx->crc = ~crc32_vmull(data, len, ~ctx->crc);
+        ctx->crc = ~crc32_vmull(~ctx->crc, data, len);
         return 0;
     }
 #endif
@@ -67,7 +67,7 @@ AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint
     return 0;
 }
 
-AARU_EXPORT void AARU_CALL crc32_slicing(uint32_t* crc, const unsigned char* data, long len)
+AARU_EXPORT void AARU_CALL crc32_slicing(uint32_t* previous_crc, const uint8_t* data, long len)
 {
     // Unroll according to Intel slicing by uint8_t
     // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
@@ -79,7 +79,7 @@ AARU_EXPORT void AARU_CALL crc32_slicing(uint32_t* crc, const unsigned char* dat
     const size_t    bytes_at_once    = 8 * unroll;
     uintptr_t       unaligned_length = (4 - (((uintptr_t)current_char) & 3)) & 3;
 
-    c = *crc;
+    c = *previous_crc;
 
     while((len != 0) && (unaligned_length != 0))
     {
@@ -110,7 +110,7 @@ AARU_EXPORT void AARU_CALL crc32_slicing(uint32_t* crc, const unsigned char* dat
 
     while(len-- != 0) c = (c >> 8) ^ crc32_table[0][(c & 0xFF) ^ *current_char++];
 
-    *crc = c;
+    *previous_crc = c;
 }
 
 AARU_EXPORT int AARU_CALL crc32_final(crc32_ctx* ctx, uint32_t* crc)
