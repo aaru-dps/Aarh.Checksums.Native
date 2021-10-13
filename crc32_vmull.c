@@ -6,6 +6,7 @@
 
 #include <arm_neon.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #include "library.h"
 #include "crc32.h"
