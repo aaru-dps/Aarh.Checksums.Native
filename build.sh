@@ -18,6 +18,8 @@
 
 OS_NAME=`uname`
 
+mkdir -p docker
+
 ## Android (ARM)
 # Detected system processor: armv7-a
 rm -f CMakeCache.txt
