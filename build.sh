@@ -140,6 +140,16 @@ docker/dockcross-linux-x86 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE
 docker/dockcross-linux-x86 make
 mv libAaru.Checksums.Native.so runtimes/linux-x86/native/
 
+## Linux (ppc64le)
+# Detected system processor: ppc64le
+rm -f CMakeCache.txt
+mkdir -p runtimes/linux-ppc64le/native
+docker run --rm dockcross/linux-ppc64le > docker/dockcross-linux-ppc64le
+chmod +x docker/dockcross-linux-ppc64le
+docker/dockcross-linux-ppc64le cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
+docker/dockcross-linux-ppc64le make
+mv libAaru.Checksums.Native.so runtimes/linux-ppc64le/native/
+
 ## Windows (ARM)
 # Detected system processor: arm
 rm -f CMakeCache.txt
