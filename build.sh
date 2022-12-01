@@ -92,13 +92,13 @@ mv libAaru.Checksums.Native.so runtimes/linux-mips64/native/
 
 ## Linux (ARM), musl
 # Detected system processor: arm
-rm -f CMakeCache.txt
-mkdir -p runtimes/linux-musl-arm/native
-docker run --rm dockcross/linux-armv7l-musl >docker/dockcross-linux-musl-arm
-chmod +x docker/dockcross-linux-musl-arm
-docker/dockcross-linux-musl-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
-docker/dockcross-linux-musl-arm make
-mv libAaru.Checksums.Native.so runtimes/linux-musl-arm/native/
+#rm -f CMakeCache.txt
+#mkdir -p runtimes/linux-musl-arm/native
+#docker run --rm dockcross/linux-armv7l-musl >docker/dockcross-linux-musl-arm
+#chmod +x docker/dockcross-linux-musl-arm
+#docker/dockcross-linux-musl-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
+#docker/dockcross-linux-musl-arm make
+#mv libAaru.Checksums.Native.so runtimes/linux-musl-arm/native/
 
 ## Linux (ARM64), musl
 # Detected system processor: aarch64
@@ -217,5 +217,6 @@ fi
 
 # TODO: "linux-musl-x64"
 # TODO: "linux-musl-x86"
+# TODO: "linux-musl-arm"
 
 nuget pack
