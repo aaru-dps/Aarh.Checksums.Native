@@ -1,6 +1,6 @@
 /*
  * This file is part of the Aaru Data Preservation Suite.
- * Copyright (c) 2019-2021 Natalia Portillo.
+ * Copyright (c) 2019-2023 Natalia Portillo.
  *
  * This file is under the public domain:
  * https://github.com/rawrunprotected/crc
