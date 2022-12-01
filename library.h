@@ -56,7 +56,7 @@
 
 #include "simd.h"
 
-#define AARU_CHECKUMS_NATIVE_VERSION 0x06000086
+#define AARU_CHECKUMS_NATIVE_VERSION 0x06000089
 
 AARU_EXPORT uint64_t AARU_CALL get_acn_version();
 
