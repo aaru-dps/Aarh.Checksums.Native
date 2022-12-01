@@ -32,7 +32,7 @@
 #include "arm_vmull.h"
 #include "simd.h"
 
-#if !defined(__MINGW32__) && (!defined(__ANDROID__) || !defined(__arm__))
+#if !defined(__MINGW32__) && !defined(_MSC_FULL_VER) && (!defined(__ANDROID__) || !defined(__arm__))
 TARGET_WITH_CRYPTO static uint64x2_t sse2neon_vmull_p64_crypto(uint64x1_t _a, uint64x1_t _b)
 {
     poly64_t a = vget_lane_p64(vreinterpret_p64_u64(_a), 0);
@@ -43,7 +43,7 @@ TARGET_WITH_CRYPTO static uint64x2_t sse2neon_vmull_p64_crypto(uint64x1_t _a, ui
 
 TARGET_WITH_SIMD uint64x2_t sse2neon_vmull_p64(uint64x1_t _a, uint64x1_t _b)
 {
-#if !defined(__MINGW32__) && (!defined(__ANDROID__) || !defined(__arm__))
+#if !defined(__MINGW32__) && !defined(_MSC_FULL_VER) && (!defined(__ANDROID__) || !defined(__arm__))
     // Wraps vmull_p64
     if(have_arm_crypto()) return sse2neon_vmull_p64_crypto(_a, _b);
 #endif
@@ -87,7 +87,7 @@ TARGET_WITH_SIMD uint64x2_t sse2neon_vmull_p64(uint64x1_t _a, uint64x1_t _b)
 
     // Interleave. Using vzip1 and vzip2 prevents Clang from emitting TBL
     // instructions.
-#if defined(__aarch64__)
+#if defined(__aarch64__) || defined(_M_ARM64)
     uint8x16_t lm_p0 = vreinterpretq_u8_u64(vzip1q_u64(vreinterpretq_u64_u8(l), vreinterpretq_u64_u8(m)));
     uint8x16_t lm_p1 = vreinterpretq_u8_u64(vzip2q_u64(vreinterpretq_u64_u8(l), vreinterpretq_u64_u8(m)));
     uint8x16_t nk_p0 = vreinterpretq_u8_u64(vzip1q_u64(vreinterpretq_u64_u8(n), vreinterpretq_u64_u8(k)));
@@ -111,7 +111,7 @@ TARGET_WITH_SIMD uint64x2_t sse2neon_vmull_p64(uint64x1_t _a, uint64x1_t _b)
     uint8x16_t t2t3_l   = veorq_u8(t2t3_tmp, t2t3_h);
 
     // De-interleave
-#if defined(__aarch64__)
+#if defined(__aarch64__) || defined(_M_ARM64)
     uint8x16_t t0 = vreinterpretq_u8_u64(vuzp1q_u64(vreinterpretq_u64_u8(t0t1_l), vreinterpretq_u64_u8(t0t1_h)));
     uint8x16_t t1 = vreinterpretq_u8_u64(vuzp2q_u64(vreinterpretq_u64_u8(t0t1_l), vreinterpretq_u64_u8(t0t1_h)));
     uint8x16_t t2 = vreinterpretq_u8_u64(vuzp1q_u64(vreinterpretq_u64_u8(t2t3_l), vreinterpretq_u64_u8(t2t3_h)));
@@ -141,7 +141,7 @@ TARGET_WITH_SIMD uint64x2_t mm_shuffle_epi8(uint64x2_t a, uint64x2_t b)
     uint8x16_t tbl        = vreinterpretq_u8_u64(a);         // input a
     uint8x16_t idx        = vreinterpretq_u8_u64(b);         // input b
     uint8x16_t idx_masked = vandq_u8(idx, vdupq_n_u8(0x8F)); // avoid using meaningless bits
-#if defined(__aarch64__)
+#if defined(__aarch64__) || defined(_M_ARM64)
     return vreinterpretq_u64_u8(vqtbl1q_u8(tbl, idx_masked));
 #else
     // use this line if testing on aarch64
