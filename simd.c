@@ -140,7 +140,7 @@ int have_crc32_apple()
 {
     int    value;
     size_t len = sizeof(int);
-    int    ret = sysctlbyname("hw.optional.crc32", &value, &len, NULL, 0);
+    int    ret = sysctlbyname("hw.optional.armv8_crc32", &value, &len, NULL, 0);
 
     if(ret != 0) return 0;
 
