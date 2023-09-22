@@ -30,9 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if(defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)) && __ARM_ARCH >= 8
+#if(defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)) && __ARM_ARCH >= 7
 
-#if defined(__MINGW32__) && !defined(__ARM_FEATURE_CRC32)
+#if !defined(__ARM_FEATURE_CRC32)
 #define __ARM_FEATURE_CRC32 1
 #endif
 

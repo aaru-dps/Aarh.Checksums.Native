@@ -198,6 +198,12 @@ int have_arm_crc32(void)
 #elif defined(__APPLE__)
     return have_crc32_apple();
 #else
+
+// Not defined in ARMv7 compilers, even if the CPU has the capability
+#ifndef HWCAP2_CRC32
+#define HWCAP2_CRC32 (1 << 4)
+#endif
+
     return getauxval(AT_HWCAP2) & HWCAP2_CRC32;
 #endif
 }

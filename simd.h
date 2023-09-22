@@ -92,7 +92,7 @@ AARU_EXPORT int have_arm_crypto(void);
 #define TARGET_WITH_SIMD
 #else
 
-#if __ARM_ARCH >= 8
+#if (__ARM_ARCH >= 7 || defined (__ARM_ARCH_8A))
 
 #ifdef __clang__
 #define TARGET_ARMV8_WITH_CRC __attribute__((target("armv8-a,crc")))
@@ -100,7 +100,7 @@ AARU_EXPORT int have_arm_crypto(void);
 #define TARGET_ARMV8_WITH_CRC __attribute__((target("arch=armv8-a+crc")))
 #endif
 
-#endif // __ARM_ARCH >= 8
+#endif // __ARM_ARCH_7A__
 
 #ifdef __clang__
 #define TARGET_WITH_CRYPTO __attribute__((target("armv8-a,crypto")))
