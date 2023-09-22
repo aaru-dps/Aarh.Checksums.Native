@@ -92,7 +92,7 @@ TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t previous_crc, const u
     }
     while(len >= 4)
     {
-        c = __crc32d(c, *buf4++);
+        c = __crc32w(c, *buf4++);
         len -= 4;
     }
 
