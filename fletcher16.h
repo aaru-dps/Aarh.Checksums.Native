@@ -34,4 +34,11 @@ AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx *ctx, const uint8_t *
 AARU_EXPORT int AARU_CALL fletcher16_final(fletcher16_ctx *ctx, uint16_t *checksum);
 AARU_EXPORT void AARU_CALL fletcher16_free(fletcher16_ctx *ctx);
 
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+    defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
+
+AARU_EXPORT TARGET_WITH_SSSE3 void AARU_CALL fletcher16_ssse3(uint8_t* sum1, uint8_t* sum2, const uint8_t* data, long len);
+
+#endif
+
 #endif // AARU_CHECKSUMS_NATIVE_FLETCHER16_H

@@ -66,6 +66,16 @@ AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx *ctx, const uint8_t *
 {
     if(!ctx || !data) return -1;
 
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+    defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
+    if(have_ssse3())
+    {
+        fletcher16_ssse3(&ctx->sum1, &ctx->sum2, data, len);
+
+        return 0;
+    }
+#endif
+
     uint32_t sum1 = ctx->sum1;
     uint32_t sum2 = ctx->sum2;
     unsigned n;
