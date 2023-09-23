@@ -250,6 +250,24 @@ TEST_F(fletcher32Fixture, fletcher32_neon_2352bytes)
 #if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 
+TEST_F(fletcher32Fixture, fletcher32_avx2)
+{
+    if(!have_avx2()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t fletcher32;
+
+    sum1 = 0xFFFF;
+    sum2 = 0xFFFF;
+
+    fletcher32_avx2(&sum1, &sum2, buffer, 1048576);
+
+    fletcher32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(fletcher32, EXPECTED_FLETCHER32);
+}
+
 TEST_F(fletcher32Fixture, fletcher32_ssse3)
 {
     if(!have_ssse3()) return;
@@ -262,6 +280,24 @@ TEST_F(fletcher32Fixture, fletcher32_ssse3)
     sum2 = 0xFFFF;
 
     fletcher32_ssse3(&sum1, &sum2, buffer, 1048576);
+
+    fletcher32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(fletcher32, EXPECTED_FLETCHER32);
+}
+
+TEST_F(fletcher32Fixture, fletcher32_avx2_misaligned)
+{
+    if(!have_avx2()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t fletcher32;
+
+    sum1 = 0xFFFF;
+    sum2 = 0xFFFF;
+
+    fletcher32_avx2(&sum1, &sum2, buffer_misaligned+1, 1048576);
 
     fletcher32 = (sum2 << 16) | sum1;
 
@@ -286,6 +322,24 @@ TEST_F(fletcher32Fixture, fletcher32_ssse3_misaligned)
     EXPECT_EQ(fletcher32, EXPECTED_FLETCHER32);
 }
 
+TEST_F(fletcher32Fixture, fletcher32_avx2_15bytes)
+{
+    if(!have_avx2()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t fletcher32;
+
+    sum1 = 0xFFFF;
+    sum2 = 0xFFFF;
+
+    fletcher32_avx2(&sum1, &sum2, buffer, 15);
+
+    fletcher32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(fletcher32, EXPECTED_FLETCHER32_15BYTES);
+}
+
 TEST_F(fletcher32Fixture, fletcher32_ssse3_15bytes)
 {
     if(!have_ssse3()) return;
@@ -302,6 +356,24 @@ TEST_F(fletcher32Fixture, fletcher32_ssse3_15bytes)
     fletcher32 = (sum2 << 16) | sum1;
 
     EXPECT_EQ(fletcher32, EXPECTED_FLETCHER32_15BYTES);
+}
+
+TEST_F(fletcher32Fixture, fletcher32_avx2_31bytes)
+{
+    if(!have_avx2()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t fletcher32;
+
+    sum1 = 0xFFFF;
+    sum2 = 0xFFFF;
+
+    fletcher32_avx2(&sum1, &sum2, buffer, 31);
+
+    fletcher32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(fletcher32, EXPECTED_FLETCHER32_31BYTES);
 }
 
 TEST_F(fletcher32Fixture, fletcher32_ssse3_31bytes)
@@ -322,6 +394,24 @@ TEST_F(fletcher32Fixture, fletcher32_ssse3_31bytes)
     EXPECT_EQ(fletcher32, EXPECTED_FLETCHER32_31BYTES);
 }
 
+TEST_F(fletcher32Fixture, fletcher32_avx2_63bytes)
+{
+    if(!have_avx2()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t fletcher32;
+
+    sum1 = 0xFFFF;
+    sum2 = 0xFFFF;
+
+    fletcher32_avx2(&sum1, &sum2, buffer, 63);
+
+    fletcher32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(fletcher32, EXPECTED_FLETCHER32_63BYTES);
+}
+
 TEST_F(fletcher32Fixture, fletcher32_ssse3_63bytes)
 {
     if(!have_ssse3()) return;
@@ -338,6 +428,24 @@ TEST_F(fletcher32Fixture, fletcher32_ssse3_63bytes)
     fletcher32 = (sum2 << 16) | sum1;
 
     EXPECT_EQ(fletcher32, EXPECTED_FLETCHER32_63BYTES);
+}
+
+TEST_F(fletcher32Fixture, fletcher32_avx2_2352bytes)
+{
+    if(!have_avx2()) return;
+
+    uint16_t sum1;
+    uint16_t sum2;
+    uint32_t fletcher32;
+
+    sum1 = 0xFFFF;
+    sum2 = 0xFFFF;
+
+    fletcher32_avx2(&sum1, &sum2, buffer, 2352);
+
+    fletcher32 = (sum2 << 16) | sum1;
+
+    EXPECT_EQ(fletcher32, EXPECTED_FLETCHER32_2352BYTES);
 }
 
 TEST_F(fletcher32Fixture, fletcher32_ssse3_2352bytes)
