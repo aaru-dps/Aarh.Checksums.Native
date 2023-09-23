@@ -84,7 +84,7 @@ AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx *ctx, const uint8_t *
     }
 
     /* in case short lengths are provided, keep it somewhat fast */
-    if(len < 11)
+    if(len < 6)
     {
         while(len--)
         {
@@ -102,7 +102,7 @@ AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx *ctx, const uint8_t *
     while(len >= NMAX)
     {
         len -= NMAX;
-        n = NMAX / 11; /* NMAX is divisible by 11 */
+        n = NMAX / 6; /* NMAX is divisible by 6 */
         do
         {
             sum1 += data[0];
@@ -117,19 +117,9 @@ AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx *ctx, const uint8_t *
             sum2 += sum1;
             sum1 += data[0 + 4 + 1];
             sum2 += sum1;
-            sum1 += data[0 + 4 + 2];
-            sum2 += sum1;
-            sum1 += data[0 + 4 + 2 + 1];
-            sum2 += sum1;
-            sum1 += data[8];
-            sum2 += sum1;
-            sum1 += data[8 + 1];
-            sum2 += sum1;
-            sum1 += data[8 + 2];
-            sum2 += sum1;
 
-            /* 11 sums unrolled */
-            data += 11;
+            /* 6 sums unrolled */
+            data += 6;
         }
         while(--n);
         sum1 %= FLETCHER16_MODULE;
@@ -139,9 +129,9 @@ AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx *ctx, const uint8_t *
     /* do remaining bytes (less than NMAX, still just one modulo) */
     if(len)
     { /* avoid modulos if none remaining */
-        while(len >= 11)
+        while(len >= 6)
         {
-            len -= 11;
+            len -= 6;
             sum1 += data[0];
             sum2 += sum1;
             sum1 += data[0 + 1];
@@ -154,18 +144,8 @@ AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx *ctx, const uint8_t *
             sum2 += sum1;
             sum1 += data[0 + 4 + 1];
             sum2 += sum1;
-            sum1 += data[0 + 4 + 2];
-            sum2 += sum1;
-            sum1 += data[0 + 4 + 2 + 1];
-            sum2 += sum1;
-            sum1 += data[8];
-            sum2 += sum1;
-            sum1 += data[8 + 1];
-            sum2 += sum1;
-            sum1 += data[8 + 2];
-            sum2 += sum1;
 
-            data += 11;
+            data += 6;
         }
         while(len--)
         {

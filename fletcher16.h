@@ -20,8 +20,8 @@
 #define AARU_CHECKSUMS_NATIVE_FLETCHER16_H
 
 #define FLETCHER16_MODULE 0xFF
-/* NMAX is the largest n such that 255n(n+1)/2 + (n+1)(ADLER_MODULE-1) <= 2^16-1 */
-#define NMAX 22
+/* NMAX is the largest n such that 255n(n+1)/2 + (n+1)(FLETCHER16_MODULE-1) <= 2^32-1 */
+#define NMAX 5802
 
 typedef struct
 {
