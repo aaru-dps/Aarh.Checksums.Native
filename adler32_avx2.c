@@ -33,9 +33,9 @@
 #include "simd.h"
 
 /**
- * @brief Calculate Adler-32 checksum for a given data using TARGET_WITH_AVX2 instructions.
+ * @brief Calculate Adler-32 checksum for a given data using AVX2 instructions.
  *
- * This function calculates the Adler-32 checksum for a block of data using TARGET_WITH_AVX2 vector instructions.
+ * This function calculates the Adler-32 checksum for a block of data using AVX2 vector instructions.
  *
  * @param sum1 Pointer to the variable where the first 16-bit checksum value is stored.
  * @param sum2 Pointer to the variable where the second 16-bit checksum value is stored.

@@ -38,8 +38,6 @@
 #include "fletcher32.h"
 #include "simd.h"
 
-TARGET_WITH_NEON /***/
-
 /**
  * @brief Calculate Fletcher-32 checksum for a given data using NEON instructions.
  *
@@ -50,7 +48,7 @@ TARGET_WITH_NEON /***/
  * @param data Pointer to the data buffer.
  * @param len Length of the data buffer in bytes.
  */
-void fletcher32_neon(uint16_t *sum1, uint16_t *sum2, const uint8_t *data, uint32_t len)
+TARGET_WITH_NEON void fletcher32_neon(uint16_t *sum1, uint16_t *sum2, const uint8_t *data, uint32_t len)
 {
     /*
      * Split Fletcher-32 into component sums.

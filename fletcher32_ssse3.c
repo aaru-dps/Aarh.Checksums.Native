@@ -40,9 +40,9 @@
 #include "fletcher32.h"
 
 /**
- * @brief Calculate Fletcher-32 checksum for a given data using TARGET_WITH_SSSE3 instructions.
+ * @brief Calculate Fletcher-32 checksum for a given data using SSSE3 instructions.
  *
- * This function calculates the Fletcher-32 checksum for a block of data using TARGET_WITH_SSSE3 vector instructions.
+ * This function calculates the Fletcher-32 checksum for a block of data using SSSE3 vector instructions.
  *
  * @param sum1 Pointer to the variable where the first 16-bit checksum value is stored.
  * @param sum2 Pointer to the variable where the second 16-bit checksum value is stored.

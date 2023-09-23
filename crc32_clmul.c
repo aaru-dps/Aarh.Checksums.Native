@@ -224,7 +224,7 @@ TARGET_WITH_CLMUL static void partial_fold(const size_t len,
 #define XOR_INITIAL(where) ONCE(where = _mm_xor_si128(where, xmm_initial))
 
 /**
- * @brief Calculate the CRC32 checksum using TARGET_WITH_CLMUL instruction extension.
+ * @brief Calculate the CRC32 checksum using CLMUL instruction extension.
  *
  * @param previous_crc The previously calculated CRC32 checksum.
  * @param data Pointer to the input data buffer.
@@ -437,7 +437,7 @@ done:
     /*
      * could just as well write xmm_crc3[2], doing a movaps and truncating, but
      * no real advantage - it's a tiny bit slower per call, while no additional CPUs
-     * would be supported by only requiring TARGET_WITH_SSSE3 and TARGET_WITH_CLMUL instead of SSE4.1 + TARGET_WITH_CLMUL
+     * would be supported by only requiring SSSE3 and CLMUL instead of SSE4.1 + CLMUL
      */
     crc = _mm_extract_epi32(xmm_crc3, 2);
     return ~crc;

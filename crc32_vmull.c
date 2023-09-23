@@ -460,7 +460,7 @@ done:
     /*
      * could just as well write q_crc3[2], doing a movaps and truncating, but
      * no real advantage - it's a tiny bit slower per call, while no additional CPUs
-     * would be supported by only requiring TARGET_WITH_SSSE3 and TARGET_WITH_CLMUL instead of SSE4.1 + TARGET_WITH_CLMUL
+     * would be supported by only requiring SSSE3 and CLMUL instead of SSE4.1 + CLMUL
      */
     crc = vgetq_lane_u32(vreinterpretq_u32_u64(q_crc3), (2));
     return ~crc;

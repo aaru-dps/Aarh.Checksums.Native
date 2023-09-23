@@ -75,7 +75,7 @@ TARGET_WITH_CLMUL static __m128i fold(__m128i in, __m128i foldConstants)
 }
 
 /**
- * @brief Calculate the CRC-64 checksum using TARGET_WITH_CLMUL instruction extension.
+ * @brief Calculate the CRC-64 checksum using CLMUL instruction extension.
  *
  * @param previous_crc The previously calculated CRC-64 checksum.
  * @param data Pointer to the input data buffer.
