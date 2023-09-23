@@ -285,7 +285,7 @@ TEST_F(crc32Fixture, crc32_clmul_2352bytes)
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
-#if __ARM_ARCH >= 8
+#if __ARM_ARCH >= 7
 TEST_F(crc32Fixture, crc32_arm_crc32)
 {
     if(!have_arm_crc32()) return;
