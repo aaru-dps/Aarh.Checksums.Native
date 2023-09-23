@@ -22,6 +22,15 @@
 #include "library.h"
 #include "crc16_ccitt.h"
 
+/**
+ * @brief Initializes the CRC-16 checksum algorithm with the CCITT polynomial.
+ *
+ * This function initializes the state variables required for the CRC-16
+ * checksum algorithm using the CCITT polynomial. It prepares the algorithm
+ * to calculate the checksum for a new data set.
+ *
+ * @return Pointer to a structure containing the checksum state.
+ */
 AARU_EXPORT crc16_ccitt_ctx* AARU_CALL crc16_ccitt_init(void)
 {
     crc16_ccitt_ctx* ctx = (crc16_ccitt_ctx*)malloc(sizeof(crc16_ccitt_ctx));
@@ -33,6 +42,20 @@ AARU_EXPORT crc16_ccitt_ctx* AARU_CALL crc16_ccitt_init(void)
     return ctx;
 }
 
+/**
+ * @brief Updates the CRC-16 checksum with new data.
+ *
+ * This function updates the CRC-16 checksum.
+ * The checksum is updated for the given data by using the CCITT polynomial.
+ * The algorithm continues the checksum calculation from the previous state,
+ * so it can be used to update the checksum with new data as it is read.
+ *
+ * @param ctx Pointer to the CRC-16 context structure.
+ * @param data Pointer to the input data buffer.
+ * @param len The length of the input data buffer.
+ *
+ * @returns 0 on success, -1 on error.
+ */
 AARU_EXPORT int AARU_CALL crc16_ccitt_update(crc16_ccitt_ctx* ctx, const uint8_t* data, uint32_t len)
 {
     // Unroll according to Intel slicing by uint8_t
@@ -79,6 +102,17 @@ AARU_EXPORT int AARU_CALL crc16_ccitt_update(crc16_ccitt_ctx* ctx, const uint8_t
     return 0;
 }
 
+/**
+ * @brief Finalizes the calculation of the CRC-16 checksum.
+ *
+ * This function finalizes the calculation of the CRC-16 checksum and returns
+ * its value.
+ *
+ * @param[in] ctx Pointer to the CRC-16 context structure.
+ * @param[out] checksum Pointer to a 16-bit unsigned integer to store the checksum value.
+ *
+ * @returns 0 on success, -1 on error.
+ */
 AARU_EXPORT int AARU_CALL crc16_ccitt_final(crc16_ccitt_ctx* ctx, uint16_t* crc)
 {
     if(!ctx) return -1;
@@ -88,6 +122,14 @@ AARU_EXPORT int AARU_CALL crc16_ccitt_final(crc16_ccitt_ctx* ctx, uint16_t* crc)
     return 0;
 }
 
+/**
+ * @brief Frees the resources allocated for the CRC-16 checksum context.
+ *
+ * This function should be called to release the memory used by the CRC-16 checksum
+ * context structure after it is no longer needed.
+ *
+ * @param ctx The CRC-16 checksum context structure, to be freed.
+ */
 AARU_EXPORT void AARU_CALL crc16_ccitt_free(crc16_ccitt_ctx* ctx)
 {
     if(ctx) free(ctx);

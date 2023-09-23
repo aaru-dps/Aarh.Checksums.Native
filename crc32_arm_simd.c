@@ -41,6 +41,17 @@
 #include "library.h"
 #include "crc32.h"
 
+/**
+ * @brief Calculates the CRC-32 using the ARMv8 instruction set in little endian mode.
+ *
+ * This function takes the previous CRC value, data and length as inputs and calculates
+ * the new CRC-32 using the ARMv8 instruction set in little endian mode.
+ *
+ * @param previous_crc The previous CRC value.
+ * @param data The input data to calculate the CRC over.
+ * @param len The length of the input data.
+ * @return The new CRC-32 value.
+ */
 TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t previous_crc, const uint8_t* data, uint32_t len)
 {
     uint32_t c = (uint32_t)previous_crc;

@@ -36,6 +36,26 @@
 
 #endif
 
+/**
+ * @brief Gets the CPUID information for the given info value.
+ *
+ * This function retrieves the CPUID information for the specified info argument
+ * and stores the results in the provided pointers: eax, ebx, ecx, and edx.
+ * Each register represents a 32-bit value returned by the CPUID instruction.
+ *
+ * @param info The CPUID info value specifying the desired information to retrieve.
+ * @param eax Pointer to store the value of the EAX register.
+ * @param ebx Pointer to store the value of the EBX register.
+ * @param ecx Pointer to store the value of the ECX register.
+ * @param edx Pointer to store the value of the EDX register.
+ *
+ * @note It is important to ensure that the provided pointers are valid and point
+ * to a memory location that can be modified by this function.
+ *
+ * @see https://en.wikipedia.org/wiki/CPUID
+ *
+ * @return None.
+ */
 static void cpuid(int info, unsigned* eax, unsigned* ebx, unsigned* ecx, unsigned* edx)
 {
 #ifdef _MSC_VER
@@ -59,6 +79,26 @@ static void cpuid(int info, unsigned* eax, unsigned* ebx, unsigned* ecx, unsigne
 #endif
 }
 
+/**
+ * @brief Get the CPU extended information using CPUID instruction.
+ *
+ * This function retrieves the extended information from the CPU by using the CPUID instruction.
+ * It reads the result into the output parameters eax, ebx, ecx, and edx based on the input parameters info and count.
+ *
+ * @param info The CPUID function number to be executed.
+ * @param count The sub-leaf index for certain CPUID functions.
+ * @param eax Pointer to store the value of the EAX register.
+ * @param ebx Pointer to store the value of the EBX register.
+ * @param ecx Pointer to store the value of the ECX register.
+ * @param edx Pointer to store the value of the EDX register.
+ *
+ * @note It is important to ensure that the provided pointers are valid and point
+ * to a memory location that can be modified by this function.
+ *
+ * @see https://en.wikipedia.org/wiki/CPUID
+ *
+ * @return None.
+ */
 static void cpuidex(int info, int count, unsigned* eax, unsigned* ebx, unsigned* ecx, unsigned* edx)
 {
 #ifdef _MSC_VER
@@ -82,6 +122,18 @@ static void cpuidex(int info, int count, unsigned* eax, unsigned* ebx, unsigned*
 #endif
 }
 
+/**
+ * @brief Checks if the hardware supports the CLMUL instruction set.
+ *
+ * The function checks if the system's CPU supports the CLMUL (Carry-Less Multiplication) instruction set.
+ * CLMUL is an extension to the x86 instruction set architecture and provides hardware acceleration for
+ * carry-less multiplication operations.
+ *
+ * @return True if CLMUL instruction set is supported, False otherwise.
+ *
+ * @see https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=CLMUL
+ * @see https://en.wikipedia.org/wiki/Carry-less_multiplication
+ */
 int have_clmul(void)
 {
     unsigned eax, ebx, ecx, edx;
@@ -95,6 +147,19 @@ int have_clmul(void)
     return has_pclmulqdq && has_sse41;
 }
 
+/**
+ * @brief Checks if the current processor supports SSSE3 instructions.
+ *
+ * The function detects whether the current processor supports SSSE3 instructions by
+ * checking the CPU feature flags. SSSE3 (Supplemental Streaming SIMD Extensions 3)
+ * is an extension to the x86 instruction set architecture that introduces
+ * additional SIMD instructions useful for multimedia and signal processing tasks.
+ *
+ * @return true if the current processor supports SSSE3 instructions, false otherwise.
+ *
+ * @see https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=SSSE3
+ * @see https://en.wikipedia.org/wiki/SSSE3
+ */
 int have_ssse3(void)
 {
     unsigned eax, ebx, ecx, edx;
@@ -102,6 +167,20 @@ int have_ssse3(void)
 
     return ecx & 0x200;
 }
+
+/**
+ * @brief Checks if the current processor supports AVX2 instructions.
+ *
+ * The function detects whether the current processor supports AVX2 instructions by
+ * checking the CPU feature flags. AVX2 (Advanced Vector Extensions 2) is an extension
+ * to the x86 instruction set architecture that introduces additional SIMD instructions
+ * useful for multimedia and signal processing tasks.
+ *
+ * @return true if the current processor supports AVX2 instructions, false otherwise.
+ *
+ * @see https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=AVX2
+ * @see https://en.wikipedia.org/wiki/Advanced_Vector_Extensions
+ */
 
 int have_avx2(void)
 {
@@ -125,6 +204,19 @@ int have_avx2(void)
 #endif
 
 #if(defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)) && defined(__APPLE__)
+/**
+ * @brief Checks if the current processor supports NEON instructions.
+ *
+ * The function detects whether the current processor supports NEON instructions by
+ * checking the CPU feature flags. NEON is an extension to the ARM instruction set
+ * architecture that introduces additional SIMD instructions useful for multimedia
+ * and signal processing tasks.
+ *
+ * @return true if the current processor supports NEON instructions, false otherwise.
+ *
+ * @see https://developer.arm.com/architectures/instruction-sets/simd-isas/neon
+ * @see https://en.wikipedia.org/wiki/ARM_architecture#Advanced_SIMD_(NEON)
+ */
 int have_neon_apple()
 {
     int    value;
@@ -136,6 +228,15 @@ int have_neon_apple()
     return value == 1;
 }
 
+/**
+ * @brief Checks if the current processor supports CRC32 instructions.
+ *
+ * The function detects whether the current processor supports CRC32 instructions by
+ * checking the CPU feature flags. CRC32 is an extension to the ARM instruction set
+ * architecture that introduces additional instructions for calculating CRC32 checksums.
+ *
+ * @return true if the current processor supports CRC32 instructions, false otherwise.
+ */
 int have_crc32_apple()
 {
     int    value;
@@ -147,6 +248,15 @@ int have_crc32_apple()
     return value == 1;
 }
 
+/**
+ * @brief Checks if the current processor supports cryptographic instructions.
+ *
+ * The function detects whether the current processor supports cryptographic instructions by
+ * checking the CPU feature flags. Cryptographic instructions are an extension to the ARM instruction set
+ * architecture that introduces additional instructions for cryptographic operations.
+ *
+ * @return true if the current processor supports cryptographic instructions, false otherwise.
+ */
 int have_crypto_apple() { return 0; }
 #endif
 
@@ -156,6 +266,15 @@ int have_neon(void)
     return 1; // ARMv8-A made it mandatory
 }
 
+/**
+ * @brief Checks if the current processor supports CRC32 instructions.
+ *
+ * The function detects whether the current processor supports CRC32 instructions by
+ * checking the CPU feature flags. CRC32 is an extension to the ARM instruction set
+ * architecture that introduces additional instructions for calculating CRC32 checksums.
+ *
+ * @return true if the current processor supports CRC32 instructions, false otherwise.
+ */
 int have_arm_crc32(void)
 {
 #if defined(_WIN32)
@@ -167,6 +286,15 @@ int have_arm_crc32(void)
 #endif
 }
 
+/**
+ * @brief Checks if the current processor supports cryptographic instructions.
+ *
+ * The function detects whether the current processor supports cryptographic instructions by
+ * checking the CPU feature flags. Cryptographic instructions are an extension to the ARM instruction set
+ * architecture that introduces additional instructions for cryptographic operations.
+ *
+ * @return true if the current processor supports cryptographic instructions, false otherwise.
+ */
 int have_arm_crypto(void)
 {
 #if defined(_WIN32)
@@ -180,6 +308,19 @@ int have_arm_crypto(void)
 #endif
 
 #if defined(__arm__) || defined(_M_ARM)
+/**
+ * @brief Checks if the current processor supports NEON instructions.
+ *
+ * The function detects whether the current processor supports NEON instructions by
+ * checking the CPU feature flags. NEON is an extension to the ARM instruction set
+ * architecture that introduces additional SIMD instructions useful for multimedia
+ * and signal processing tasks.
+ *
+ * @return true if the current processor supports NEON instructions, false otherwise.
+ *
+ * @see https://developer.arm.com/architectures/instruction-sets/simd-isas/neon
+ * @see https://en.wikipedia.org/wiki/ARM_architecture#Advanced_SIMD_(NEON)
+ */
 int have_neon(void)
 {
 #if defined(_WIN32)
@@ -191,6 +332,15 @@ int have_neon(void)
 #endif
 }
 
+/**
+ * @brief Checks if the current processor supports CRC32 instructions.
+ *
+ * The function detects whether the current processor supports CRC32 instructions by
+ * checking the CPU feature flags. CRC32 is an extension to the ARM instruction set
+ * architecture that introduces additional instructions for calculating CRC32 checksums.
+ *
+ * @return true if the current processor supports CRC32 instructions, false otherwise.
+ */
 int have_arm_crc32(void)
 {
 #if defined(_WIN32)
@@ -208,6 +358,15 @@ int have_arm_crc32(void)
 #endif
 }
 
+/**
+ * @brief Checks if the current processor supports cryptographic instructions.
+ *
+ * The function detects whether the current processor supports cryptographic instructions by
+ * checking the CPU feature flags. Cryptographic instructions are an extension to the ARM instruction set
+ * architecture that introduces additional instructions for cryptographic operations.
+ *
+ * @return true if the current processor supports cryptographic instructions, false otherwise.
+ */
 int have_arm_crypto(void)
 {
 #if defined(_WIN32)

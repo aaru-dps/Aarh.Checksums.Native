@@ -32,6 +32,16 @@
 #include "fletcher32.h"
 #include "simd.h"
 
+/**
+ * @brief Calculate Fletcher-32 checksum for a given data using NEON instructions.
+ *
+ * This function calculates the Fletcher-32 checksum for a block of data using NEON vector instructions.
+ *
+ * @param sum1 Pointer to the variable where the first 16-bit checksum value is stored.
+ * @param sum2 Pointer to the variable where the second 16-bit checksum value is stored.
+ * @param data Pointer to the data buffer.
+ * @param len Length of the data buffer in bytes.
+ */
 AARU_EXPORT AVX2 void AARU_CALL fletcher32_avx2(uint16_t *sum1, uint16_t *sum2, const uint8_t *data, long len) {
     uint32_t s1 = *sum1;
     uint32_t s2 = *sum2;

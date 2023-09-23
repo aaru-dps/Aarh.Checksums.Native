@@ -34,8 +34,7 @@
 #include "crc32.h"
 #include "crc32_simd.h"
 
-CLMUL
-static void fold_1(__m128i* xmm_crc0, __m128i* xmm_crc1, __m128i* xmm_crc2, __m128i* xmm_crc3)
+CLMUL static void fold_1(__m128i* xmm_crc0, __m128i* xmm_crc1, __m128i* xmm_crc2, __m128i* xmm_crc3)
 {
     const __m128i xmm_fold4 = _mm_set_epi32(0x00000001, 0x54442bd4, 0x00000001, 0xc6e41596);
 
@@ -57,8 +56,7 @@ static void fold_1(__m128i* xmm_crc0, __m128i* xmm_crc1, __m128i* xmm_crc2, __m1
     *xmm_crc3 = _mm_castps_si128(ps_res);
 }
 
-CLMUL
-static void fold_2(__m128i* xmm_crc0, __m128i* xmm_crc1, __m128i* xmm_crc2, __m128i* xmm_crc3)
+CLMUL static void fold_2(__m128i* xmm_crc0, __m128i* xmm_crc1, __m128i* xmm_crc2, __m128i* xmm_crc3)
 {
     const __m128i xmm_fold4 = _mm_set_epi32(0x00000001, 0x54442bd4, 0x00000001, 0xc6e41596);
 
@@ -88,8 +86,7 @@ static void fold_2(__m128i* xmm_crc0, __m128i* xmm_crc1, __m128i* xmm_crc2, __m1
     *xmm_crc3 = _mm_castps_si128(ps_res31);
 }
 
-CLMUL
-static void fold_3(__m128i* xmm_crc0, __m128i* xmm_crc1, __m128i* xmm_crc2, __m128i* xmm_crc3)
+CLMUL static void fold_3(__m128i* xmm_crc0, __m128i* xmm_crc1, __m128i* xmm_crc2, __m128i* xmm_crc3)
 {
     const __m128i xmm_fold4 = _mm_set_epi32(0x00000001, 0x54442bd4, 0x00000001, 0xc6e41596);
 
@@ -125,8 +122,7 @@ static void fold_3(__m128i* xmm_crc0, __m128i* xmm_crc1, __m128i* xmm_crc2, __m1
     *xmm_crc3 = _mm_castps_si128(ps_res32);
 }
 
-CLMUL
-static void fold_4(__m128i* xmm_crc0, __m128i* xmm_crc1, __m128i* xmm_crc2, __m128i* xmm_crc3)
+CLMUL static void fold_4(__m128i* xmm_crc0, __m128i* xmm_crc1, __m128i* xmm_crc2, __m128i* xmm_crc3)
 {
     const __m128i xmm_fold4 = _mm_set_epi32(0x00000001, 0x54442bd4, 0x00000001, 0xc6e41596);
 
@@ -170,8 +166,7 @@ static void fold_4(__m128i* xmm_crc0, __m128i* xmm_crc1, __m128i* xmm_crc2, __m1
     *xmm_crc3 = _mm_castps_si128(ps_res3);
 }
 
-CLMUL
-static void partial_fold(const size_t len,
+CLMUL static void partial_fold(const size_t len,
                          __m128i*     xmm_crc0,
                          __m128i*     xmm_crc1,
                          __m128i*     xmm_crc2,
@@ -228,6 +223,15 @@ static void partial_fold(const size_t len,
  */
 #define XOR_INITIAL(where) ONCE(where = _mm_xor_si128(where, xmm_initial))
 
+/**
+ * @brief Calculate the CRC32 checksum using CLMUL instruction extension.
+ *
+ * @param previous_crc The previously calculated CRC32 checksum.
+ * @param data Pointer to the input data buffer.
+ * @param len Length of the input data in bytes.
+ *
+ * @return The calculated CRC32 checksum.
+ */
 AARU_EXPORT CLMUL uint32_t AARU_CALL crc32_clmul(uint32_t previous_crc, const uint8_t* data, long len)
 {
     unsigned long algn_diff;

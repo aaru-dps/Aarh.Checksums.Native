@@ -38,6 +38,16 @@
 #include "adler32.h"
 #include "simd.h"
 
+/**
+ * @brief Calculate Adler-32 checksum for a given data using NEON instructions.
+ *
+ * This function calculates the Adler-32 checksum for a block of data using NEON vector instructions.
+ *
+ * @param sum1 Pointer to the variable where the first 16-bit checksum value is stored.
+ * @param sum2 Pointer to the variable where the second 16-bit checksum value is stored.
+ * @param data Pointer to the data buffer.
+ * @param len Length of the data buffer in bytes.
+ */
 TARGET_WITH_SIMD void adler32_neon(uint16_t *sum1, uint16_t *sum2, const uint8_t *data, uint32_t len)
 {
     /*

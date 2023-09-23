@@ -39,6 +39,20 @@ TARGET_WITH_SIMD FORCE_INLINE uint64x2_t fold(uint64x2_t in, uint64x2_t foldCons
                      sse2neon_vmull_p64(vget_high_u64(in), vget_high_u64(foldConstants)));
 }
 
+/**
+ * @brief Calculates the CRC-64 checksum using the vmull instruction.
+ *
+ * This function calculates the CRC-64 checksum of the given data using the
+ * vmull instruction for optimized performance. It takes the previous CRC value,
+ * the data buffer, and the length of data as parameters. The function returns
+ * the resulting CRC-32 checksum.
+ *
+ * @param previous_crc The previous CRC value.
+ * @param data The data buffer.
+ * @param len The length of the data buffer.
+ *
+ * @return The CRC-64 checksum of the given data.
+ */
 AARU_EXPORT TARGET_WITH_SIMD uint64_t AARU_CALL crc64_vmull(uint64_t previous_crc, const uint8_t* data, long len)
 {
     const uint64_t k1 = 0xe05dd497ca393ae4; // bitReflect(expMod65(128 + 64, poly, 1)) << 1;

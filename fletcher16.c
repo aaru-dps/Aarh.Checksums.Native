@@ -28,6 +28,15 @@
 #include "library.h"
 #include "fletcher16.h"
 
+/**
+ * @brief Initializes the Fletcher-16 checksum algorithm.
+ *
+ * This function initializes the state variables required for the Fletcher-16
+ * checksum algorithm. It prepares the algorithm to calculate the checksum
+ * for a new data set.
+ *
+ * @return Pointer to a structure containing the checksum state.
+ */
 AARU_EXPORT fletcher16_ctx* AARU_CALL fletcher16_init()
 {
     fletcher16_ctx* ctx;
@@ -42,6 +51,17 @@ AARU_EXPORT fletcher16_ctx* AARU_CALL fletcher16_init()
     return ctx;
 }
 
+/**
+ * @brief Updates the Fletcher-16 checksum with new data.
+ *
+ * This function updates the Fletcher-16 checksum.
+ * The checksum is updated for the given data by iterating through each byte and
+ * applying the corresponding calculations to the rolling checksum values.
+ *
+ * @param ctx Pointer to the Fletcher-16 context structure.
+ * @param data Pointer to the input data buffer.
+ * @param len The length of the input data buffer.
+ */
 AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx* ctx, const uint8_t* data, uint32_t len)
 {
     if(!ctx || !data) return -1;
@@ -159,6 +179,17 @@ AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx* ctx, const uint8_t* 
     return 0;
 }
 
+/**
+ * @brief Finalizes the calculation of the Fletcher-16 checksum.
+ *
+ * This function finalizes the calculation of the Fletcher-16 checksum and returns
+ * its value.
+ *
+ * @param[in] ctx Pointer to the Fletcher-32 context structure.
+ * @param[out] checksum Pointer to a 16-bit unsigned integer to store the checksum value.
+ *
+ * @returns 0 on success, -1 on error.
+ */
 AARU_EXPORT int AARU_CALL fletcher16_final(fletcher16_ctx* ctx, uint16_t* checksum)
 {
     if(!ctx) return -1;
@@ -167,6 +198,14 @@ AARU_EXPORT int AARU_CALL fletcher16_final(fletcher16_ctx* ctx, uint16_t* checks
     return 0;
 }
 
+/**
+ * @brief Frees the resources allocated for the Fletcher-16 checksum context.
+ *
+ * This function should be called to release the memory used by the Fletcher-16 checksum
+ * context structure after it is no longer needed.
+ *
+ * @param ctx The Fletcher-16 checksum context structure, to be freed.
+ */
 AARU_EXPORT void AARU_CALL fletcher16_free(fletcher16_ctx* ctx)
 {
     if(!ctx) return;

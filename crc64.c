@@ -23,6 +23,15 @@
 #include "crc64.h"
 #include "simd.h"
 
+/**
+ * @brief Initializes the CRC-64 checksum algorithm with the ECMA polynomial.
+ *
+ * This function initializes the state variables required for the CRC-ECMA
+ * checksum algorithm using the IBM polynomial. It prepares the algorithm
+ * to calculate the checksum for a new data set.
+ *
+ * @return Pointer to a structure containing the checksum state.
+ */
 AARU_EXPORT crc64_ctx* AARU_CALL crc64_init(void)
 {
     int        i, slice;
@@ -35,6 +44,20 @@ AARU_EXPORT crc64_ctx* AARU_CALL crc64_init(void)
     return ctx;
 }
 
+/**
+ * @brief Updates the CRC-64 checksum with new data.
+ *
+ * This function updates the CRC-64 checksum.
+ * The checksum is updated for the given data by using the ECMA polynomial.
+ * The algorithm continues the checksum calculation from the previous state,
+ * so it can be used to update the checksum with new data as it is read.
+ *
+ * @param ctx Pointer to the CRC-64 context structure.
+ * @param data Pointer to the input data buffer.
+ * @param len The length of the input data buffer.
+ *
+ * @returns 0 on success, -1 on error.
+ */
 AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx* ctx, const uint8_t* data, uint32_t len)
 {
     if(!ctx || !data) return -1;
@@ -97,6 +120,17 @@ AARU_EXPORT void AARU_CALL crc64_slicing(uint64_t* previous_crc, const uint8_t* 
     *previous_crc = c;
 }
 
+/**
+ * @brief Finalizes the calculation of the CRC-64 checksum.
+ *
+ * This function finalizes the calculation of the CRC-64 checksum and returns
+ * its value.
+ *
+ * @param[in] ctx Pointer to the CRC-64 context structure.
+ * @param[out] checksum Pointer to a 64-bit unsigned integer to store the checksum value.
+ *
+ * @returns 0 on success, -1 on error.
+ */
 AARU_EXPORT int AARU_CALL crc64_final(crc64_ctx* ctx, uint64_t* crc)
 {
     if(!ctx) return -1;
@@ -106,6 +140,14 @@ AARU_EXPORT int AARU_CALL crc64_final(crc64_ctx* ctx, uint64_t* crc)
     return 0;
 }
 
+/**
+ * @brief Frees the resources allocated for the CRC-64 checksum context.
+ *
+ * This function should be called to release the memory used by the CRC-64 checksum
+ * context structure after it is no longer needed.
+ *
+ * @param ctx The CRC-64 checksum context structure, to be freed.
+ */
 AARU_EXPORT void AARU_CALL crc64_free(crc64_ctx* ctx)
 {
     if(ctx) free(ctx);

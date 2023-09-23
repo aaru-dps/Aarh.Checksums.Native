@@ -32,6 +32,16 @@
 #include "adler32.h"
 #include "simd.h"
 
+/**
+ * @brief Calculate Adler-32 checksum for a given data using AVX2 instructions.
+ *
+ * This function calculates the Adler-32 checksum for a block of data using AVX2 vector instructions.
+ *
+ * @param sum1 Pointer to the variable where the first 16-bit checksum value is stored.
+ * @param sum2 Pointer to the variable where the second 16-bit checksum value is stored.
+ * @param data Pointer to the data buffer.
+ * @param len Length of the data buffer in bytes.
+ */
 AARU_EXPORT AVX2 void AARU_CALL adler32_avx2(uint16_t* sum1, uint16_t* sum2, const uint8_t* data, long len)
 {
     uint32_t s1 = *sum1;

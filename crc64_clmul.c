@@ -72,6 +72,15 @@ CLMUL static __m128i fold(__m128i in, __m128i foldConstants)
     return _mm_xor_si128(_mm_clmulepi64_si128(in, foldConstants, 0x00), _mm_clmulepi64_si128(in, foldConstants, 0x11));
 }
 
+/**
+ * @brief Calculate the CRC-64 checksum using CLMUL instruction extension.
+ *
+ * @param previous_crc The previously calculated CRC-64 checksum.
+ * @param data Pointer to the input data buffer.
+ * @param len Length of the input data in bytes.
+ *
+ * @return The calculated CRC-64 checksum.
+ */
 AARU_EXPORT CLMUL uint64_t AARU_CALL crc64_clmul(uint64_t crc, const uint8_t* data, long length)
 {
     const uint64_t k1 = 0xe05dd497ca393ae4; // bitReflect(expMod65(128 + 64, poly, 1)) << 1;

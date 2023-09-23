@@ -233,6 +233,20 @@ TARGET_WITH_SIMD FORCE_INLINE void partial_fold(const size_t len,
     *q_crc3 = vreinterpretq_u64_u32(ps_res);
 }
 
+/**
+ * @brief Calculates the CRC-32 checksum using the vmull instruction.
+ *
+ * This function calculates the CRC-32 checksum of the given data using the
+ * vmull instruction for optimized performance. It takes the previous CRC value,
+ * the data buffer, and the length of data as parameters. The function returns
+ * the resulting CRC-32 checksum.
+ *
+ * @param previous_crc The previous CRC value.
+ * @param data The data buffer.
+ * @param len The length of the data buffer.
+ *
+ * @return The CRC-32 checksum of the given data.
+ */
 TARGET_WITH_SIMD uint32_t crc32_vmull(uint32_t previous_crc, const uint8_t* data, long len)
 {
     unsigned long algn_diff;

@@ -22,6 +22,15 @@
 #include "library.h"
 #include "crc32.h"
 
+/**
+ * @brief Initializes the CRC-32 checksum algorithm with the ISO polynomial.
+ *
+ * This function initializes the state variables required for the CRC-32
+ * checksum algorithm using the ISO polynomial. It prepares the algorithm
+ * to calculate the checksum for a new data set.
+ *
+ * @return Pointer to a structure containing the checksum state.
+ */
 AARU_EXPORT crc32_ctx* AARU_CALL crc32_init(void)
 {
     crc32_ctx* ctx = (crc32_ctx*)malloc(sizeof(crc32_ctx));
@@ -33,6 +42,20 @@ AARU_EXPORT crc32_ctx* AARU_CALL crc32_init(void)
     return ctx;
 }
 
+/**
+ * @brief Updates the CRC-32 checksum with new data.
+ *
+ * This function updates the CRC-32 checksum.
+ * The checksum is updated for the given data by using the ISO polynomial.
+ * The algorithm continues the checksum calculation from the previous state,
+ * so it can be used to update the checksum with new data as it is read.
+ *
+ * @param ctx Pointer to the CRC-32 context structure.
+ * @param data Pointer to the input data buffer.
+ * @param len The length of the input data buffer.
+ *
+ * @returns 0 on success, -1 on error.
+ */
 AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint32_t len)
 {
     if(!ctx || !data) return -1;
@@ -67,6 +90,17 @@ AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint
     return 0;
 }
 
+/**
+ * @brief Computes the CRC-32 checksum using slicing-by-8 algorithm.
+ *
+ * This function calculates the CRC-32 value for the given data using slicing-by-8 algorithm.
+ *
+ * @param previous_crc A pointer to the previous CRC-32 value, and where the updated value gets stored.
+ * @param data The pointer to the data buffer.
+ * @param len The length of the data in bytes.
+ *
+ * @note This function assumes little-endian byte order.
+ */
 AARU_EXPORT void AARU_CALL crc32_slicing(uint32_t* previous_crc, const uint8_t* data, long len)
 {
     // Unroll according to Intel slicing by uint8_t
@@ -113,6 +147,17 @@ AARU_EXPORT void AARU_CALL crc32_slicing(uint32_t* previous_crc, const uint8_t* 
     *previous_crc = c;
 }
 
+/**
+ * @brief Finalizes the calculation of the CRC-32 checksum.
+ *
+ * This function finalizes the calculation of the CRC-32 checksum and returns
+ * its value.
+ *
+ * @param[in] ctx Pointer to the CRC-32 context structure.
+ * @param[out] checksum Pointer to a 32-bit unsigned integer to store the checksum value.
+ *
+ * @returns 0 on success, -1 on error.
+ */
 AARU_EXPORT int AARU_CALL crc32_final(crc32_ctx* ctx, uint32_t* crc)
 {
     if(!ctx) return -1;
@@ -122,6 +167,14 @@ AARU_EXPORT int AARU_CALL crc32_final(crc32_ctx* ctx, uint32_t* crc)
     return 0;
 }
 
+/**
+ * @brief Frees the resources allocated for the CRC-32 checksum context.
+ *
+ * This function should be called to release the memory used by the CRC-32 checksum
+ * context structure after it is no longer needed.
+ *
+ * @param ctx The CRC-32 checksum context structure, to be freed.
+ */
 AARU_EXPORT void AARU_CALL crc32_free(crc32_ctx* ctx)
 {
     if(ctx) free(ctx);

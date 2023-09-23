@@ -29,13 +29,22 @@
 #include "adler32.h"
 #include "simd.h"
 
-AARU_EXPORT adler32_ctx* AARU_CALL adler32_init()
+/**
+ * @brief Initializes the Adler-32 checksum algorithm.
+ *
+ * This function initializes the state variables required for the Adler-32
+ * checksum algorithm. It prepares the algorithm to calculate the checksum
+ * for a new data set.
+ *
+ * @return Pointer to a structure containing the checksum state.
+ */
+AARU_EXPORT adler32_ctx *AARU_CALL adler32_init()
 {
-    adler32_ctx* ctx;
+    adler32_ctx *ctx;
 
-    ctx = (adler32_ctx*)malloc(sizeof(adler32_ctx));
+    ctx = (adler32_ctx *) malloc(sizeof(adler32_ctx));
 
-    if(!ctx) return NULL;
+    if (!ctx) return NULL;
 
     ctx->sum1 = 1;
     ctx->sum2 = 0;
@@ -43,18 +52,31 @@ AARU_EXPORT adler32_ctx* AARU_CALL adler32_init()
     return ctx;
 }
 
-AARU_EXPORT int AARU_CALL adler32_update(adler32_ctx* ctx, const uint8_t* data, uint32_t len)
+/**
+ * @brief Updates the Adler-32 checksum with new data.
+ *
+ * This function updates the Adler-32 checksum.
+ * The checksum is updated for the given data by iterating through each byte and
+ * applying the corresponding calculations to the rolling checksum values.
+ *
+ * @param ctx Pointer to the Adler-32 context structure.
+ * @param data Pointer to the input data buffer.
+ * @param len The length of the input data buffer.
+ */
+AARU_EXPORT int AARU_CALL adler32_update(adler32_ctx *ctx, const uint8_t *data, uint32_t len)
 {
-    if(!ctx || !data) return -1;
+    if (!ctx || !data) return -1;
+
 #if defined(__aarch64__) || defined(_M_ARM64) || ((defined(__arm__) || defined(_M_ARM)) && !defined(__MINGW32__))
-    if(have_neon())
+    if (have_neon())
     {
         adler32_neon(&ctx->sum1, &ctx->sum2, data, len);
 
         return 0;
     }
 #endif
-#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) || \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
     if(have_avx2())
     {
@@ -76,7 +98,15 @@ AARU_EXPORT int AARU_CALL adler32_update(adler32_ctx* ctx, const uint8_t* data, 
     return 0;
 }
 
-AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t* sum1, uint16_t* sum2, const uint8_t* data, long len)
+/**
+ * @brief Calculates Adler-32 checksum for a given data using slicing algorithm.
+ *
+ * @param sum1 Pointer to a 16-bit unsigned integer to store the first sum value.
+ * @param sum2 Pointer to a 16-bit unsigned integer to store the second sum value.
+ * @param data Pointer to the data for which the checksum is to be calculated.
+ * @param len The length of the data in bytes.
+ */
+AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t *sum1, uint16_t *sum2, const uint8_t *data, long len)
 {
     uint32_t s1 = *sum1;
     uint32_t s2 = *sum2;
@@ -84,12 +114,12 @@ AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t* sum1, uint16_t* sum2, const
     unsigned n;
 
     /* in case user likes doing a byte at a time, keep it fast */
-    if(len == 1)
+    if (len == 1)
     {
         s1 += data[0];
-        if(s1 >= ADLER_MODULE) s1 -= ADLER_MODULE;
+        if (s1 >= ADLER_MODULE) s1 -= ADLER_MODULE;
         s2 += s1;
-        if(s2 >= ADLER_MODULE) s2 -= ADLER_MODULE;
+        if (s2 >= ADLER_MODULE) s2 -= ADLER_MODULE;
 
         *sum1 = s1 & 0xFFFF;
         *sum2 = s2 & 0xFFFF;
@@ -98,14 +128,14 @@ AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t* sum1, uint16_t* sum2, const
     }
 
     /* in case short lengths are provided, keep it somewhat fast */
-    if(len < 16)
+    if (len < 16)
     {
-        while(len--)
+        while (len--)
         {
             s1 += *data++;
             s2 += s1;
         }
-        if(s1 >= ADLER_MODULE) s1 -= ADLER_MODULE;
+        if (s1 >= ADLER_MODULE) s1 -= ADLER_MODULE;
         s2 %= ADLER_MODULE; /* only added so many ADLER_MODULE's */
         *sum1 = s1 & 0xFFFF;
         *sum2 = s2 & 0xFFFF;
@@ -114,11 +144,12 @@ AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t* sum1, uint16_t* sum2, const
     }
 
     /* do length NMAX blocks -- requires just one modulo operation */
-    while(len >= NMAX)
+    while (len >= NMAX)
     {
         len -= NMAX;
         n = NMAX / 16; /* NMAX is divisible by 16 */
-        do {
+        do
+        {
             s1 += (data)[0];
             s2 += s1;
             s1 += (data)[0 + 1];
@@ -154,15 +185,16 @@ AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t* sum1, uint16_t* sum2, const
 
             /* 16 sums unrolled */
             data += 16;
-        } while(--n);
+        }
+        while (--n);
         s1 %= ADLER_MODULE;
         s2 %= ADLER_MODULE;
     }
 
     /* do remaining bytes (less than NMAX, still just one modulo) */
-    if(len)
+    if (len)
     { /* avoid modulos if none remaining */
-        while(len >= 16)
+        while (len >= 16)
         {
             len -= 16;
             s1 += (data)[0];
@@ -200,7 +232,7 @@ AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t* sum1, uint16_t* sum2, const
 
             data += 16;
         }
-        while(len--)
+        while (len--)
         {
             s1 += *data++;
             s2 += s1;
@@ -213,17 +245,36 @@ AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t* sum1, uint16_t* sum2, const
     *sum2 = s2 & 0xFFFF;
 }
 
-AARU_EXPORT int AARU_CALL adler32_final(adler32_ctx* ctx, uint32_t* checksum)
+/**
+ * @brief Finalizes the calculation of the Adler-32 checksum.
+ *
+ * This function finalizes the calculation of the Adler-32 checksum and returns
+ * its value.
+ *
+ * @param[in] ctx Pointer to the Adler-32 context structure.
+ * @param[out] checksum Pointer to a 32-bit unsigned integer to store the checksum value.
+ *
+ * @returns 0 on success, -1 on error.
+ */
+AARU_EXPORT int AARU_CALL adler32_final(adler32_ctx *ctx, uint32_t *checksum)
 {
-    if(!ctx) return -1;
+    if (!ctx) return -1;
 
     *checksum = (ctx->sum2 << 16) | ctx->sum1;
     return 0;
 }
 
-AARU_EXPORT void AARU_CALL adler32_free(adler32_ctx* ctx)
+/**
+ * @brief Frees the resources allocated for the Adler-32 checksum context.
+ *
+ * This function should be called to release the memory used by the Adler-32 checksum
+ * context structure after it is no longer needed.
+ *
+ * @param ctx The Adler-32 checksum context structure, to be freed.
+ */
+AARU_EXPORT void AARU_CALL adler32_free(adler32_ctx *ctx)
 {
-    if(!ctx) return;
+    if (!ctx) return;
 
     free(ctx);
 }
