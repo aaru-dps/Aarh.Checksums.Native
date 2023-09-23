@@ -34,4 +34,10 @@ AARU_EXPORT int AARU_CALL             fletcher32_update(fletcher32_ctx* ctx, con
 AARU_EXPORT int AARU_CALL             fletcher32_final(fletcher32_ctx* ctx, uint32_t* checksum);
 AARU_EXPORT void AARU_CALL            fletcher32_free(fletcher32_ctx* ctx);
 
+#if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+
+AARU_EXPORT void AARU_CALL fletcher32_neon(uint16_t* sum1, uint16_t* sum2, const uint8_t* data, uint32_t len);
+
+#endif
+
 #endif // AARU_CHECKSUMS_NATIVE_FLETCHER32_H
