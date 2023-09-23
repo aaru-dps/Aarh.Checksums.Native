@@ -31,9 +31,9 @@
  *
  * @return Pointer to a structure containing the checksum state.
  */
-AARU_EXPORT crc32_ctx* AARU_CALL crc32_init(void)
+AARU_EXPORT crc32_ctx *AARU_CALL crc32_init(void)
 {
-    crc32_ctx* ctx = (crc32_ctx*)malloc(sizeof(crc32_ctx));
+    crc32_ctx *ctx = (crc32_ctx *)malloc(sizeof(crc32_ctx));
 
     if(!ctx) return NULL;
 
@@ -56,11 +56,11 @@ AARU_EXPORT crc32_ctx* AARU_CALL crc32_init(void)
  *
  * @returns 0 on success, -1 on error.
  */
-AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint32_t len)
+AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx *ctx, const uint8_t *data, uint32_t len)
 {
     if(!ctx || !data) return -1;
 
-#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) || \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
     if(have_clmul())
     {
@@ -101,17 +101,17 @@ AARU_EXPORT int AARU_CALL crc32_update(crc32_ctx* ctx, const uint8_t* data, uint
  *
  * @note This function assumes little-endian byte order.
  */
-AARU_EXPORT void AARU_CALL crc32_slicing(uint32_t* previous_crc, const uint8_t* data, long len)
+AARU_EXPORT void AARU_CALL crc32_slicing(uint32_t *previous_crc, const uint8_t *data, long len)
 {
     // Unroll according to Intel slicing by uint8_t
     // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
     // http://sourceforge.net/projects/slicing-by-8/
-    uint32_t        c;
-    const uint32_t* current;
-    const uint8_t*  current_char     = (const uint8_t*)data;
-    const size_t    unroll           = 4;
-    const size_t    bytes_at_once    = 8 * unroll;
-    uintptr_t       unaligned_length = (4 - (((uintptr_t)current_char) & 3)) & 3;
+    uint32_t       c;
+    const uint32_t *current;
+    const uint8_t  *current_char    = data;
+    const size_t   unroll           = 4;
+    const size_t   bytes_at_once    = 8 * unroll;
+    uintptr_t      unaligned_length = (4 - (((uintptr_t)current_char) & 3)) & 3;
 
     c = *previous_crc;
 
@@ -122,7 +122,7 @@ AARU_EXPORT void AARU_CALL crc32_slicing(uint32_t* previous_crc, const uint8_t* 
         unaligned_length--;
     }
 
-    current = (const uint32_t*)current_char;
+    current = (const uint32_t *)current_char;
 
     while(len >= bytes_at_once)
     {
@@ -140,7 +140,7 @@ AARU_EXPORT void AARU_CALL crc32_slicing(uint32_t* previous_crc, const uint8_t* 
         len -= bytes_at_once;
     }
 
-    current_char = (const uint8_t*)current;
+    current_char = (const uint8_t *)current;
 
     while(len-- != 0) c = (c >> 8) ^ crc32_table[0][(c & 0xFF) ^ *current_char++];
 
@@ -158,7 +158,7 @@ AARU_EXPORT void AARU_CALL crc32_slicing(uint32_t* previous_crc, const uint8_t* 
  *
  * @returns 0 on success, -1 on error.
  */
-AARU_EXPORT int AARU_CALL crc32_final(crc32_ctx* ctx, uint32_t* crc)
+AARU_EXPORT int AARU_CALL crc32_final(crc32_ctx *ctx, uint32_t *crc)
 {
     if(!ctx) return -1;
 
@@ -175,7 +175,7 @@ AARU_EXPORT int AARU_CALL crc32_final(crc32_ctx* ctx, uint32_t* crc)
  *
  * @param ctx The CRC-32 checksum context structure, to be freed.
  */
-AARU_EXPORT void AARU_CALL crc32_free(crc32_ctx* ctx)
+AARU_EXPORT void AARU_CALL crc32_free(crc32_ctx *ctx)
 {
     if(ctx) free(ctx);
 }

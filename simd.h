@@ -25,17 +25,17 @@
 #define ALIGNED_(n) __attribute__((aligned(n)))
 #endif
 
-#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) || \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 
 #ifdef _MSC_VER
-#define AVX2
-#define SSSE3
-#define CLMUL
+#define TARGET_WITH_AVX2
+#define TARGET_WITH_SSSE3
+#define TARGET_WITH_CLMUL
 #else
-#define AVX2 __attribute__((target("avx2")))
-#define SSSE3 __attribute__((target("ssse3")))
-#define CLMUL __attribute__((target("pclmul,sse4.1")))
+#define TARGET_WITH_AVX2 __attribute__((target("avx2")))
+#define TARGET_WITH_SSSE3 __attribute__((target("ssse3")))
+#define TARGET_WITH_CLMUL __attribute__((target("pclmul,sse4.1")))
 #endif
 
 AARU_EXPORT int have_clmul(void);
@@ -71,7 +71,7 @@ AARU_EXPORT int have_arm_crypto(void);
 
 #define TARGET_ARMV8_WITH_CRC
 #define TARGET_WITH_CRYPTO
-#define TARGET_WITH_SIMD
+#define TARGET_WITH_NEON
 
 #else // _MSC_VER
 
@@ -89,7 +89,7 @@ AARU_EXPORT int have_arm_crypto(void);
 #define TARGET_WITH_CRYPTO __attribute__((target("+crypto")))
 #endif
 
-#define TARGET_WITH_SIMD
+#define TARGET_WITH_NEON
 #else
 
 #if (__ARM_ARCH >= 7 || defined (__ARM_ARCH_8A))
@@ -109,9 +109,9 @@ AARU_EXPORT int have_arm_crypto(void);
 #endif
 
 #ifdef __clang__
-#define TARGET_WITH_SIMD __attribute__((target("neon")))
+#define TARGET_WITH_NEON __attribute__((target("neon")))
 #else
-#define TARGET_WITH_SIMD __attribute__((target("fpu=neon")))
+#define TARGET_WITH_NEON __attribute__((target("fpu=neon")))
 #endif
 
 #endif // __aarch64__ || _M_ARM64

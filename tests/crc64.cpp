@@ -16,19 +16,19 @@
 #define EXPECTED_CRC64_63BYTES 0x29F331FC90702BF4
 #define EXPECTED_CRC64_2352BYTES 0x126435DB43477623
 
-static const uint8_t* buffer;
-static const uint8_t* buffer_misaligned;
+static const uint8_t *buffer;
+static const uint8_t *buffer_misaligned;
 
 class crc64Fixture : public ::testing::Test
 {
-  public:
+public:
     crc64Fixture()
     {
         // initialization;
         // can also be done in SetUp()
     }
 
-  protected:
+protected:
     void SetUp()
     {
         char path[PATH_MAX];
@@ -37,18 +37,19 @@ class crc64Fixture : public ::testing::Test
         getcwd(path, PATH_MAX);
         snprintf(filename, PATH_MAX, "%s/data/random", path);
 
-        FILE* file = fopen(filename, "rb");
-        buffer     = (const uint8_t*)malloc(1048576);
-        fread((void*)buffer, 1, 1048576, file);
+        FILE *file = fopen(filename, "rb");
+        buffer = (const uint8_t *)malloc(1048576);
+        fread((void *)buffer, 1, 1048576, file);
         fclose(file);
 
-        buffer_misaligned = (const uint8_t*)malloc(1048577);
-        memcpy((void*)(buffer_misaligned + 1), buffer, 1048576);
+        buffer_misaligned = (const uint8_t *)malloc(1048577);
+        memcpy((void *)(buffer_misaligned + 1), buffer, 1048576);
     }
 
-    void TearDown() {
-        free((void*)buffer);
-        free((void*)buffer_misaligned);
+    void TearDown()
+    {
+        free((void *)buffer);
+        free((void *)buffer_misaligned);
     }
 
     ~crc64Fixture()
@@ -61,8 +62,8 @@ class crc64Fixture : public ::testing::Test
 
 TEST_F(crc64Fixture, crc64_auto)
 {
-    crc64_ctx* ctx = crc64_init();
-    uint64_t   crc;
+    crc64_ctx *ctx = crc64_init();
+    uint64_t  crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -85,12 +86,12 @@ TEST_F(crc64Fixture, crc64_slicing)
 
 TEST_F(crc64Fixture, crc64_auto_misaligned)
 {
-    crc64_ctx* ctx = crc64_init();
-    uint64_t   crc;
+    crc64_ctx *ctx = crc64_init();
+    uint64_t  crc;
 
     EXPECT_NE(ctx, nullptr);
 
-    crc64_update(ctx, buffer_misaligned+1, 1048576);
+    crc64_update(ctx, buffer_misaligned + 1, 1048576);
     crc64_final(ctx, &crc);
 
     EXPECT_EQ(crc, EXPECTED_CRC64);
@@ -100,7 +101,7 @@ TEST_F(crc64Fixture, crc64_slicing_misaligned)
 {
     uint64_t crc = CRC64_ECMA_SEED;
 
-    crc64_slicing(&crc, buffer_misaligned+1, 1048576);
+    crc64_slicing(&crc, buffer_misaligned + 1, 1048576);
 
     crc ^= CRC64_ECMA_SEED;
 
@@ -109,8 +110,8 @@ TEST_F(crc64Fixture, crc64_slicing_misaligned)
 
 TEST_F(crc64Fixture, crc64_auto_15bytes)
 {
-    crc64_ctx* ctx = crc64_init();
-    uint64_t   crc;
+    crc64_ctx *ctx = crc64_init();
+    uint64_t  crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -133,8 +134,8 @@ TEST_F(crc64Fixture, crc64_slicing_15bytes)
 
 TEST_F(crc64Fixture, crc64_auto_31bytes)
 {
-    crc64_ctx* ctx = crc64_init();
-    uint64_t   crc;
+    crc64_ctx *ctx = crc64_init();
+    uint64_t  crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -157,8 +158,8 @@ TEST_F(crc64Fixture, crc64_slicing_31bytes)
 
 TEST_F(crc64Fixture, crc64_auto_63bytes)
 {
-    crc64_ctx* ctx = crc64_init();
-    uint64_t   crc;
+    crc64_ctx *ctx = crc64_init();
+    uint64_t  crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -181,8 +182,8 @@ TEST_F(crc64Fixture, crc64_slicing_63bytes)
 
 TEST_F(crc64Fixture, crc64_auto_2352bytes)
 {
-    crc64_ctx* ctx = crc64_init();
-    uint64_t   crc;
+    crc64_ctx *ctx = crc64_init();
+    uint64_t  crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -203,7 +204,7 @@ TEST_F(crc64Fixture, crc64_slicing_2352bytes)
     EXPECT_EQ(crc, EXPECTED_CRC64_2352BYTES);
 }
 
-#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) || \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 TEST_F(crc64Fixture, crc64_clmul)
 {
@@ -224,7 +225,7 @@ TEST_F(crc64Fixture, crc64_clmul_misaligned)
 
     uint64_t crc = CRC64_ECMA_SEED;
 
-    crc = ~crc64_clmul(~crc, buffer_misaligned+1, 1048576);
+    crc = ~crc64_clmul(~crc, buffer_misaligned + 1, 1048576);
 
     crc ^= CRC64_ECMA_SEED;
 
@@ -282,13 +283,14 @@ TEST_F(crc64Fixture, crc64_clmul_2352bytes)
 
     EXPECT_EQ(crc, EXPECTED_CRC64_2352BYTES);
 }
+
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 TEST_F(crc64Fixture, crc64_vmull)
 {
     if(!have_neon()) return;
-    
+
     uint64_t crc = CRC64_ECMA_SEED;
 
     crc = ~crc64_vmull(~crc, buffer, 1048576);
@@ -304,7 +306,7 @@ TEST_F(crc64Fixture, crc64_vmull_misaligned)
 
     uint64_t crc = CRC64_ECMA_SEED;
 
-    crc = ~crc64_vmull(~crc, buffer_misaligned+1, 1048576);
+    crc = ~crc64_vmull(~crc, buffer_misaligned + 1, 1048576);
 
     crc ^= CRC64_ECMA_SEED;
 
@@ -362,4 +364,5 @@ TEST_F(crc64Fixture, crc64_vmull_2352bytes)
 
     EXPECT_EQ(crc, EXPECTED_CRC64_2352BYTES);
 }
+
 #endif

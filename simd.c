@@ -22,7 +22,7 @@
 #include "library.h"
 #include "simd.h"
 
-#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) || \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 
 #ifdef _MSC_VER
@@ -123,15 +123,15 @@ static void cpuidex(int info, int count, unsigned* eax, unsigned* ebx, unsigned*
 }
 
 /**
- * @brief Checks if the hardware supports the CLMUL instruction set.
+ * @brief Checks if the hardware supports the TARGET_WITH_CLMUL instruction set.
  *
- * The function checks if the system's CPU supports the CLMUL (Carry-Less Multiplication) instruction set.
- * CLMUL is an extension to the x86 instruction set architecture and provides hardware acceleration for
+ * The function checks if the system's CPU supports the TARGET_WITH_CLMUL (Carry-Less Multiplication) instruction set.
+ * TARGET_WITH_CLMUL is an extension to the x86 instruction set architecture and provides hardware acceleration for
  * carry-less multiplication operations.
  *
- * @return True if CLMUL instruction set is supported, False otherwise.
+ * @return True if TARGET_WITH_CLMUL instruction set is supported, False otherwise.
  *
- * @see https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=CLMUL
+ * @see https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=TARGET_WITH_CLMUL
  * @see https://en.wikipedia.org/wiki/Carry-less_multiplication
  */
 int have_clmul(void)
@@ -148,17 +148,17 @@ int have_clmul(void)
 }
 
 /**
- * @brief Checks if the current processor supports SSSE3 instructions.
+ * @brief Checks if the current processor supports TARGET_WITH_SSSE3 instructions.
  *
- * The function detects whether the current processor supports SSSE3 instructions by
- * checking the CPU feature flags. SSSE3 (Supplemental Streaming SIMD Extensions 3)
+ * The function detects whether the current processor supports TARGET_WITH_SSSE3 instructions by
+ * checking the CPU feature flags. TARGET_WITH_SSSE3 (Supplemental Streaming SIMD Extensions 3)
  * is an extension to the x86 instruction set architecture that introduces
  * additional SIMD instructions useful for multimedia and signal processing tasks.
  *
- * @return true if the current processor supports SSSE3 instructions, false otherwise.
+ * @return true if the current processor supports TARGET_WITH_SSSE3 instructions, false otherwise.
  *
- * @see https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=SSSE3
- * @see https://en.wikipedia.org/wiki/SSSE3
+ * @see https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=TARGET_WITH_SSSE3
+ * @see https://en.wikipedia.org/wiki/TARGET_WITH_SSSE3
  */
 int have_ssse3(void)
 {
@@ -169,16 +169,16 @@ int have_ssse3(void)
 }
 
 /**
- * @brief Checks if the current processor supports AVX2 instructions.
+ * @brief Checks if the current processor supports TARGET_WITH_AVX2 instructions.
  *
- * The function detects whether the current processor supports AVX2 instructions by
- * checking the CPU feature flags. AVX2 (Advanced Vector Extensions 2) is an extension
+ * The function detects whether the current processor supports TARGET_WITH_AVX2 instructions by
+ * checking the CPU feature flags. TARGET_WITH_AVX2 (Advanced Vector Extensions 2) is an extension
  * to the x86 instruction set architecture that introduces additional SIMD instructions
  * useful for multimedia and signal processing tasks.
  *
- * @return true if the current processor supports AVX2 instructions, false otherwise.
+ * @return true if the current processor supports TARGET_WITH_AVX2 instructions, false otherwise.
  *
- * @see https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=AVX2
+ * @see https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=TARGET_WITH_AVX2
  * @see https://en.wikipedia.org/wiki/Advanced_Vector_Extensions
  */
 
@@ -193,17 +193,24 @@ int have_avx2(void)
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 #if defined(_WIN32)
+
 #include <windows.h>
 
 #include <processthreadsapi.h>
+
 #elif defined(__APPLE__)
+
 #include <sys/sysctl.h>
+
 #else
+
 #include <sys/auxv.h>
+
 #endif
 #endif
 
 #if(defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)) && defined(__APPLE__)
+
 /**
  * @brief Checks if the current processor supports NEON instructions.
  *
@@ -257,10 +264,13 @@ int have_crc32_apple()
  *
  * @return true if the current processor supports cryptographic instructions, false otherwise.
  */
-int have_crypto_apple() { return 0; }
+int have_crypto_apple()
+{ return 0; }
+
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64)
+
 int have_neon(void)
 {
     return 1; // ARMv8-A made it mandatory
@@ -305,9 +315,11 @@ int have_arm_crypto(void)
     return getauxval(AT_HWCAP) & HWCAP_AES;
 #endif
 }
+
 #endif
 
 #if defined(__arm__) || defined(_M_ARM)
+
 /**
  * @brief Checks if the current processor supports NEON instructions.
  *
@@ -377,4 +389,5 @@ int have_arm_crypto(void)
     return getauxval(AT_HWCAP2) & HWCAP2_AES;
 #endif
 }
+
 #endif

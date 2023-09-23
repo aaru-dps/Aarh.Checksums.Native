@@ -33,15 +33,17 @@
 #include "simd.h"
 
 #if !defined(__MINGW32__) && !defined(_MSC_FULL_VER) && (!defined(__ANDROID__) || !defined(__arm__))
+
 TARGET_WITH_CRYPTO static uint64x2_t sse2neon_vmull_p64_crypto(uint64x1_t _a, uint64x1_t _b)
 {
     poly64_t a = vget_lane_p64(vreinterpret_p64_u64(_a), 0);
     poly64_t b = vget_lane_p64(vreinterpret_p64_u64(_b), 0);
     return vreinterpretq_u64_p128(vmull_p64(a, b));
 }
+
 #endif
 
-TARGET_WITH_SIMD uint64x2_t sse2neon_vmull_p64(uint64x1_t _a, uint64x1_t _b)
+TARGET_WITH_NEON uint64x2_t sse2neon_vmull_p64(uint64x1_t _a, uint64x1_t _b)
 {
 #if !defined(__MINGW32__) && !defined(_MSC_FULL_VER) && (!defined(__ANDROID__) || !defined(__arm__))
     // Wraps vmull_p64
@@ -117,10 +119,10 @@ TARGET_WITH_SIMD uint64x2_t sse2neon_vmull_p64(uint64x1_t _a, uint64x1_t _b)
     uint8x16_t t2 = vreinterpretq_u8_u64(vuzp1q_u64(vreinterpretq_u64_u8(t2t3_l), vreinterpretq_u64_u8(t2t3_h)));
     uint8x16_t t3 = vreinterpretq_u8_u64(vuzp2q_u64(vreinterpretq_u64_u8(t2t3_l), vreinterpretq_u64_u8(t2t3_h)));
 #else
-    uint8x16_t t1    = vcombine_u8(vget_high_u8(t0t1_l), vget_high_u8(t0t1_h));
-    uint8x16_t t0    = vcombine_u8(vget_low_u8(t0t1_l), vget_low_u8(t0t1_h));
-    uint8x16_t t3    = vcombine_u8(vget_high_u8(t2t3_l), vget_high_u8(t2t3_h));
-    uint8x16_t t2    = vcombine_u8(vget_low_u8(t2t3_l), vget_low_u8(t2t3_h));
+    uint8x16_t t1 = vcombine_u8(vget_high_u8(t0t1_l), vget_high_u8(t0t1_h));
+    uint8x16_t t0 = vcombine_u8(vget_low_u8(t0t1_l), vget_low_u8(t0t1_h));
+    uint8x16_t t3 = vcombine_u8(vget_high_u8(t2t3_l), vget_high_u8(t2t3_h));
+    uint8x16_t t2 = vcombine_u8(vget_low_u8(t2t3_l), vget_low_u8(t2t3_h));
 #endif
     // Shift the cross products
     uint8x16_t t0_shift = vextq_u8(t0, t0, 15); // t0 << 8
@@ -136,7 +138,7 @@ TARGET_WITH_SIMD uint64x2_t sse2neon_vmull_p64(uint64x1_t _a, uint64x1_t _b)
     return vreinterpretq_u64_u8(r);
 }
 
-TARGET_WITH_SIMD uint64x2_t mm_shuffle_epi8(uint64x2_t a, uint64x2_t b)
+TARGET_WITH_NEON uint64x2_t mm_shuffle_epi8(uint64x2_t a, uint64x2_t b)
 {
     uint8x16_t tbl        = vreinterpretq_u8_u64(a);         // input a
     uint8x16_t idx        = vreinterpretq_u8_u64(b);         // input b
@@ -147,20 +149,20 @@ TARGET_WITH_SIMD uint64x2_t mm_shuffle_epi8(uint64x2_t a, uint64x2_t b)
     // use this line if testing on aarch64
     uint8x8x2_t a_split = {vget_low_u8(tbl), vget_high_u8(tbl)};
     return vreinterpretq_u64_u8(
-        vcombine_u8(vtbl2_u8(a_split, vget_low_u8(idx_masked)), vtbl2_u8(a_split, vget_high_u8(idx_masked))));
+            vcombine_u8(vtbl2_u8(a_split, vget_low_u8(idx_masked)), vtbl2_u8(a_split, vget_high_u8(idx_masked))));
 #endif
 }
 
-TARGET_WITH_SIMD uint64x2_t mm_srli_si128(uint64x2_t a, int imm)
+TARGET_WITH_NEON uint64x2_t mm_srli_si128(uint64x2_t a, int imm)
 {
     uint8x16_t tmp[2] = {vreinterpretq_u8_u64(a), vdupq_n_u8(0)};
-    return vreinterpretq_u64_u8(vld1q_u8(((uint8_t const*)tmp) + imm));
+    return vreinterpretq_u64_u8(vld1q_u8(((uint8_t const *)tmp) + imm));
 }
 
-TARGET_WITH_SIMD uint64x2_t mm_slli_si128(uint64x2_t a, int imm)
+TARGET_WITH_NEON uint64x2_t mm_slli_si128(uint64x2_t a, int imm)
 {
     uint8x16_t tmp[2] = {vdupq_n_u8(0), vreinterpretq_u8_u64(a)};
-    return vreinterpretq_u64_u8(vld1q_u8(((uint8_t const*)tmp) + (16 - imm)));
+    return vreinterpretq_u64_u8(vld1q_u8(((uint8_t const *)tmp) + (16 - imm)));
 }
 
 #endif

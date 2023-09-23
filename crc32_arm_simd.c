@@ -52,9 +52,9 @@
  * @param len The length of the input data.
  * @return The new CRC-32 value.
  */
-TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t previous_crc, const uint8_t* data, uint32_t len)
+TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t previous_crc, const uint8_t *data, uint32_t len)
 {
-    uint32_t c = (uint32_t)previous_crc;
+    uint32_t c = previous_crc;
 
 #if defined(__aarch64__) || defined(_M_ARM64)
     while(len && ((uintptr_t)data & 7))
@@ -62,7 +62,7 @@ TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t previous_crc, const u
         c = __crc32b(c, *data++);
         --len;
     }
-    const uint64_t* buf8 = (const uint64_t*)data;
+    const uint64_t *buf8 = (const uint64_t *)data;
     while(len >= 64)
     {
         c = __crc32d(c, *buf8++);
@@ -81,14 +81,14 @@ TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t previous_crc, const u
         len -= 8;
     }
 
-    data = (const uint8_t*)buf8;
+    data = (const uint8_t *)buf8;
 #else // AARCH64
     while(len && ((uintptr_t)data & 3))
     {
         c = __crc32b(c, *data++);
         --len;
     }
-    const uint32_t* buf4 = (const uint32_t*)data;
+    const uint32_t *buf4 = (const uint32_t *)data;
     while(len >= 32)
     {
         c = __crc32w(c, *buf4++);
@@ -107,10 +107,12 @@ TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t previous_crc, const u
         len -= 4;
     }
 
-    data = (const uint8_t*)buf4;
+    data = (const uint8_t *)buf4;
 #endif
 
-    while(len--) { c = __crc32b(c, *data++); }
+    while(len--)
+    { c = __crc32b(c, *data++); }
     return c;
 }
+
 #endif

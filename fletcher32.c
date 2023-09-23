@@ -37,11 +37,11 @@
  *
  * @return Pointer to a structure containing the checksum state.
  */
-AARU_EXPORT fletcher32_ctx* AARU_CALL fletcher32_init()
+AARU_EXPORT fletcher32_ctx *AARU_CALL fletcher32_init()
 {
-    fletcher32_ctx* ctx;
+    fletcher32_ctx *ctx;
 
-    ctx = (fletcher32_ctx*)malloc(sizeof(fletcher32_ctx));
+    ctx = (fletcher32_ctx *)malloc(sizeof(fletcher32_ctx));
 
     if(!ctx) return NULL;
 
@@ -62,7 +62,7 @@ AARU_EXPORT fletcher32_ctx* AARU_CALL fletcher32_init()
  * @param data Pointer to the input data buffer.
  * @param len The length of the input data buffer.
  */
-AARU_EXPORT int AARU_CALL fletcher32_update(fletcher32_ctx* ctx, const uint8_t* data, uint32_t len)
+AARU_EXPORT int AARU_CALL fletcher32_update(fletcher32_ctx *ctx, const uint8_t *data, uint32_t len)
 {
     if(!ctx || !data) return -1;
 
@@ -75,7 +75,7 @@ AARU_EXPORT int AARU_CALL fletcher32_update(fletcher32_ctx* ctx, const uint8_t* 
     }
 #endif
 
-#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) || \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
     if(have_avx2())
     {
@@ -130,43 +130,45 @@ AARU_EXPORT int AARU_CALL fletcher32_update(fletcher32_ctx* ctx, const uint8_t* 
     {
         len -= NMAX;
         n = NMAX / 16; /* NMAX is divisible by 16 */
-        do {
-            sum1 += (data)[0];
+        do
+        {
+            sum1 += data[0];
             sum2 += sum1;
-            sum1 += (data)[0 + 1];
+            sum1 += data[0 + 1];
             sum2 += sum1;
-            sum1 += (data)[0 + 2];
+            sum1 += data[0 + 2];
             sum2 += sum1;
-            sum1 += (data)[0 + 2 + 1];
+            sum1 += data[0 + 2 + 1];
             sum2 += sum1;
-            sum1 += (data)[0 + 4];
+            sum1 += data[0 + 4];
             sum2 += sum1;
-            sum1 += (data)[0 + 4 + 1];
+            sum1 += data[0 + 4 + 1];
             sum2 += sum1;
-            sum1 += (data)[0 + 4 + 2];
+            sum1 += data[0 + 4 + 2];
             sum2 += sum1;
-            sum1 += (data)[0 + 4 + 2 + 1];
+            sum1 += data[0 + 4 + 2 + 1];
             sum2 += sum1;
-            sum1 += (data)[8];
+            sum1 += data[8];
             sum2 += sum1;
-            sum1 += (data)[8 + 1];
+            sum1 += data[8 + 1];
             sum2 += sum1;
-            sum1 += (data)[8 + 2];
+            sum1 += data[8 + 2];
             sum2 += sum1;
-            sum1 += (data)[8 + 2 + 1];
+            sum1 += data[8 + 2 + 1];
             sum2 += sum1;
-            sum1 += (data)[8 + 4];
+            sum1 += data[8 + 4];
             sum2 += sum1;
-            sum1 += (data)[8 + 4 + 1];
+            sum1 += data[8 + 4 + 1];
             sum2 += sum1;
-            sum1 += (data)[8 + 4 + 2];
+            sum1 += data[8 + 4 + 2];
             sum2 += sum1;
-            sum1 += (data)[8 + 4 + 2 + 1];
+            sum1 += data[8 + 4 + 2 + 1];
             sum2 += sum1;
 
             /* 16 sums unrolled */
             data += 16;
-        } while(--n);
+        }
+        while(--n);
         sum1 %= FLETCHER32_MODULE;
         sum2 %= FLETCHER32_MODULE;
     }
@@ -177,37 +179,37 @@ AARU_EXPORT int AARU_CALL fletcher32_update(fletcher32_ctx* ctx, const uint8_t* 
         while(len >= 16)
         {
             len -= 16;
-            sum1 += (data)[0];
+            sum1 += data[0];
             sum2 += sum1;
-            sum1 += (data)[0 + 1];
+            sum1 += data[0 + 1];
             sum2 += sum1;
-            sum1 += (data)[0 + 2];
+            sum1 += data[0 + 2];
             sum2 += sum1;
-            sum1 += (data)[0 + 2 + 1];
+            sum1 += data[0 + 2 + 1];
             sum2 += sum1;
-            sum1 += (data)[0 + 4];
+            sum1 += data[0 + 4];
             sum2 += sum1;
-            sum1 += (data)[0 + 4 + 1];
+            sum1 += data[0 + 4 + 1];
             sum2 += sum1;
-            sum1 += (data)[0 + 4 + 2];
+            sum1 += data[0 + 4 + 2];
             sum2 += sum1;
-            sum1 += (data)[0 + 4 + 2 + 1];
+            sum1 += data[0 + 4 + 2 + 1];
             sum2 += sum1;
-            sum1 += (data)[8];
+            sum1 += data[8];
             sum2 += sum1;
-            sum1 += (data)[8 + 1];
+            sum1 += data[8 + 1];
             sum2 += sum1;
-            sum1 += (data)[8 + 2];
+            sum1 += data[8 + 2];
             sum2 += sum1;
-            sum1 += (data)[8 + 2 + 1];
+            sum1 += data[8 + 2 + 1];
             sum2 += sum1;
-            sum1 += (data)[8 + 4];
+            sum1 += data[8 + 4];
             sum2 += sum1;
-            sum1 += (data)[8 + 4 + 1];
+            sum1 += data[8 + 4 + 1];
             sum2 += sum1;
-            sum1 += (data)[8 + 4 + 2];
+            sum1 += data[8 + 4 + 2];
             sum2 += sum1;
-            sum1 += (data)[8 + 4 + 2 + 1];
+            sum1 += data[8 + 4 + 2 + 1];
             sum2 += sum1;
 
             data += 16;
@@ -237,7 +239,7 @@ AARU_EXPORT int AARU_CALL fletcher32_update(fletcher32_ctx* ctx, const uint8_t* 
  *
  * @returns 0 on success, -1 on error.
  */
-AARU_EXPORT int AARU_CALL fletcher32_final(fletcher32_ctx* ctx, uint32_t* checksum)
+AARU_EXPORT int AARU_CALL fletcher32_final(fletcher32_ctx *ctx, uint32_t *checksum)
 {
     if(!ctx) return -1;
 
@@ -253,7 +255,7 @@ AARU_EXPORT int AARU_CALL fletcher32_final(fletcher32_ctx* ctx, uint32_t* checks
  *
  * @param ctx The Fletcher-32 checksum context structure, to be freed.
  */
-AARU_EXPORT void AARU_CALL fletcher32_free(fletcher32_ctx* ctx)
+AARU_EXPORT void AARU_CALL fletcher32_free(fletcher32_ctx *ctx)
 {
     if(!ctx) return;
 

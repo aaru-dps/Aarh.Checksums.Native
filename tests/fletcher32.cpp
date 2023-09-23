@@ -16,19 +16,19 @@
 #define EXPECTED_FLETCHER32_63BYTES 0xD8432080
 #define EXPECTED_FLETCHER32_2352BYTES 0xCB3E7352
 
-static const uint8_t* buffer;
-static const uint8_t* buffer_misaligned;
+static const uint8_t *buffer;
+static const uint8_t *buffer_misaligned;
 
 class fletcher32Fixture : public ::testing::Test
 {
-  public:
+public:
     fletcher32Fixture()
     {
         // initialization;
         // can also be done in SetUp()
     }
 
-  protected:
+protected:
     void SetUp()
     {
         char path[PATH_MAX];
@@ -37,18 +37,19 @@ class fletcher32Fixture : public ::testing::Test
         getcwd(path, PATH_MAX);
         snprintf(filename, PATH_MAX, "%s/data/random", path);
 
-        FILE* file = fopen(filename, "rb");
-        buffer     = (const uint8_t*)malloc(1048576);
-        fread((void*)buffer, 1, 1048576, file);
+        FILE *file = fopen(filename, "rb");
+        buffer = (const uint8_t *)malloc(1048576);
+        fread((void *)buffer, 1, 1048576, file);
         fclose(file);
 
-        buffer_misaligned = (const uint8_t*)malloc(1048577);
-        memcpy((void*)(buffer_misaligned + 1), buffer, 1048576);
+        buffer_misaligned = (const uint8_t *)malloc(1048577);
+        memcpy((void *)(buffer_misaligned + 1), buffer, 1048576);
     }
 
-    void TearDown() {
-        free((void*)buffer);
-        free((void*)buffer_misaligned);
+    void TearDown()
+    {
+        free((void *)buffer);
+        free((void *)buffer_misaligned);
     }
 
     ~fletcher32Fixture()
@@ -61,8 +62,8 @@ class fletcher32Fixture : public ::testing::Test
 
 TEST_F(fletcher32Fixture, fletcher32_auto)
 {
-    fletcher32_ctx* ctx = fletcher32_init();
-    uint32_t        fletcher;
+    fletcher32_ctx *ctx = fletcher32_init();
+    uint32_t       fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -74,12 +75,12 @@ TEST_F(fletcher32Fixture, fletcher32_auto)
 
 TEST_F(fletcher32Fixture, fletcher32_auto_misaligned)
 {
-    fletcher32_ctx* ctx = fletcher32_init();
-    uint32_t        fletcher;
+    fletcher32_ctx *ctx = fletcher32_init();
+    uint32_t       fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
-    fletcher32_update(ctx, buffer_misaligned+1, 1048576);
+    fletcher32_update(ctx, buffer_misaligned + 1, 1048576);
     fletcher32_final(ctx, &fletcher);
 
     EXPECT_EQ(fletcher, EXPECTED_FLETCHER32);
@@ -87,8 +88,8 @@ TEST_F(fletcher32Fixture, fletcher32_auto_misaligned)
 
 TEST_F(fletcher32Fixture, fletcher32_auto_15bytes)
 {
-    fletcher32_ctx* ctx = fletcher32_init();
-    uint32_t        fletcher;
+    fletcher32_ctx *ctx = fletcher32_init();
+    uint32_t       fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -100,8 +101,8 @@ TEST_F(fletcher32Fixture, fletcher32_auto_15bytes)
 
 TEST_F(fletcher32Fixture, fletcher32_auto_31bytes)
 {
-    fletcher32_ctx* ctx = fletcher32_init();
-    uint32_t        fletcher;
+    fletcher32_ctx *ctx = fletcher32_init();
+    uint32_t       fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -113,8 +114,8 @@ TEST_F(fletcher32Fixture, fletcher32_auto_31bytes)
 
 TEST_F(fletcher32Fixture, fletcher32_auto_63bytes)
 {
-    fletcher32_ctx* ctx = fletcher32_init();
-    uint32_t        fletcher;
+    fletcher32_ctx *ctx = fletcher32_init();
+    uint32_t       fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -126,8 +127,8 @@ TEST_F(fletcher32Fixture, fletcher32_auto_63bytes)
 
 TEST_F(fletcher32Fixture, fletcher32_auto_2352bytes)
 {
-    fletcher32_ctx* ctx = fletcher32_init();
-    uint32_t        fletcher;
+    fletcher32_ctx *ctx = fletcher32_init();
+    uint32_t       fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -167,7 +168,7 @@ TEST_F(fletcher32Fixture, fletcher32_neon_misaligned)
     sum1 = 0xFFFF;
     sum2 = 0xFFFF;
 
-    fletcher32_neon(&sum1, &sum2, buffer_misaligned+1, 1048576);
+    fletcher32_neon(&sum1, &sum2, buffer_misaligned + 1, 1048576);
 
     fletcher32 = (sum2 << 16) | sum1;
 
@@ -245,9 +246,10 @@ TEST_F(fletcher32Fixture, fletcher32_neon_2352bytes)
 
     EXPECT_EQ(fletcher32, EXPECTED_FLETCHER32_2352BYTES);
 }
+
 #endif
 
-#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) || \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 
 TEST_F(fletcher32Fixture, fletcher32_avx2)
@@ -297,7 +299,7 @@ TEST_F(fletcher32Fixture, fletcher32_avx2_misaligned)
     sum1 = 0xFFFF;
     sum2 = 0xFFFF;
 
-    fletcher32_avx2(&sum1, &sum2, buffer_misaligned+1, 1048576);
+    fletcher32_avx2(&sum1, &sum2, buffer_misaligned + 1, 1048576);
 
     fletcher32 = (sum2 << 16) | sum1;
 
@@ -315,7 +317,7 @@ TEST_F(fletcher32Fixture, fletcher32_ssse3_misaligned)
     sum1 = 0xFFFF;
     sum2 = 0xFFFF;
 
-    fletcher32_ssse3(&sum1, &sum2, buffer_misaligned+1, 1048576);
+    fletcher32_ssse3(&sum1, &sum2, buffer_misaligned + 1, 1048576);
 
     fletcher32 = (sum2 << 16) | sum1;
 
@@ -465,4 +467,5 @@ TEST_F(fletcher32Fixture, fletcher32_ssse3_2352bytes)
 
     EXPECT_EQ(fletcher32, EXPECTED_FLETCHER32_2352BYTES);
 }
+
 #endif

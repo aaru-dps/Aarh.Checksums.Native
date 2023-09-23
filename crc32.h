@@ -270,7 +270,7 @@ AARU_EXPORT void AARU_CALL       crc32_slicing(uint32_t* previous_crc, const uin
 
 #if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
-AARU_EXPORT CLMUL uint32_t AARU_CALL crc32_clmul(uint32_t previous_crc, const uint8_t* data, long len);
+AARU_EXPORT TARGET_WITH_CLMUL uint32_t AARU_CALL crc32_clmul(uint32_t previous_crc, const uint8_t* data, long len);
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
@@ -279,7 +279,7 @@ AARU_EXPORT TARGET_ARMV8_WITH_CRC uint32_t AARU_CALL armv8_crc32_little(uint32_t
                                                                         const uint8_t* data,
                                                                         uint32_t       len);
 #endif
-AARU_EXPORT TARGET_WITH_SIMD uint32_t AARU_CALL crc32_vmull(uint32_t previous_crc, const uint8_t* data, long len);
+AARU_EXPORT TARGET_WITH_NEON uint32_t AARU_CALL crc32_vmull(uint32_t previous_crc, const uint8_t* data, long len);
 #endif
 
 #endif // AARU_CHECKSUMS_NATIVE_CRC32_H

@@ -16,19 +16,19 @@
 #define EXPECTED_ADLER32_63BYTES 0xD8AC2081
 #define EXPECTED_ADLER32_2352BYTES 0xECD1738B
 
-static const uint8_t* buffer;
-static const uint8_t* buffer_misaligned;
+static const uint8_t *buffer;
+static const uint8_t *buffer_misaligned;
 
 class adler32Fixture : public ::testing::Test
 {
-  public:
+public:
     adler32Fixture()
     {
         // initialization;
         // can also be done in SetUp()
     }
 
-  protected:
+protected:
     void SetUp()
     {
         char path[PATH_MAX];
@@ -37,18 +37,19 @@ class adler32Fixture : public ::testing::Test
         getcwd(path, PATH_MAX);
         snprintf(filename, PATH_MAX, "%s/data/random", path);
 
-        FILE* file = fopen(filename, "rb");
-        buffer     = (const uint8_t*)malloc(1048576);
-        fread((void*)buffer, 1, 1048576, file);
+        FILE *file = fopen(filename, "rb");
+        buffer = (const uint8_t *)malloc(1048576);
+        fread((void *)buffer, 1, 1048576, file);
         fclose(file);
 
-        buffer_misaligned = (const uint8_t*)malloc(1048577);
-        memcpy((void*)(buffer_misaligned + 1), buffer, 1048576);
+        buffer_misaligned = (const uint8_t *)malloc(1048577);
+        memcpy((void *)(buffer_misaligned + 1), buffer, 1048576);
     }
 
-    void TearDown() {
-        free((void*)buffer);
-        free((void*)buffer_misaligned);
+    void TearDown()
+    {
+        free((void *)buffer);
+        free((void *)buffer_misaligned);
     }
 
     ~adler32Fixture()
@@ -61,8 +62,8 @@ class adler32Fixture : public ::testing::Test
 
 TEST_F(adler32Fixture, adler32_auto)
 {
-    adler32_ctx* ctx = adler32_init();
-    uint32_t     adler32;
+    adler32_ctx *ctx = adler32_init();
+    uint32_t    adler32;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -90,12 +91,12 @@ TEST_F(adler32Fixture, adler32_slicing)
 
 TEST_F(adler32Fixture, adler32_auto_misaligned)
 {
-    adler32_ctx* ctx = adler32_init();
-    uint32_t     adler32;
+    adler32_ctx *ctx = adler32_init();
+    uint32_t    adler32;
 
     EXPECT_NE(ctx, nullptr);
 
-    adler32_update(ctx, buffer_misaligned+1, 1048576);
+    adler32_update(ctx, buffer_misaligned + 1, 1048576);
     adler32_final(ctx, &adler32);
 
     EXPECT_EQ(adler32, EXPECTED_ADLER32);
@@ -110,7 +111,7 @@ TEST_F(adler32Fixture, adler32_slicing_misaligned)
     sum1 = 1;
     sum2 = 0;
 
-    adler32_slicing(&sum1, &sum2, buffer_misaligned+1, 1048576);
+    adler32_slicing(&sum1, &sum2, buffer_misaligned + 1, 1048576);
 
     adler32 = (sum2 << 16) | sum1;
 
@@ -119,8 +120,8 @@ TEST_F(adler32Fixture, adler32_slicing_misaligned)
 
 TEST_F(adler32Fixture, adler32_auto_15bytes)
 {
-    adler32_ctx* ctx = adler32_init();
-    uint32_t     adler32;
+    adler32_ctx *ctx = adler32_init();
+    uint32_t    adler32;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -148,8 +149,8 @@ TEST_F(adler32Fixture, adler32_slicing_15bytes)
 
 TEST_F(adler32Fixture, adler32_auto_31bytes)
 {
-    adler32_ctx* ctx = adler32_init();
-    uint32_t     adler32;
+    adler32_ctx *ctx = adler32_init();
+    uint32_t    adler32;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -177,8 +178,8 @@ TEST_F(adler32Fixture, adler32_slicing_31bytes)
 
 TEST_F(adler32Fixture, adler32_auto_63bytes)
 {
-    adler32_ctx* ctx = adler32_init();
-    uint32_t     adler32;
+    adler32_ctx *ctx = adler32_init();
+    uint32_t    adler32;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -206,8 +207,8 @@ TEST_F(adler32Fixture, adler32_slicing_63bytes)
 
 TEST_F(adler32Fixture, adler32_auto_2352bytes)
 {
-    adler32_ctx* ctx = adler32_init();
-    uint32_t     adler32;
+    adler32_ctx *ctx = adler32_init();
+    uint32_t    adler32;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -263,7 +264,7 @@ TEST_F(adler32Fixture, adler32_neon_misaligned)
     sum1 = 1;
     sum2 = 0;
 
-    adler32_neon(&sum1, &sum2, buffer_misaligned+1, 1048576);
+    adler32_neon(&sum1, &sum2, buffer_misaligned + 1, 1048576);
 
     adler32 = (sum2 << 16) | sum1;
 
@@ -341,9 +342,10 @@ TEST_F(adler32Fixture, adler32_neon_2352bytes)
 
     EXPECT_EQ(adler32, EXPECTED_ADLER32_2352BYTES);
 }
+
 #endif
 
-#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) || \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 
 TEST_F(adler32Fixture, adler32_avx2)
@@ -393,7 +395,7 @@ TEST_F(adler32Fixture, adler32_avx2_misaligned)
     sum1 = 1;
     sum2 = 0;
 
-    adler32_avx2(&sum1, &sum2, buffer_misaligned+1, 1048576);
+    adler32_avx2(&sum1, &sum2, buffer_misaligned + 1, 1048576);
 
     adler32 = (sum2 << 16) | sum1;
 
@@ -411,7 +413,7 @@ TEST_F(adler32Fixture, adler32_ssse3_misaligned)
     sum1 = 1;
     sum2 = 0;
 
-    adler32_ssse3(&sum1, &sum2, buffer_misaligned+1, 1048576);
+    adler32_ssse3(&sum1, &sum2, buffer_misaligned + 1, 1048576);
 
     adler32 = (sum2 << 16) | sum1;
 
@@ -561,4 +563,5 @@ TEST_F(adler32Fixture, adler32_ssse3_2352bytes)
 
     EXPECT_EQ(adler32, EXPECTED_ADLER32_2352BYTES);
 }
+
 #endif

@@ -31,9 +31,9 @@
  *
  * @return Pointer to a structure containing the checksum state.
  */
-AARU_EXPORT crc16_ccitt_ctx* AARU_CALL crc16_ccitt_init(void)
+AARU_EXPORT crc16_ccitt_ctx *AARU_CALL crc16_ccitt_init(void)
 {
-    crc16_ccitt_ctx* ctx = (crc16_ccitt_ctx*)malloc(sizeof(crc16_ccitt_ctx));
+    crc16_ccitt_ctx *ctx = (crc16_ccitt_ctx *)malloc(sizeof(crc16_ccitt_ctx));
 
     if(!ctx) return NULL;
 
@@ -56,7 +56,7 @@ AARU_EXPORT crc16_ccitt_ctx* AARU_CALL crc16_ccitt_init(void)
  *
  * @returns 0 on success, -1 on error.
  */
-AARU_EXPORT int AARU_CALL crc16_ccitt_update(crc16_ccitt_ctx* ctx, const uint8_t* data, uint32_t len)
+AARU_EXPORT int AARU_CALL crc16_ccitt_update(crc16_ccitt_ctx *ctx, const uint8_t *data, uint32_t len)
 {
     // Unroll according to Intel slicing by uint8_t
     // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
@@ -64,11 +64,11 @@ AARU_EXPORT int AARU_CALL crc16_ccitt_update(crc16_ccitt_ctx* ctx, const uint8_t
 
     if(!ctx || !data) return -1;
 
-    uint16_t       crc;
-    const uint8_t* current_char     = (const uint8_t*)data;
-    const size_t   unroll           = 4;
-    const size_t   bytes_at_once    = 8 * unroll;
-    uintptr_t      unaligned_length = (4 - (((uintptr_t)current_char) & 3)) & 3;
+    uint16_t crc;
+    const uint8_t *current_char = data;
+    const size_t unroll           = 4;
+    const size_t bytes_at_once    = 8 * unroll;
+    uintptr_t    unaligned_length = (4 - (((uintptr_t)current_char) & 3)) & 3;
 
     crc = ctx->crc;
 
@@ -113,7 +113,7 @@ AARU_EXPORT int AARU_CALL crc16_ccitt_update(crc16_ccitt_ctx* ctx, const uint8_t
  *
  * @returns 0 on success, -1 on error.
  */
-AARU_EXPORT int AARU_CALL crc16_ccitt_final(crc16_ccitt_ctx* ctx, uint16_t* crc)
+AARU_EXPORT int AARU_CALL crc16_ccitt_final(crc16_ccitt_ctx *ctx, uint16_t *crc)
 {
     if(!ctx) return -1;
 
@@ -130,7 +130,7 @@ AARU_EXPORT int AARU_CALL crc16_ccitt_final(crc16_ccitt_ctx* ctx, uint16_t* crc)
  *
  * @param ctx The CRC-16 checksum context structure, to be freed.
  */
-AARU_EXPORT void AARU_CALL crc16_ccitt_free(crc16_ccitt_ctx* ctx)
+AARU_EXPORT void AARU_CALL crc16_ccitt_free(crc16_ccitt_ctx *ctx)
 {
     if(ctx) free(ctx);
 }

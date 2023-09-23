@@ -42,9 +42,9 @@ AARU_EXPORT adler32_ctx *AARU_CALL adler32_init()
 {
     adler32_ctx *ctx;
 
-    ctx = (adler32_ctx *) malloc(sizeof(adler32_ctx));
+    ctx = (adler32_ctx *)malloc(sizeof(adler32_ctx));
 
-    if (!ctx) return NULL;
+    if(!ctx) return NULL;
 
     ctx->sum1 = 1;
     ctx->sum2 = 0;
@@ -65,10 +65,10 @@ AARU_EXPORT adler32_ctx *AARU_CALL adler32_init()
  */
 AARU_EXPORT int AARU_CALL adler32_update(adler32_ctx *ctx, const uint8_t *data, uint32_t len)
 {
-    if (!ctx || !data) return -1;
+    if(!ctx || !data) return -1;
 
 #if defined(__aarch64__) || defined(_M_ARM64) || ((defined(__arm__) || defined(_M_ARM)) && !defined(__MINGW32__))
-    if (have_neon())
+    if(have_neon())
     {
         adler32_neon(&ctx->sum1, &ctx->sum2, data, len);
 
@@ -110,16 +110,15 @@ AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t *sum1, uint16_t *sum2, const
 {
     uint32_t s1 = *sum1;
     uint32_t s2 = *sum2;
-
     unsigned n;
 
     /* in case user likes doing a byte at a time, keep it fast */
-    if (len == 1)
+    if(len == 1)
     {
         s1 += data[0];
-        if (s1 >= ADLER_MODULE) s1 -= ADLER_MODULE;
+        if(s1 >= ADLER_MODULE) s1 -= ADLER_MODULE;
         s2 += s1;
-        if (s2 >= ADLER_MODULE) s2 -= ADLER_MODULE;
+        if(s2 >= ADLER_MODULE) s2 -= ADLER_MODULE;
 
         *sum1 = s1 & 0xFFFF;
         *sum2 = s2 & 0xFFFF;
@@ -128,14 +127,14 @@ AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t *sum1, uint16_t *sum2, const
     }
 
     /* in case short lengths are provided, keep it somewhat fast */
-    if (len < 16)
+    if(len < 16)
     {
-        while (len--)
+        while(len--)
         {
             s1 += *data++;
             s2 += s1;
         }
-        if (s1 >= ADLER_MODULE) s1 -= ADLER_MODULE;
+        if(s1 >= ADLER_MODULE) s1 -= ADLER_MODULE;
         s2 %= ADLER_MODULE; /* only added so many ADLER_MODULE's */
         *sum1 = s1 & 0xFFFF;
         *sum2 = s2 & 0xFFFF;
@@ -144,95 +143,95 @@ AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t *sum1, uint16_t *sum2, const
     }
 
     /* do length NMAX blocks -- requires just one modulo operation */
-    while (len >= NMAX)
+    while(len >= NMAX)
     {
         len -= NMAX;
         n = NMAX / 16; /* NMAX is divisible by 16 */
         do
         {
-            s1 += (data)[0];
+            s1 += data[0];
             s2 += s1;
-            s1 += (data)[0 + 1];
+            s1 += data[0 + 1];
             s2 += s1;
-            s1 += (data)[0 + 2];
+            s1 += data[0 + 2];
             s2 += s1;
-            s1 += (data)[0 + 2 + 1];
+            s1 += data[0 + 2 + 1];
             s2 += s1;
-            s1 += (data)[0 + 4];
+            s1 += data[0 + 4];
             s2 += s1;
-            s1 += (data)[0 + 4 + 1];
+            s1 += data[0 + 4 + 1];
             s2 += s1;
-            s1 += (data)[0 + 4 + 2];
+            s1 += data[0 + 4 + 2];
             s2 += s1;
-            s1 += (data)[0 + 4 + 2 + 1];
+            s1 += data[0 + 4 + 2 + 1];
             s2 += s1;
-            s1 += (data)[8];
+            s1 += data[8];
             s2 += s1;
-            s1 += (data)[8 + 1];
+            s1 += data[8 + 1];
             s2 += s1;
-            s1 += (data)[8 + 2];
+            s1 += data[8 + 2];
             s2 += s1;
-            s1 += (data)[8 + 2 + 1];
+            s1 += data[8 + 2 + 1];
             s2 += s1;
-            s1 += (data)[8 + 4];
+            s1 += data[8 + 4];
             s2 += s1;
-            s1 += (data)[8 + 4 + 1];
+            s1 += data[8 + 4 + 1];
             s2 += s1;
-            s1 += (data)[8 + 4 + 2];
+            s1 += data[8 + 4 + 2];
             s2 += s1;
-            s1 += (data)[8 + 4 + 2 + 1];
+            s1 += data[8 + 4 + 2 + 1];
             s2 += s1;
 
             /* 16 sums unrolled */
             data += 16;
         }
-        while (--n);
+        while(--n);
         s1 %= ADLER_MODULE;
         s2 %= ADLER_MODULE;
     }
 
     /* do remaining bytes (less than NMAX, still just one modulo) */
-    if (len)
+    if(len)
     { /* avoid modulos if none remaining */
-        while (len >= 16)
+        while(len >= 16)
         {
             len -= 16;
-            s1 += (data)[0];
+            s1 += data[0];
             s2 += s1;
-            s1 += (data)[0 + 1];
+            s1 += data[0 + 1];
             s2 += s1;
-            s1 += (data)[0 + 2];
+            s1 += data[0 + 2];
             s2 += s1;
-            s1 += (data)[0 + 2 + 1];
+            s1 += data[0 + 2 + 1];
             s2 += s1;
-            s1 += (data)[0 + 4];
+            s1 += data[0 + 4];
             s2 += s1;
-            s1 += (data)[0 + 4 + 1];
+            s1 += data[0 + 4 + 1];
             s2 += s1;
-            s1 += (data)[0 + 4 + 2];
+            s1 += data[0 + 4 + 2];
             s2 += s1;
-            s1 += (data)[0 + 4 + 2 + 1];
+            s1 += data[0 + 4 + 2 + 1];
             s2 += s1;
-            s1 += (data)[8];
+            s1 += data[8];
             s2 += s1;
-            s1 += (data)[8 + 1];
+            s1 += data[8 + 1];
             s2 += s1;
-            s1 += (data)[8 + 2];
+            s1 += data[8 + 2];
             s2 += s1;
-            s1 += (data)[8 + 2 + 1];
+            s1 += data[8 + 2 + 1];
             s2 += s1;
-            s1 += (data)[8 + 4];
+            s1 += data[8 + 4];
             s2 += s1;
-            s1 += (data)[8 + 4 + 1];
+            s1 += data[8 + 4 + 1];
             s2 += s1;
-            s1 += (data)[8 + 4 + 2];
+            s1 += data[8 + 4 + 2];
             s2 += s1;
-            s1 += (data)[8 + 4 + 2 + 1];
+            s1 += data[8 + 4 + 2 + 1];
             s2 += s1;
 
             data += 16;
         }
-        while (len--)
+        while(len--)
         {
             s1 += *data++;
             s2 += s1;
@@ -258,7 +257,7 @@ AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t *sum1, uint16_t *sum2, const
  */
 AARU_EXPORT int AARU_CALL adler32_final(adler32_ctx *ctx, uint32_t *checksum)
 {
-    if (!ctx) return -1;
+    if(!ctx) return -1;
 
     *checksum = (ctx->sum2 << 16) | ctx->sum1;
     return 0;
@@ -274,7 +273,7 @@ AARU_EXPORT int AARU_CALL adler32_final(adler32_ctx *ctx, uint32_t *checksum)
  */
 AARU_EXPORT void AARU_CALL adler32_free(adler32_ctx *ctx)
 {
-    if (!ctx) return;
+    if(!ctx) return;
 
     free(ctx);
 }

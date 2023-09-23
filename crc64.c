@@ -32,10 +32,9 @@
  *
  * @return Pointer to a structure containing the checksum state.
  */
-AARU_EXPORT crc64_ctx* AARU_CALL crc64_init(void)
+AARU_EXPORT crc64_ctx *AARU_CALL crc64_init(void)
 {
-    int        i, slice;
-    crc64_ctx* ctx = (crc64_ctx*)malloc(sizeof(crc64_ctx));
+    crc64_ctx *ctx = (crc64_ctx *)malloc(sizeof(crc64_ctx));
 
     if(!ctx) return NULL;
 
@@ -58,11 +57,11 @@ AARU_EXPORT crc64_ctx* AARU_CALL crc64_init(void)
  *
  * @returns 0 on success, -1 on error.
  */
-AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx* ctx, const uint8_t* data, uint32_t len)
+AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx *ctx, const uint8_t *data, uint32_t len)
 {
     if(!ctx || !data) return -1;
 
-#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) || \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
     if(have_clmul())
     {
@@ -88,17 +87,17 @@ AARU_EXPORT int AARU_CALL crc64_update(crc64_ctx* ctx, const uint8_t* data, uint
     return 0;
 }
 
-AARU_EXPORT void AARU_CALL crc64_slicing(uint64_t* previous_crc, const uint8_t* data, uint32_t len)
+AARU_EXPORT void AARU_CALL crc64_slicing(uint64_t *previous_crc, const uint8_t *data, uint32_t len)
 {
     uint64_t c = *previous_crc;
 
     if(len > 4)
     {
-        const uint8_t* limit;
+        const uint8_t *limit;
 
-        while((uintptr_t)(data)&3)
+        while((uintptr_t)(data) & 3)
         {
-            c = crc64_table[0][*data++ ^ ((c)&0xFF)] ^ ((c) >> 8);
+            c = crc64_table[0][*data++ ^ (c & 0xFF)] ^ (c >> 8);
             --len;
         }
 
@@ -107,15 +106,15 @@ AARU_EXPORT void AARU_CALL crc64_slicing(uint64_t* previous_crc, const uint8_t* 
 
         while(data < limit)
         {
-            const uint32_t tmp = c ^ *(const uint32_t*)(data);
+            const uint32_t tmp = c ^ *(const uint32_t *)(data);
             data += 4;
 
-            c = crc64_table[3][((tmp)&0xFF)] ^ crc64_table[2][(((tmp) >> 8) & 0xFF)] ^ ((c) >> 32) ^
-                crc64_table[1][(((tmp) >> 16) & 0xFF)] ^ crc64_table[0][((tmp) >> 24)];
+            c = crc64_table[3][tmp & 0xFF] ^ crc64_table[2][(tmp >> 8) & 0xFF] ^ (c >> 32) ^
+                crc64_table[1][tmp >> 16 & 0xFF] ^ crc64_table[0][tmp >> 24];
         }
     }
 
-    while(len-- != 0) c = crc64_table[0][*data++ ^ ((c)&0xFF)] ^ ((c) >> 8);
+    while(len-- != 0) c = crc64_table[0][*data++ ^ (c & 0xFF)] ^ (c >> 8);
 
     *previous_crc = c;
 }
@@ -131,7 +130,7 @@ AARU_EXPORT void AARU_CALL crc64_slicing(uint64_t* previous_crc, const uint8_t* 
  *
  * @returns 0 on success, -1 on error.
  */
-AARU_EXPORT int AARU_CALL crc64_final(crc64_ctx* ctx, uint64_t* crc)
+AARU_EXPORT int AARU_CALL crc64_final(crc64_ctx *ctx, uint64_t *crc)
 {
     if(!ctx) return -1;
 
@@ -148,7 +147,7 @@ AARU_EXPORT int AARU_CALL crc64_final(crc64_ctx* ctx, uint64_t* crc)
  *
  * @param ctx The CRC-64 checksum context structure, to be freed.
  */
-AARU_EXPORT void AARU_CALL crc64_free(crc64_ctx* ctx)
+AARU_EXPORT void AARU_CALL crc64_free(crc64_ctx *ctx)
 {
     if(ctx) free(ctx);
 }

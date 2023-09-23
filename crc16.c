@@ -31,9 +31,9 @@
  *
  * @return Pointer to a structure containing the checksum state.
  */
-AARU_EXPORT crc16_ctx* AARU_CALL crc16_init(void)
+AARU_EXPORT crc16_ctx *AARU_CALL crc16_init(void)
 {
-    crc16_ctx* ctx = (crc16_ctx*)malloc(sizeof(crc16_ctx));
+    crc16_ctx *ctx = (crc16_ctx *)malloc(sizeof(crc16_ctx));
 
     if(!ctx) return NULL;
 
@@ -56,7 +56,7 @@ AARU_EXPORT crc16_ctx* AARU_CALL crc16_init(void)
  *
  * @returns 0 on success, -1 on error.
  */
-AARU_EXPORT int AARU_CALL crc16_update(crc16_ctx* ctx, const uint8_t* data, uint32_t len)
+AARU_EXPORT int AARU_CALL crc16_update(crc16_ctx *ctx, const uint8_t *data, uint32_t len)
 {
     // Unroll according to Intel slicing by uint8_t
     // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
@@ -64,12 +64,12 @@ AARU_EXPORT int AARU_CALL crc16_update(crc16_ctx* ctx, const uint8_t* data, uint
 
     if(!ctx || !data) return -1;
 
-    uint16_t        crc;
-    const uint32_t* current;
-    const uint8_t*  current_char     = (const uint8_t*)data;
-    const size_t    unroll           = 4;
-    const size_t    bytes_at_once    = 8 * unroll;
-    uintptr_t       unaligned_length = (4 - (((uintptr_t)current_char) & 3)) & 3;
+    uint16_t       crc;
+    const uint32_t *current;
+    const uint8_t  *current_char    = data;
+    const size_t   unroll           = 4;
+    const size_t   bytes_at_once    = 8 * unroll;
+    uintptr_t      unaligned_length = (4 - (((uintptr_t)current_char) & 3)) & 3;
 
     crc = ctx->crc;
 
@@ -80,7 +80,7 @@ AARU_EXPORT int AARU_CALL crc16_update(crc16_ctx* ctx, const uint8_t* data, uint
         unaligned_length--;
     }
 
-    current = (const uint32_t*)current_char;
+    current = (const uint32_t *)current_char;
 
     while(len >= bytes_at_once)
     {
@@ -89,6 +89,7 @@ AARU_EXPORT int AARU_CALL crc16_update(crc16_ctx* ctx, const uint8_t* data, uint
         {
             uint32_t one = *current++ ^ crc;
             uint32_t two = *current++;
+
             // TODO: Big endian!
             crc = crc16_table[0][(two >> 24) & 0xFF] ^ crc16_table[1][(two >> 16) & 0xFF] ^
                   crc16_table[2][(two >> 8) & 0xFF] ^ crc16_table[3][two & 0xFF] ^ crc16_table[4][(one >> 24) & 0xFF] ^
@@ -98,7 +99,7 @@ AARU_EXPORT int AARU_CALL crc16_update(crc16_ctx* ctx, const uint8_t* data, uint
         len -= bytes_at_once;
     }
 
-    current_char = (const uint8_t*)current;
+    current_char = (const uint8_t *)current;
 
     while(len-- != 0) crc = (crc >> 8) ^ crc16_table[0][(crc & 0xFF) ^ *current_char++];
 
@@ -117,7 +118,7 @@ AARU_EXPORT int AARU_CALL crc16_update(crc16_ctx* ctx, const uint8_t* data, uint
  *
  * @returns 0 on success, -1 on error.
  */
-AARU_EXPORT int AARU_CALL crc16_final(crc16_ctx* ctx, uint16_t* crc)
+AARU_EXPORT int AARU_CALL crc16_final(crc16_ctx *ctx, uint16_t *crc)
 {
     if(!ctx) return -1;
 
@@ -134,7 +135,7 @@ AARU_EXPORT int AARU_CALL crc16_final(crc16_ctx* ctx, uint16_t* crc)
  *
  * @param ctx The CRC-16 checksum context structure, to be freed.
  */
-AARU_EXPORT void AARU_CALL crc16_free(crc16_ctx* ctx)
+AARU_EXPORT void AARU_CALL crc16_free(crc16_ctx *ctx)
 {
     if(ctx) free(ctx);
 }

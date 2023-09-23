@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) || \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 
 #include <stdint.h>
@@ -41,16 +41,17 @@
 
 
 /**
- * @brief Calculate Adler-32 checksum for a given data using SSSE3 instructions.
+ * @brief Calculate Adler-32 checksum for a given data using TARGET_WITH_SSSE3 instructions.
  *
- * This function calculates the Adler-32 checksum for a block of data using SSSE3 vector instructions.
+ * This function calculates the Adler-32 checksum for a block of data using TARGET_WITH_SSSE3 vector instructions.
  *
  * @param sum1 Pointer to the variable where the first 16-bit checksum value is stored.
  * @param sum2 Pointer to the variable where the second 16-bit checksum value is stored.
  * @param data Pointer to the data buffer.
  * @param len Length of the data buffer in bytes.
  */
-AARU_EXPORT SSSE3 void AARU_CALL adler32_ssse3(uint16_t* sum1, uint16_t* sum2, const uint8_t* data, long len)
+AARU_EXPORT TARGET_WITH_SSSE3 void AARU_CALL
+adler32_ssse3(uint16_t *sum1, uint16_t *sum2, const uint8_t *data, long len)
 {
     uint32_t s1 = *sum1;
     uint32_t s2 = *sum2;
@@ -74,15 +75,16 @@ AARU_EXPORT SSSE3 void AARU_CALL adler32_ssse3(uint16_t* sum1, uint16_t* sum2, c
          * Process n blocks of data. At most NMAX data bytes can be
          * processed before s2 must be reduced modulo BASE.
          */
-        __m128i v_ps = _mm_set_epi32(0, 0, 0, s1 * n);
-        __m128i v_s2 = _mm_set_epi32(0, 0, 0, s2);
-        __m128i v_s1 = _mm_set_epi32(0, 0, 0, 0);
-        do {
+        __m128i       v_ps = _mm_set_epi32(0, 0, 0, s1 * n);
+        __m128i       v_s2 = _mm_set_epi32(0, 0, 0, s2);
+        __m128i       v_s1 = _mm_set_epi32(0, 0, 0, 0);
+        do
+        {
             /*
              * Load 32 input bytes.
              */
-            const __m128i bytes1 = _mm_loadu_si128((__m128i*)(data));
-            const __m128i bytes2 = _mm_loadu_si128((__m128i*)(data + 16));
+            const __m128i bytes1 = _mm_loadu_si128((__m128i *)(data));
+            const __m128i bytes2 = _mm_loadu_si128((__m128i *)(data + 16));
             /*
              * Add previous block byte sum to v_ps.
              */
@@ -91,15 +93,16 @@ AARU_EXPORT SSSE3 void AARU_CALL adler32_ssse3(uint16_t* sum1, uint16_t* sum2, c
              * Horizontally add the bytes for s1, multiply-adds the
              * bytes by [ 32, 31, 30, ... ] for s2.
              */
-            v_s1               = _mm_add_epi32(v_s1, _mm_sad_epu8(bytes1, zero));
+            v_s1 = _mm_add_epi32(v_s1, _mm_sad_epu8(bytes1, zero));
             const __m128i mad1 = _mm_maddubs_epi16(bytes1, tap1);
-            v_s2               = _mm_add_epi32(v_s2, _mm_madd_epi16(mad1, ones));
-            v_s1               = _mm_add_epi32(v_s1, _mm_sad_epu8(bytes2, zero));
+            v_s2 = _mm_add_epi32(v_s2, _mm_madd_epi16(mad1, ones));
+            v_s1 = _mm_add_epi32(v_s1, _mm_sad_epu8(bytes2, zero));
             const __m128i mad2 = _mm_maddubs_epi16(bytes2, tap2);
-            v_s2               = _mm_add_epi32(v_s2, _mm_madd_epi16(mad2, ones));
+            v_s2 = _mm_add_epi32(v_s2, _mm_madd_epi16(mad2, ones));
             data += BLOCK_SIZE;
-        } while(--n);
-        v_s2 = _mm_add_epi32(v_s2, _mm_slli_epi32(v_ps, 5));
+        }
+        while(--n);
+        v_s2               = _mm_add_epi32(v_s2, _mm_slli_epi32(v_ps, 5));
         /*
          * Sum epi32 ints v_s1(s2) and accumulate in s1(s2).
          */
@@ -144,7 +147,8 @@ AARU_EXPORT SSSE3 void AARU_CALL adler32_ssse3(uint16_t* sum1, uint16_t* sum2, c
             s2 += (s1 += *data++);
             len -= 16;
         }
-        while(len--) { s2 += (s1 += *data++); }
+        while(len--)
+        { s2 += (s1 += *data++); }
         if(s1 >= ADLER_MODULE) s1 -= ADLER_MODULE;
         s2 %= ADLER_MODULE;
     }

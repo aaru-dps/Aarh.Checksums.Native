@@ -37,8 +37,8 @@ AARU_EXPORT void AARU_CALL            fletcher32_free(fletcher32_ctx* ctx);
 #if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 
-AARU_EXPORT AVX2 void AARU_CALL  fletcher32_avx2(uint16_t* sum1, uint16_t* sum2, const uint8_t* data, long len);
-AARU_EXPORT SSSE3 void AARU_CALL fletcher32_ssse3(uint16_t* sum1, uint16_t* sum2, const uint8_t* data, long len);
+AARU_EXPORT TARGET_WITH_AVX2 void AARU_CALL  fletcher32_avx2(uint16_t* sum1, uint16_t* sum2, const uint8_t* data, long len);
+AARU_EXPORT TARGET_WITH_SSSE3 void AARU_CALL fletcher32_ssse3(uint16_t* sum1, uint16_t* sum2, const uint8_t* data, long len);
 
 #endif
 

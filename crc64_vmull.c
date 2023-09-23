@@ -17,26 +17,36 @@
 #include "crc64.h"
 
 static const uint8_t shuffleMasks[] = {
-    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-    0x8f, 0x8e, 0x8d, 0x8c, 0x8b, 0x8a, 0x89, 0x88, 0x87, 0x86, 0x85, 0x84, 0x83, 0x82, 0x81, 0x80,
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+        0x8f, 0x8e, 0x8d, 0x8c, 0x8b, 0x8a, 0x89, 0x88, 0x87, 0x86, 0x85, 0x84, 0x83, 0x82, 0x81, 0x80,
 };
 
-TARGET_WITH_SIMD FORCE_INLINE void shiftRight128(uint64x2_t in, size_t n, uint64x2_t* outLeft, uint64x2_t* outRight)
+TARGET_WITH_NEON FORCE_INLINE void shiftRight128(uint64x2_t in, size_t n, uint64x2_t *outLeft, uint64x2_t *outRight)
 {
     const uint64x2_t maskA =
-        vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)(const uint64x2_t*)(shuffleMasks + (16 - n))));
+                             vreinterpretq_u64_u32(
+                                     vld1q_u32((const uint32_t *)(const uint64x2_t *)(shuffleMasks + (16 - n))));
     uint64x2_t       b     = vreinterpretq_u64_u8(vceqq_u8(vreinterpretq_u8_u64(vreinterpretq_u64_u32(vdupq_n_u32(0))),
-                                                 vreinterpretq_u8_u64(vreinterpretq_u64_u32(vdupq_n_u32(0)))));
+                                                           vreinterpretq_u8_u64(
+                                                                   vreinterpretq_u64_u32(vdupq_n_u32(0)))));
     const uint64x2_t maskB = vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(maskA), vreinterpretq_u32_u64(b)));
 
     *outLeft  = mm_shuffle_epi8(in, maskB);
     *outRight = mm_shuffle_epi8(in, maskA);
 }
 
-TARGET_WITH_SIMD FORCE_INLINE uint64x2_t fold(uint64x2_t in, uint64x2_t foldConstants)
+TARGET_WITH_NEON FORCE_INLINE uint64x2_t
+fold                          (uint64x2_t
+in,
+uint64x2_t foldConstants
+)
 {
-    return veorq_u64(sse2neon_vmull_p64(vget_low_u64(in), vget_low_u64(foldConstants)),
-                     sse2neon_vmull_p64(vget_high_u64(in), vget_high_u64(foldConstants)));
+return
+
+veorq_u64(sse2neon_vmull_p64(vget_low_u64(in), vget_low_u64(foldConstants)),
+        sse2neon_vmull_p64(vget_high_u64(in), vget_high_u64(foldConstants))
+
+);
 }
 
 /**
@@ -53,7 +63,7 @@ TARGET_WITH_SIMD FORCE_INLINE uint64x2_t fold(uint64x2_t in, uint64x2_t foldCons
  *
  * @return The CRC-64 checksum of the given data.
  */
-AARU_EXPORT TARGET_WITH_SIMD uint64_t AARU_CALL crc64_vmull(uint64_t previous_crc, const uint8_t* data, long len)
+AARU_EXPORT TARGET_WITH_NEON uint64_t AARU_CALL crc64_vmull(uint64_t previous_crc, const uint8_t *data, long len)
 {
     const uint64_t k1 = 0xe05dd497ca393ae4; // bitReflect(expMod65(128 + 64, poly, 1)) << 1;
     const uint64_t k2 = 0xdabe95afc7875f40; // bitReflect(expMod65(128, poly, 1)) << 1;
@@ -63,26 +73,28 @@ AARU_EXPORT TARGET_WITH_SIMD uint64_t AARU_CALL crc64_vmull(uint64_t previous_cr
     const uint64x2_t foldConstants1 = vcombine_u64(vcreate_u64(k1), vcreate_u64(k2));
     const uint64x2_t foldConstants2 = vcombine_u64(vcreate_u64(mu), vcreate_u64(p));
 
-    const uint8_t* end = data + len;
+    const uint8_t *end = data + len;
 
     // Align pointers
-    const uint64x2_t* alignedData = (const uint64x2_t*)((uintptr_t)data & ~(uintptr_t)15);
-    const uint64x2_t* alignedEnd  = (const uint64x2_t*)(((uintptr_t)end + 15) & ~(uintptr_t)15);
+    const uint64x2_t *alignedData = (const uint64x2_t *)((uintptr_t)data & ~(uintptr_t)15);
+    const uint64x2_t *alignedEnd  = (const uint64x2_t *)(((uintptr_t)end + 15) & ~(uintptr_t)15);
 
-    const size_t leadInSize  = data - (const uint8_t*)alignedData;
-    const size_t leadOutSize = (const uint8_t*)alignedEnd - end;
+    const size_t leadInSize  = data - (const uint8_t *)alignedData;
+    const size_t leadOutSize = (const uint8_t *)alignedEnd - end;
 
     const size_t alignedLength = alignedEnd - alignedData;
 
     const uint64x2_t leadInMask =
-        vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)(const uint64x2_t*)(shuffleMasks + (16 - leadInSize))));
-    uint64x2_t a = vreinterpretq_u64_u32(vdupq_n_u32(0));
-    uint64x2_t b = vreinterpretq_u64_u32(
-        vld1q_u32((const uint32_t*)alignedData)); // Use a signed shift right to create a mask with the sign bit
-    const uint64x2_t data0 =
-        vreinterpretq_u64_u8(vbslq_u8(vreinterpretq_u8_s8(vshrq_n_s8(vreinterpretq_s8_u64(leadInMask), 7)),
-                                      vreinterpretq_u8_u64(b),
-                                      vreinterpretq_u8_u64(a)));
+                             vreinterpretq_u64_u32(vld1q_u32(
+                                     (const uint32_t *)(const uint64x2_t *)(shuffleMasks + (16 - leadInSize))));
+    uint64x2_t       a          = vreinterpretq_u64_u32(vdupq_n_u32(0));
+    uint64x2_t       b          = vreinterpretq_u64_u32(
+            vld1q_u32((const uint32_t *)alignedData)); // Use a signed shift right to create a mask with the sign bit
+    const uint64x2_t data0      =
+                             vreinterpretq_u64_u8(
+                                     vbslq_u8(vreinterpretq_u8_s8(vshrq_n_s8(vreinterpretq_s8_u64(leadInMask), 7)),
+                                              vreinterpretq_u8_u64(b),
+                                              vreinterpretq_u8_u64(a)));
 
     const uint64x2_t initialCrc = vsetq_lane_u64(~previous_crc, vdupq_n_u64(0), 0);
 
@@ -97,12 +109,12 @@ AARU_EXPORT TARGET_WITH_SIMD uint64_t AARU_CALL crc64_vmull(uint64_t previous_cr
         shiftRight128(data0, leadOutSize, &A, &B);
 
         const uint64x2_t P = veorq_u64(A, crc0);
-        R                  = veorq_u64(sse2neon_vmull_p64(vget_low_u64(P), vget_high_u64(foldConstants1)),
+        R = veorq_u64(sse2neon_vmull_p64(vget_low_u64(P), vget_high_u64(foldConstants1)),
                       veorq_u64(mm_srli_si128(P, 8), mm_slli_si128(crc1, 8)));
     }
     else if(alignedLength == 2)
     {
-        const uint64x2_t data1 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)(alignedData + 1)));
+        const uint64x2_t data1 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t *)(alignedData + 1)));
 
         if(len < 8)
         {
@@ -115,7 +127,7 @@ AARU_EXPORT TARGET_WITH_SIMD uint64_t AARU_CALL crc64_vmull(uint64_t previous_cr
             shiftRight128(data1, leadOutSize, &C, &D);
 
             const uint64x2_t P = veorq_u64(veorq_u64(B, C), crc0);
-            R                  = veorq_u64(sse2neon_vmull_p64(vget_low_u64(P), vget_high_u64(foldConstants1)),
+            R = veorq_u64(sse2neon_vmull_p64(vget_low_u64(P), vget_high_u64(foldConstants1)),
                           veorq_u64(mm_srli_si128(P, 8), mm_slli_si128(crc1, 8)));
         }
         else
@@ -145,7 +157,7 @@ AARU_EXPORT TARGET_WITH_SIMD uint64_t AARU_CALL crc64_vmull(uint64_t previous_cr
 
         while(len >= 32)
         {
-            accumulator = fold(veorq_u64(vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)alignedData)), accumulator),
+            accumulator = fold(veorq_u64(vreinterpretq_u64_u32(vld1q_u32((const uint32_t *)alignedData)), accumulator),
                                foldConstants1);
 
             len -= 16;
@@ -153,12 +165,13 @@ AARU_EXPORT TARGET_WITH_SIMD uint64_t AARU_CALL crc64_vmull(uint64_t previous_cr
         }
 
         uint64x2_t P;
-        if(len == 16) P = veorq_u64(accumulator, vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)alignedData)));
+        if(len == 16) P = veorq_u64(accumulator, vreinterpretq_u64_u32(vld1q_u32((const uint32_t *)alignedData)));
         else
         {
             const uint64x2_t end0 =
-                veorq_u64(accumulator, vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)alignedData)));
-            const uint64x2_t end1 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t*)(alignedData + 1)));
+                                     veorq_u64(accumulator,
+                                               vreinterpretq_u64_u32(vld1q_u32((const uint32_t *)alignedData)));
+            const uint64x2_t end1 = vreinterpretq_u64_u32(vld1q_u32((const uint32_t *)(alignedData + 1)));
 
             uint64x2_t A, B, C, D;
             shiftRight128(end0, leadOutSize, &A, &B);
@@ -174,7 +187,7 @@ AARU_EXPORT TARGET_WITH_SIMD uint64_t AARU_CALL crc64_vmull(uint64_t previous_cr
     // Final Barrett reduction
     const uint64x2_t T1 = sse2neon_vmull_p64(vget_low_u64(R), vget_low_u64(foldConstants2));
     const uint64x2_t T2 = veorq_u64(
-        veorq_u64(sse2neon_vmull_p64(vget_low_u64(T1), vget_high_u64(foldConstants2)), mm_slli_si128(T1, 8)), R);
+            veorq_u64(sse2neon_vmull_p64(vget_low_u64(T1), vget_high_u64(foldConstants2)), mm_slli_si128(T1, 8)), R);
 
     return ~vgetq_lane_u64(T2, 1);
 }
