@@ -41,4 +41,10 @@ AARU_EXPORT TARGET_WITH_SSSE3 void AARU_CALL fletcher16_ssse3(uint8_t* sum1, uin
 
 #endif
 
+#if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+
+AARU_EXPORT TARGET_WITH_NEON void AARU_CALL fletcher16_neon(uint8_t* sum1, uint8_t* sum2, const uint8_t* data, uint32_t len);
+
+#endif
+
 #endif // AARU_CHECKSUMS_NATIVE_FLETCHER16_H
