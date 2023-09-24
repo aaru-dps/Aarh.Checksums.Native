@@ -48,123 +48,131 @@
  * @param data Pointer to the data buffer.
  * @param len Length of the data buffer in bytes.
  */
-TARGET_WITH_NEON void fletcher16_neon(uint8_t* sum1, uint8_t* sum2, const uint8_t* data, uint32_t len)
+TARGET_WITH_NEON void fletcher16_neon(uint8_t *sum1, uint8_t *sum2, const uint8_t *data, uint32_t len)
 {
     /*
      * Split Fletcher-16 into component sums.
      */
     uint32_t s1 = *sum1;
     uint32_t s2 = *sum2;
-    /*
-     * Serially compute s1 & s2, until the data is 16-byte aligned.
-     */
-    if((uintptr_t)data & 15)
-    {
-        while((uintptr_t)data & 15)
-        {
-            s2 += (s1 += *data++);
-            --len;
-        }
-        s1 %= FLETCHER16_MODULE;
-        s2 %= FLETCHER16_MODULE;
-    }
+
     /*
      * Process the data in blocks.
      */
     const unsigned BLOCK_SIZE = 1 << 5;
-    uint32_t       blocks     = len / BLOCK_SIZE;
-    len -= blocks * BLOCK_SIZE;
-    while(blocks)
+    if(len >= BLOCK_SIZE)
     {
-        unsigned n = NMAX / BLOCK_SIZE; /* The NMAX constraint. */
-        if(n > blocks) n = (unsigned)blocks;
-        blocks -= n;
         /*
-         * Process n blocks of data. At most NMAX data bytes can be
-         * processed before s2 must be reduced modulo FLETCHER16_MODULE.
+         * Serially compute s1 & s2, until the data is 16-byte aligned.
          */
+        if((uintptr_t)data & 15)
+        {
+            while((uintptr_t)data & 15)
+            {
+                s2 += (s1 += *data++);
+                --len;
+            }
+            s1 %= FLETCHER16_MODULE;
+            s2 %= FLETCHER16_MODULE;
+        }
+
+        uint32_t blocks = len / BLOCK_SIZE;
+        len -= blocks * BLOCK_SIZE;
+        while(blocks)
+        {
+            unsigned n = NMAX / BLOCK_SIZE; /* The NMAX constraint. */
+            if(n > blocks) n = (unsigned)blocks;
+            blocks -= n;
+            /*
+             * Process n blocks of data. At most NMAX data bytes can be
+             * processed before s2 must be reduced modulo FLETCHER16_MODULE.
+             */
 #ifdef _MSC_VER
-        uint32x4_t v_s2 = {.n128_u32 = {0, 0, 0, s1 * n}};
-        uint32x4_t v_s1 = {.n128_u32 = {0, 0, 0, 0}};
+            uint32x4_t v_s2 = {.n128_u32 = {0, 0, 0, s1 * n}};
+            uint32x4_t v_s1 = {.n128_u32 = {0, 0, 0, 0}};
 #else
-        uint32x4_t v_s2 = (uint32x4_t){0, 0, 0, s1 * n};
-        uint32x4_t v_s1 = (uint32x4_t){0, 0, 0, 0};
+            uint32x4_t v_s2 = (uint32x4_t){0, 0, 0, s1 * n};
+            uint32x4_t v_s1 = (uint32x4_t){0, 0, 0, 0};
 #endif
-        uint16x8_t v_column_sum_1 = vdupq_n_u16(0);
-        uint16x8_t v_column_sum_2 = vdupq_n_u16(0);
-        uint16x8_t v_column_sum_3 = vdupq_n_u16(0);
-        uint16x8_t v_column_sum_4 = vdupq_n_u16(0);
-        do {
+            uint16x8_t v_column_sum_1 = vdupq_n_u16(0);
+            uint16x8_t v_column_sum_2 = vdupq_n_u16(0);
+            uint16x8_t v_column_sum_3 = vdupq_n_u16(0);
+            uint16x8_t v_column_sum_4 = vdupq_n_u16(0);
+            do
+            {
+                /*
+                 * Load 32 input bytes.
+                 */
+                const uint8x16_t bytes1 = vld1q_u8((uint8_t *)(data));
+                const uint8x16_t bytes2 = vld1q_u8((uint8_t *)(data + 16));
+                /*
+                 * Add previous block byte sum to v_s2.
+                 */
+                v_s2           = vaddq_u32(v_s2, v_s1);
+                /*
+                 * Horizontally add the bytes for s1.
+                 */
+                v_s1           = vpadalq_u16(v_s1, vpadalq_u8(vpaddlq_u8(bytes1), bytes2));
+                /*
+                 * Vertically add the bytes for s2.
+                 */
+                v_column_sum_1 = vaddw_u8(v_column_sum_1, vget_low_u8(bytes1));
+                v_column_sum_2 = vaddw_u8(v_column_sum_2, vget_high_u8(bytes1));
+                v_column_sum_3 = vaddw_u8(v_column_sum_3, vget_low_u8(bytes2));
+                v_column_sum_4 = vaddw_u8(v_column_sum_4, vget_high_u8(bytes2));
+                data += BLOCK_SIZE;
+            }
+            while(--n);
+            v_s2                      = vshlq_n_u32(v_s2, 5);
             /*
-             * Load 32 input bytes.
+             * Multiply-add bytes by [ 32, 31, 30, ... ] for s2.
              */
-            const uint8x16_t bytes1 = vld1q_u8((uint8_t*)(data));
-            const uint8x16_t bytes2 = vld1q_u8((uint8_t*)(data + 16));
-            /*
-             * Add previous block byte sum to v_s2.
-             */
-            v_s2 = vaddq_u32(v_s2, v_s1);
-            /*
-             * Horizontally add the bytes for s1.
-             */
-            v_s1 = vpadalq_u16(v_s1, vpadalq_u8(vpaddlq_u8(bytes1), bytes2));
-            /*
-             * Vertically add the bytes for s2.
-             */
-            v_column_sum_1 = vaddw_u8(v_column_sum_1, vget_low_u8(bytes1));
-            v_column_sum_2 = vaddw_u8(v_column_sum_2, vget_high_u8(bytes1));
-            v_column_sum_3 = vaddw_u8(v_column_sum_3, vget_low_u8(bytes2));
-            v_column_sum_4 = vaddw_u8(v_column_sum_4, vget_high_u8(bytes2));
-            data += BLOCK_SIZE;
-        } while(--n);
-        v_s2 = vshlq_n_u32(v_s2, 5);
-        /*
-         * Multiply-add bytes by [ 32, 31, 30, ... ] for s2.
-         */
 #ifdef _MSC_VER
 #ifdef _M_ARM64
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_1), neon_ld1m_16((uint16_t[]){32, 31, 30, 29}));
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_1), neon_ld1m_16((uint16_t[]){28, 27, 26, 25}));
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_2), neon_ld1m_16((uint16_t[]){24, 23, 22, 21}));
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_2), neon_ld1m_16((uint16_t[]){20, 19, 18, 17}));
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_3), neon_ld1m_16((uint16_t[]){16, 15, 14, 13}));
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_3), neon_ld1m_16((uint16_t[]){12, 11, 10, 9}));
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_4), neon_ld1m_16((uint16_t[]){8, 7, 6, 5}));
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_4), neon_ld1m_16((uint16_t[]){4, 3, 2, 1}));
+            v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_1), neon_ld1m_16((uint16_t[]){32, 31, 30, 29}));
+            v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_1), neon_ld1m_16((uint16_t[]){28, 27, 26, 25}));
+            v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_2), neon_ld1m_16((uint16_t[]){24, 23, 22, 21}));
+            v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_2), neon_ld1m_16((uint16_t[]){20, 19, 18, 17}));
+            v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_3), neon_ld1m_16((uint16_t[]){16, 15, 14, 13}));
+            v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_3), neon_ld1m_16((uint16_t[]){12, 11, 10, 9}));
+            v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_4), neon_ld1m_16((uint16_t[]){8, 7, 6, 5}));
+            v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_4), neon_ld1m_16((uint16_t[]){4, 3, 2, 1}));
 #else
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_1), vld1_u16(((uint16_t[]){32, 31, 30, 29})));
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_1), vld1_u16(((uint16_t[]){28, 27, 26, 25})));
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_2), vld1_u16(((uint16_t[]){24, 23, 22, 21})));
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_2), vld1_u16(((uint16_t[]){20, 19, 18, 17})));
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_3), vld1_u16(((uint16_t[]){16, 15, 14, 13})));
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_3), vld1_u16(((uint16_t[]){12, 11, 10, 9})));
-        v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_4), vld1_u16(((uint16_t[]){8, 7, 6, 5})));
-        v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_4), vld1_u16(((uint16_t[]){4, 3, 2, 1})));
+            v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_1), vld1_u16(((uint16_t[]){32, 31, 30, 29})));
+            v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_1), vld1_u16(((uint16_t[]){28, 27, 26, 25})));
+            v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_2), vld1_u16(((uint16_t[]){24, 23, 22, 21})));
+            v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_2), vld1_u16(((uint16_t[]){20, 19, 18, 17})));
+            v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_3), vld1_u16(((uint16_t[]){16, 15, 14, 13})));
+            v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_3), vld1_u16(((uint16_t[]){12, 11, 10, 9})));
+            v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_4), vld1_u16(((uint16_t[]){8, 7, 6, 5})));
+            v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_4), vld1_u16(((uint16_t[]){4, 3, 2, 1})));
 #endif
 #else
-        v_s2            = vmlal_u16(v_s2, vget_low_u16(v_column_sum_1), (uint16x4_t){32, 31, 30, 29});
-        v_s2            = vmlal_u16(v_s2, vget_high_u16(v_column_sum_1), (uint16x4_t){28, 27, 26, 25});
-        v_s2            = vmlal_u16(v_s2, vget_low_u16(v_column_sum_2), (uint16x4_t){24, 23, 22, 21});
-        v_s2            = vmlal_u16(v_s2, vget_high_u16(v_column_sum_2), (uint16x4_t){20, 19, 18, 17});
-        v_s2            = vmlal_u16(v_s2, vget_low_u16(v_column_sum_3), (uint16x4_t){16, 15, 14, 13});
-        v_s2            = vmlal_u16(v_s2, vget_high_u16(v_column_sum_3), (uint16x4_t){12, 11, 10, 9});
-        v_s2            = vmlal_u16(v_s2, vget_low_u16(v_column_sum_4), (uint16x4_t){8, 7, 6, 5});
-        v_s2            = vmlal_u16(v_s2, vget_high_u16(v_column_sum_4), (uint16x4_t){4, 3, 2, 1});
+            v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_1), (uint16x4_t){32, 31, 30, 29});
+            v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_1), (uint16x4_t){28, 27, 26, 25});
+            v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_2), (uint16x4_t){24, 23, 22, 21});
+            v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_2), (uint16x4_t){20, 19, 18, 17});
+            v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_3), (uint16x4_t){16, 15, 14, 13});
+            v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_3), (uint16x4_t){12, 11, 10, 9});
+            v_s2 = vmlal_u16(v_s2, vget_low_u16(v_column_sum_4), (uint16x4_t){8, 7, 6, 5});
+            v_s2 = vmlal_u16(v_s2, vget_high_u16(v_column_sum_4), (uint16x4_t){4, 3, 2, 1});
 #endif
-        /*
-         * Sum epi32 ints v_s1(s2) and accumulate in s1(s2).
-         */
-        uint32x2_t sum1 = vpadd_u32(vget_low_u32(v_s1), vget_high_u32(v_s1));
-        uint32x2_t sum2 = vpadd_u32(vget_low_u32(v_s2), vget_high_u32(v_s2));
-        uint32x2_t s1s2 = vpadd_u32(sum1, sum2);
-        s1 += vget_lane_u32(s1s2, 0);
-        s2 += vget_lane_u32(s1s2, 1);
-        /*
-         * Reduce.
-         */
-        s1 %= FLETCHER16_MODULE;
-        s2 %= FLETCHER16_MODULE;
+            /*
+             * Sum epi32 ints v_s1(s2) and accumulate in s1(s2).
+             */
+            uint32x2_t sum1 = vpadd_u32(vget_low_u32(v_s1), vget_high_u32(v_s1));
+            uint32x2_t sum2 = vpadd_u32(vget_low_u32(v_s2), vget_high_u32(v_s2));
+            uint32x2_t s1s2 = vpadd_u32(sum1, sum2);
+            s1 += vget_lane_u32(s1s2, 0);
+            s2 += vget_lane_u32(s1s2, 1);
+            /*
+             * Reduce.
+             */
+            s1 %= FLETCHER16_MODULE;
+            s2 %= FLETCHER16_MODULE;
+        }
     }
+
     /*
      * Handle leftover data.
      */
@@ -190,10 +198,12 @@ TARGET_WITH_NEON void fletcher16_neon(uint8_t* sum1, uint8_t* sum2, const uint8_
             s2 += (s1 += *data++);
             len -= 16;
         }
-        while(len--) { s2 += (s1 += *data++); }
+        while(len--)
+        { s2 += (s1 += *data++); }
         s1 %= FLETCHER16_MODULE;
         s2 %= FLETCHER16_MODULE;
     }
+
     /*
      * Return the recombined sums.
      */
