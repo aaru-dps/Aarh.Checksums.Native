@@ -11,6 +11,9 @@
 #include "gtest/gtest.h"
 
 #define EXPECTED_FLETCHER16 0x3357
+#define EXPECTED_FLETCHER16_1BYTE 0xAFAF
+#define EXPECTED_FLETCHER16_5BYTES 0x1F16
+#define EXPECTED_FLETCHER16_7BYTES 0x865B
 #define EXPECTED_FLETCHER16_15BYTES 0x0282
 #define EXPECTED_FLETCHER16_31BYTES 0xABB7
 #define EXPECTED_FLETCHER16_63BYTES 0x1CA0
@@ -84,6 +87,45 @@ TEST_F(fletcher16Fixture, fletcher16_auto_misaligned)
     fletcher16_final(ctx, &fletcher);
 
     EXPECT_EQ(fletcher, EXPECTED_FLETCHER16);
+}
+
+TEST_F(fletcher16Fixture, fletcher16_auto_1byte)
+{
+    fletcher16_ctx* ctx = fletcher16_init();
+    uint16_t        fletcher;
+
+    EXPECT_NE(ctx, nullptr);
+
+    fletcher16_update(ctx, buffer, 1);
+    fletcher16_final(ctx, &fletcher);
+
+    EXPECT_EQ(fletcher, EXPECTED_FLETCHER16_1BYTE);
+}
+
+TEST_F(fletcher16Fixture, fletcher16_auto_5bytes)
+{
+    fletcher16_ctx* ctx = fletcher16_init();
+    uint16_t        fletcher;
+
+    EXPECT_NE(ctx, nullptr);
+
+    fletcher16_update(ctx, buffer, 5);
+    fletcher16_final(ctx, &fletcher);
+
+    EXPECT_EQ(fletcher, EXPECTED_FLETCHER16_5BYTES);
+}
+
+TEST_F(fletcher16Fixture, fletcher16_auto_7bytes)
+{
+    fletcher16_ctx* ctx = fletcher16_init();
+    uint16_t        fletcher;
+
+    EXPECT_NE(ctx, nullptr);
+
+    fletcher16_update(ctx, buffer, 7);
+    fletcher16_final(ctx, &fletcher);
+
+    EXPECT_EQ(fletcher, EXPECTED_FLETCHER16_7BYTES);
 }
 
 TEST_F(fletcher16Fixture, fletcher16_auto_15bytes)
