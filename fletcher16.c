@@ -91,7 +91,7 @@ AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx *ctx, const uint8_t *
             sum1 += *data++;
             sum2 += sum1;
         }
-        if(sum1 >= FLETCHER16_MODULE) sum1 -= FLETCHER16_MODULE;
+        sum1 %= FLETCHER16_MODULE;
         sum2 %= FLETCHER16_MODULE; /* only added so many FLETCHER16_MODULE's */
         ctx->sum1 = sum1 & 0xFF;
         ctx->sum2 = sum2 & 0xFF;
