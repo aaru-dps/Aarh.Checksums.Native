@@ -180,6 +180,152 @@ TEST_F(fletcher16Fixture, fletcher16_auto_2352bytes)
     EXPECT_EQ(fletcher, EXPECTED_FLETCHER16_2352BYTES);
 }
 
+#if defined(__aarch64__) || defined(_M_ARM64) || ((defined(__arm__) || defined(_M_ARM)) && !defined(_WIN32))
+TEST_F(fletcher16Fixture, fletcher16_neon)
+{
+    if(!have_neon()) return;
+
+    uint8_t sum1;
+    uint8_t sum2;
+    uint32_t fletcher16;
+
+    sum1 = 0xFF;
+    sum2 = 0xFF;
+
+    fletcher16_neon(&sum1, &sum2, buffer, 1048576);
+
+    fletcher16 = (sum2 << 8) | sum1;
+
+    EXPECT_EQ(fletcher16, EXPECTED_FLETCHER16);
+}
+
+TEST_F(fletcher16Fixture, fletcher16_neon_misaligned)
+{
+    if(!have_neon()) return;
+
+    uint8_t sum1;
+    uint8_t sum2;
+    uint32_t fletcher16;
+
+    sum1 = 0xFF;
+    sum2 = 0xFF;
+
+    fletcher16_neon(&sum1, &sum2, buffer_misaligned + 1, 1048576);
+
+    fletcher16 = (sum2 << 8) | sum1;
+
+    EXPECT_EQ(fletcher16, EXPECTED_FLETCHER16);
+}
+
+TEST_F(fletcher16Fixture, fletcher16_neon_1byte)
+{
+    if(!have_neon()) return;
+
+    uint8_t  sum1;
+    uint8_t  sum2;
+    uint32_t fletcher16;
+
+    sum1 = 0xFF;
+    sum2 = 0xFF;
+
+    fletcher16_neon(&sum1, &sum2, buffer, 1);
+
+    fletcher16 = (sum2 << 8) | sum1;
+
+    EXPECT_EQ(fletcher16, EXPECTED_FLETCHER16_1BYTE);
+}
+
+TEST_F(fletcher16Fixture, fletcher16_neon_7bytes)
+{
+    if(!have_neon()) return;
+
+    uint8_t  sum1;
+    uint8_t  sum2;
+    uint32_t fletcher16;
+
+    sum1 = 0xFF;
+    sum2 = 0xFF;
+
+    fletcher16_neon(&sum1, &sum2, buffer, 7);
+
+    fletcher16 = (sum2 << 8) | sum1;
+
+    EXPECT_EQ(fletcher16, EXPECTED_FLETCHER16_7BYTES);
+}
+
+TEST_F(fletcher16Fixture, fletcher16_neon_15bytes)
+{
+    if(!have_neon()) return;
+
+    uint8_t sum1;
+    uint8_t sum2;
+    uint32_t fletcher16;
+
+    sum1 = 0xFF;
+    sum2 = 0xFF;
+
+    fletcher16_neon(&sum1, &sum2, buffer, 15);
+
+    fletcher16 = (sum2 << 8) | sum1;
+
+    EXPECT_EQ(fletcher16, EXPECTED_FLETCHER16_15BYTES);
+}
+
+TEST_F(fletcher16Fixture, fletcher16_neon_31bytes)
+{
+    if(!have_neon()) return;
+
+    uint8_t sum1;
+    uint8_t sum2;
+    uint32_t fletcher16;
+
+    sum1 = 0xFF;
+    sum2 = 0xFF;
+
+    fletcher16_neon(&sum1, &sum2, buffer, 31);
+
+    fletcher16 = (sum2 << 8) | sum1;
+
+    EXPECT_EQ(fletcher16, EXPECTED_FLETCHER16_31BYTES);
+}
+
+TEST_F(fletcher16Fixture, fletcher16_neon_63bytes)
+{
+    if(!have_neon()) return;
+
+    uint8_t sum1;
+    uint8_t sum2;
+    uint32_t fletcher16;
+
+    sum1 = 0xFF;
+    sum2 = 0xFF;
+
+    fletcher16_neon(&sum1, &sum2, buffer, 63);
+
+    fletcher16 = (sum2 << 8) | sum1;
+
+    EXPECT_EQ(fletcher16, EXPECTED_FLETCHER16_63BYTES);
+}
+
+TEST_F(fletcher16Fixture, fletcher16_neon_2352bytes)
+{
+    if(!have_neon()) return;
+
+    uint8_t sum1;
+    uint8_t sum2;
+    uint32_t fletcher16;
+
+    sum1 = 0xFF;
+    sum2 = 0xFF;
+
+    fletcher16_neon(&sum1, &sum2, buffer, 2352);
+
+    fletcher16 = (sum2 << 8) | sum1;
+
+    EXPECT_EQ(fletcher16, EXPECTED_FLETCHER16_2352BYTES);
+}
+#endif
+
 #if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 

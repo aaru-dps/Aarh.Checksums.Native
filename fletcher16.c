@@ -66,6 +66,15 @@ AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx *ctx, const uint8_t *
 {
     if(!ctx || !data) return -1;
 
+#if defined(__aarch64__) || defined(_M_ARM64) || ((defined(__arm__) || defined(_M_ARM)) && !defined(__MINGW32__))
+    if(have_neon())
+    {
+        fletcher16_neon(&ctx->sum1, &ctx->sum2, data, len);
+
+        return 0;
+    }
+#endif
+
 #if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
     if(have_ssse3())
