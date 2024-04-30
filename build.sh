@@ -164,7 +164,7 @@ mv flags.make ./CMakeFiles/Aaru.Checksums.Native.dir/flags.make
 sed -e 's/\-soname,libAaru\.Checksums\.Native\.so//g' ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt > link.txt
 mv link.txt ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt
 docker/dockcross-win-arm make
-mv libAaru.Checksums.Native.so runtimes/win-arm/native/libAaru.Checksums.Native.dll
+mv libAaru.Checksums.Native.dll runtimes/win-arm/native/
 
 ## Windows (ARM64)
 # Detected system processor: aarch64
@@ -180,7 +180,7 @@ mv flags.make ./CMakeFiles/Aaru.Checksums.Native.dir/flags.make
 sed -e 's/\-soname,libAaru\.Checksums\.Native\.so//g' ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt > link.txt
 mv link.txt ./CMakeFiles/Aaru.Checksums.Native.dir/link.txt
 docker/dockcross-win-arm64 make
-mv libAaru.Checksums.Native.so runtimes/win-arm64/native/libAaru.Checksums.Native.dll
+mv libAaru.Checksums.Native.dll runtimes/win-arm64/native/
 
 ## Windows (AMD64)
 # Detected system processor: x86_64
