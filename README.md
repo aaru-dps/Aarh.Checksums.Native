@@ -6,9 +6,11 @@ The purpose of this library is to provide checksums and hashing algorithms for A
 
 No archiver processing code should fall here, those go in [Aaru.Checksums](https://github.com/aaru-dps/Aaru.Checksums).
 
-To build you just need Docker on Linux and run `build.sh`, that will generate a NuGet package for use with Aaru.Checksums.
+To build you just need Docker on Linux and run `build.sh`, that will generate a NuGet package for use with
+Aaru.Checksums.
 
 Currently implemented algorithms are:
+
 - Adler-32
 - CRC-16 (CCITT and IBM polynomials)
 - CRC-32 (ISO polynomial)

@@ -10,10 +10,10 @@
 #include "../crc64.h"
 #include "gtest/gtest.h"
 
-#define EXPECTED_CRC64 0xbf09992cc5ede38e
-#define EXPECTED_CRC64_15BYTES 0x797F3766FD93975B
-#define EXPECTED_CRC64_31BYTES 0xCD9201905A7937FD
-#define EXPECTED_CRC64_63BYTES 0x29F331FC90702BF4
+#define EXPECTED_CRC64           0xbf09992cc5ede38e
+#define EXPECTED_CRC64_15BYTES   0x797F3766FD93975B
+#define EXPECTED_CRC64_31BYTES   0xCD9201905A7937FD
+#define EXPECTED_CRC64_63BYTES   0x29F331FC90702BF4
 #define EXPECTED_CRC64_2352BYTES 0x126435DB43477623
 
 static const uint8_t *buffer;
@@ -38,7 +38,7 @@ protected:
         snprintf(filename, PATH_MAX, "%s/data/random", path);
 
         FILE *file = fopen(filename, "rb");
-        buffer = (const uint8_t *)malloc(1048576);
+        buffer     = (const uint8_t *)malloc(1048576);
         fread((void *)buffer, 1, 1048576, file);
         fclose(file);
 
@@ -63,7 +63,7 @@ protected:
 TEST_F(crc64Fixture, crc64_auto)
 {
     crc64_ctx *ctx = crc64_init();
-    uint64_t  crc;
+    uint64_t   crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -87,7 +87,7 @@ TEST_F(crc64Fixture, crc64_slicing)
 TEST_F(crc64Fixture, crc64_auto_misaligned)
 {
     crc64_ctx *ctx = crc64_init();
-    uint64_t  crc;
+    uint64_t   crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -111,7 +111,7 @@ TEST_F(crc64Fixture, crc64_slicing_misaligned)
 TEST_F(crc64Fixture, crc64_auto_15bytes)
 {
     crc64_ctx *ctx = crc64_init();
-    uint64_t  crc;
+    uint64_t   crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -135,7 +135,7 @@ TEST_F(crc64Fixture, crc64_slicing_15bytes)
 TEST_F(crc64Fixture, crc64_auto_31bytes)
 {
     crc64_ctx *ctx = crc64_init();
-    uint64_t  crc;
+    uint64_t   crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -159,7 +159,7 @@ TEST_F(crc64Fixture, crc64_slicing_31bytes)
 TEST_F(crc64Fixture, crc64_auto_63bytes)
 {
     crc64_ctx *ctx = crc64_init();
-    uint64_t  crc;
+    uint64_t   crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -183,7 +183,7 @@ TEST_F(crc64Fixture, crc64_slicing_63bytes)
 TEST_F(crc64Fixture, crc64_auto_2352bytes)
 {
     crc64_ctx *ctx = crc64_init();
-    uint64_t  crc;
+    uint64_t   crc;
 
     EXPECT_NE(ctx, nullptr);
 

@@ -56,8 +56,8 @@ static uint64_t div129by65(uint64_t poly)
 }
 
 static const uint8_t shuffleMasks[] = {
-        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-        0x8f, 0x8e, 0x8d, 0x8c, 0x8b, 0x8a, 0x89, 0x88, 0x87, 0x86, 0x85, 0x84, 0x83, 0x82, 0x81, 0x80,
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+    0x8f, 0x8e, 0x8d, 0x8c, 0x8b, 0x8a, 0x89, 0x88, 0x87, 0x86, 0x85, 0x84, 0x83, 0x82, 0x81, 0x80,
 };
 
 TARGET_WITH_CLMUL static void shiftRight128(__m128i in, size_t n, __m128i *outLeft, __m128i *outRight)
@@ -85,10 +85,10 @@ TARGET_WITH_CLMUL static __m128i fold(__m128i in, __m128i foldConstants)
  */
 AARU_EXPORT TARGET_WITH_CLMUL uint64_t AARU_CALL crc64_clmul(uint64_t crc, const uint8_t *data, long length)
 {
-    const uint64_t k1 = 0xe05dd497ca393ae4; // bitReflect(expMod65(128 + 64, poly, 1)) << 1;
-    const uint64_t k2 = 0xdabe95afc7875f40; // bitReflect(expMod65(128, poly, 1)) << 1;
-    const uint64_t mu = 0x9c3e466c172963d5; // (bitReflect(div129by65(poly)) << 1) | 1;
-    const uint64_t p  = 0x92d8af2baf0e1e85; // (bitReflect(poly) << 1) | 1;
+    const uint64_t k1 = 0xe05dd497ca393ae4;  // bitReflect(expMod65(128 + 64, poly, 1)) << 1;
+    const uint64_t k2 = 0xdabe95afc7875f40;  // bitReflect(expMod65(128, poly, 1)) << 1;
+    const uint64_t mu = 0x9c3e466c172963d5;  // (bitReflect(div129by65(poly)) << 1) | 1;
+    const uint64_t p  = 0x92d8af2baf0e1e85;  // (bitReflect(poly) << 1) | 1;
 
     const __m128i foldConstants1 = _mm_set_epi64x(k2, k1);
     const __m128i foldConstants2 = _mm_set_epi64x(p, mu);
@@ -124,8 +124,8 @@ AARU_EXPORT TARGET_WITH_CLMUL uint64_t AARU_CALL crc64_clmul(uint64_t crc, const
         shiftRight128(data0, leadOutSize, &A, &B);
 
         const __m128i P = _mm_xor_si128(A, crc0);
-        R = _mm_xor_si128(_mm_clmulepi64_si128(P, foldConstants1, 0x10),
-                          _mm_xor_si128(_mm_srli_si128(P, 8), _mm_slli_si128(crc1, 8)));
+        R               = _mm_xor_si128(_mm_clmulepi64_si128(P, foldConstants1, 0x10),
+                                        _mm_xor_si128(_mm_srli_si128(P, 8), _mm_slli_si128(crc1, 8)));
     }
     else if(alignedLength == 2)
     {
@@ -142,8 +142,8 @@ AARU_EXPORT TARGET_WITH_CLMUL uint64_t AARU_CALL crc64_clmul(uint64_t crc, const
             shiftRight128(data1, leadOutSize, &C, &D);
 
             const __m128i P = _mm_xor_si128(_mm_xor_si128(B, C), crc0);
-            R = _mm_xor_si128(_mm_clmulepi64_si128(P, foldConstants1, 0x10),
-                              _mm_xor_si128(_mm_srli_si128(P, 8), _mm_slli_si128(crc1, 8)));
+            R               = _mm_xor_si128(_mm_clmulepi64_si128(P, foldConstants1, 0x10),
+                                            _mm_xor_si128(_mm_srli_si128(P, 8), _mm_slli_si128(crc1, 8)));
         }
         else
         {
@@ -156,7 +156,7 @@ AARU_EXPORT TARGET_WITH_CLMUL uint64_t AARU_CALL crc64_clmul(uint64_t crc, const
             shiftRight128(_mm_xor_si128(data1, crc1), leadOutSize, &C, &D);
 
             const __m128i P = _mm_xor_si128(fold(A, foldConstants1), _mm_xor_si128(B, C));
-            R = _mm_xor_si128(_mm_clmulepi64_si128(P, foldConstants1, 0x10), _mm_srli_si128(P, 8));
+            R               = _mm_xor_si128(_mm_clmulepi64_si128(P, foldConstants1, 0x10), _mm_srli_si128(P, 8));
         }
     }
     else
@@ -179,8 +179,7 @@ AARU_EXPORT TARGET_WITH_CLMUL uint64_t AARU_CALL crc64_clmul(uint64_t crc, const
         }
 
         __m128i P;
-        if(length == 16)
-        { P = _mm_xor_si128(accumulator, _mm_load_si128(alignedData)); }
+        if(length == 16) { P = _mm_xor_si128(accumulator, _mm_load_si128(alignedData)); }
         else
         {
             const __m128i end0 = _mm_xor_si128(accumulator, _mm_load_si128(alignedData));
@@ -199,9 +198,7 @@ AARU_EXPORT TARGET_WITH_CLMUL uint64_t AARU_CALL crc64_clmul(uint64_t crc, const
     // Final Barrett reduction
     const __m128i T1 = _mm_clmulepi64_si128(R, foldConstants2, 0x00);
     const __m128i T2 =
-                          _mm_xor_si128(
-                                  _mm_xor_si128(_mm_clmulepi64_si128(T1, foldConstants2, 0x10), _mm_slli_si128(T1, 8)),
-                                  R);
+        _mm_xor_si128(_mm_xor_si128(_mm_clmulepi64_si128(T1, foldConstants2, 0x10), _mm_slli_si128(T1, 8)), R);
 
 #if defined(_WIN64)
     return ~_mm_extract_epi64(T2, 1);

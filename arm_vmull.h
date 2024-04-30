@@ -29,4 +29,4 @@ TARGET_WITH_NEON uint64x2_t          mm_slli_si128(uint64x2_t a, int imm);
 
 #endif
 
-#endif // AARU_CHECKSUMS_NATIVE_ARM_VMULL_H
+#endif  // AARU_CHECKSUMS_NATIVE_ARM_VMULL_H

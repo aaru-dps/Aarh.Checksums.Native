@@ -262,24 +262,23 @@ static const uint32_t crc32_table[8][256] = {
 #define CRC32_ISO_POLY 0xEDB88320
 #define CRC32_ISO_SEED 0xFFFFFFFF
 
-AARU_EXPORT crc32_ctx* AARU_CALL crc32_init();
-AARU_EXPORT int AARU_CALL        crc32_update(crc32_ctx* ctx, const uint8_t* data, uint32_t len);
-AARU_EXPORT int AARU_CALL        crc32_final(crc32_ctx* ctx, uint32_t* crc);
-AARU_EXPORT void AARU_CALL       crc32_free(crc32_ctx* ctx);
-AARU_EXPORT void AARU_CALL       crc32_slicing(uint32_t* previous_crc, const uint8_t* data, long len);
+AARU_EXPORT crc32_ctx *AARU_CALL crc32_init();
+AARU_EXPORT int AARU_CALL        crc32_update(crc32_ctx *ctx, const uint8_t *data, uint32_t len);
+AARU_EXPORT int AARU_CALL        crc32_final(crc32_ctx *ctx, uint32_t *crc);
+AARU_EXPORT void AARU_CALL       crc32_free(crc32_ctx *ctx);
+AARU_EXPORT void AARU_CALL       crc32_slicing(uint32_t *previous_crc, const uint8_t *data, long len);
 
-#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) || \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
-AARU_EXPORT TARGET_WITH_CLMUL uint32_t AARU_CALL crc32_clmul(uint32_t previous_crc, const uint8_t* data, long len);
+AARU_EXPORT TARGET_WITH_CLMUL uint32_t AARU_CALL crc32_clmul(uint32_t previous_crc, const uint8_t *data, long len);
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 #if __ARM_ARCH >= 7
-AARU_EXPORT TARGET_ARMV8_WITH_CRC uint32_t AARU_CALL armv8_crc32_little(uint32_t       previous_crc,
-                                                                        const uint8_t* data,
-                                                                        uint32_t       len);
+AARU_EXPORT TARGET_ARMV8_WITH_CRC uint32_t AARU_CALL armv8_crc32_little(uint32_t previous_crc, const uint8_t *data,
+                                                                        uint32_t len);
 #endif
-AARU_EXPORT TARGET_WITH_NEON uint32_t AARU_CALL crc32_vmull(uint32_t previous_crc, const uint8_t* data, long len);
+AARU_EXPORT TARGET_WITH_NEON uint32_t AARU_CALL crc32_vmull(uint32_t previous_crc, const uint8_t *data, long len);
 #endif
 
-#endif // AARU_CHECKSUMS_NATIVE_CRC32_H
+#endif  // AARU_CHECKSUMS_NATIVE_CRC32_H

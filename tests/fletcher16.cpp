@@ -10,13 +10,13 @@
 #include "../fletcher16.h"
 #include "gtest/gtest.h"
 
-#define EXPECTED_FLETCHER16 0x3357
-#define EXPECTED_FLETCHER16_1BYTE 0xAFAF
-#define EXPECTED_FLETCHER16_5BYTES 0x1F16
-#define EXPECTED_FLETCHER16_7BYTES 0x865B
-#define EXPECTED_FLETCHER16_15BYTES 0x0282
-#define EXPECTED_FLETCHER16_31BYTES 0xABB7
-#define EXPECTED_FLETCHER16_63BYTES 0x1CA0
+#define EXPECTED_FLETCHER16           0x3357
+#define EXPECTED_FLETCHER16_1BYTE     0xAFAF
+#define EXPECTED_FLETCHER16_5BYTES    0x1F16
+#define EXPECTED_FLETCHER16_7BYTES    0x865B
+#define EXPECTED_FLETCHER16_15BYTES   0x0282
+#define EXPECTED_FLETCHER16_31BYTES   0xABB7
+#define EXPECTED_FLETCHER16_63BYTES   0x1CA0
 #define EXPECTED_FLETCHER16_2352BYTES 0x0AC5
 
 static const uint8_t *buffer;
@@ -41,7 +41,7 @@ protected:
         snprintf(filename, PATH_MAX, "%s/data/random", path);
 
         FILE *file = fopen(filename, "rb");
-        buffer = (const uint8_t *)malloc(1048576);
+        buffer     = (const uint8_t *)malloc(1048576);
         fread((void *)buffer, 1, 1048576, file);
         fclose(file);
 
@@ -66,7 +66,7 @@ protected:
 TEST_F(fletcher16Fixture, fletcher16_auto)
 {
     fletcher16_ctx *ctx = fletcher16_init();
-    uint16_t fletcher;
+    uint16_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -79,7 +79,7 @@ TEST_F(fletcher16Fixture, fletcher16_auto)
 TEST_F(fletcher16Fixture, fletcher16_auto_misaligned)
 {
     fletcher16_ctx *ctx = fletcher16_init();
-    uint16_t fletcher;
+    uint16_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -91,7 +91,7 @@ TEST_F(fletcher16Fixture, fletcher16_auto_misaligned)
 
 TEST_F(fletcher16Fixture, fletcher16_auto_1byte)
 {
-    fletcher16_ctx* ctx = fletcher16_init();
+    fletcher16_ctx *ctx = fletcher16_init();
     uint16_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
@@ -104,7 +104,7 @@ TEST_F(fletcher16Fixture, fletcher16_auto_1byte)
 
 TEST_F(fletcher16Fixture, fletcher16_auto_5bytes)
 {
-    fletcher16_ctx* ctx = fletcher16_init();
+    fletcher16_ctx *ctx = fletcher16_init();
     uint16_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
@@ -117,7 +117,7 @@ TEST_F(fletcher16Fixture, fletcher16_auto_5bytes)
 
 TEST_F(fletcher16Fixture, fletcher16_auto_7bytes)
 {
-    fletcher16_ctx* ctx = fletcher16_init();
+    fletcher16_ctx *ctx = fletcher16_init();
     uint16_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
@@ -131,7 +131,7 @@ TEST_F(fletcher16Fixture, fletcher16_auto_7bytes)
 TEST_F(fletcher16Fixture, fletcher16_auto_15bytes)
 {
     fletcher16_ctx *ctx = fletcher16_init();
-    uint16_t fletcher;
+    uint16_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -144,7 +144,7 @@ TEST_F(fletcher16Fixture, fletcher16_auto_15bytes)
 TEST_F(fletcher16Fixture, fletcher16_auto_31bytes)
 {
     fletcher16_ctx *ctx = fletcher16_init();
-    uint16_t fletcher;
+    uint16_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -157,7 +157,7 @@ TEST_F(fletcher16Fixture, fletcher16_auto_31bytes)
 TEST_F(fletcher16Fixture, fletcher16_auto_63bytes)
 {
     fletcher16_ctx *ctx = fletcher16_init();
-    uint16_t fletcher;
+    uint16_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -170,7 +170,7 @@ TEST_F(fletcher16Fixture, fletcher16_auto_63bytes)
 TEST_F(fletcher16Fixture, fletcher16_auto_2352bytes)
 {
     fletcher16_ctx *ctx = fletcher16_init();
-    uint16_t fletcher;
+    uint16_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -185,8 +185,8 @@ TEST_F(fletcher16Fixture, fletcher16_neon)
 {
     if(!have_neon()) return;
 
-    uint8_t sum1;
-    uint8_t sum2;
+    uint8_t  sum1;
+    uint8_t  sum2;
     uint32_t fletcher16;
 
     sum1 = 0xFF;
@@ -203,8 +203,8 @@ TEST_F(fletcher16Fixture, fletcher16_neon_misaligned)
 {
     if(!have_neon()) return;
 
-    uint8_t sum1;
-    uint8_t sum2;
+    uint8_t  sum1;
+    uint8_t  sum2;
     uint32_t fletcher16;
 
     sum1 = 0xFF;
@@ -257,8 +257,8 @@ TEST_F(fletcher16Fixture, fletcher16_neon_15bytes)
 {
     if(!have_neon()) return;
 
-    uint8_t sum1;
-    uint8_t sum2;
+    uint8_t  sum1;
+    uint8_t  sum2;
     uint32_t fletcher16;
 
     sum1 = 0xFF;
@@ -275,8 +275,8 @@ TEST_F(fletcher16Fixture, fletcher16_neon_31bytes)
 {
     if(!have_neon()) return;
 
-    uint8_t sum1;
-    uint8_t sum2;
+    uint8_t  sum1;
+    uint8_t  sum2;
     uint32_t fletcher16;
 
     sum1 = 0xFF;
@@ -293,8 +293,8 @@ TEST_F(fletcher16Fixture, fletcher16_neon_63bytes)
 {
     if(!have_neon()) return;
 
-    uint8_t sum1;
-    uint8_t sum2;
+    uint8_t  sum1;
+    uint8_t  sum2;
     uint32_t fletcher16;
 
     sum1 = 0xFF;
@@ -311,8 +311,8 @@ TEST_F(fletcher16Fixture, fletcher16_neon_2352bytes)
 {
     if(!have_neon()) return;
 
-    uint8_t sum1;
-    uint8_t sum2;
+    uint8_t  sum1;
+    uint8_t  sum2;
     uint32_t fletcher16;
 
     sum1 = 0xFF;
@@ -326,7 +326,7 @@ TEST_F(fletcher16Fixture, fletcher16_neon_2352bytes)
 }
 #endif
 
-#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) || \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 
 TEST_F(fletcher16Fixture, fletcher16_avx2)
@@ -351,8 +351,8 @@ TEST_F(fletcher16Fixture, fletcher16_ssse3)
 {
     if(!have_ssse3()) return;
 
-    uint8_t sum1;
-    uint8_t sum2;
+    uint8_t  sum1;
+    uint8_t  sum2;
     uint32_t fletcher16;
 
     sum1 = 0xFF;
@@ -477,8 +477,8 @@ TEST_F(fletcher16Fixture, fletcher16_avx2_15bytes)
 {
     if(!have_avx2()) return;
 
-    uint8_t sum1;
-    uint8_t sum2;
+    uint8_t  sum1;
+    uint8_t  sum2;
     uint32_t fletcher16;
 
     sum1 = 0xFF;
@@ -513,8 +513,8 @@ TEST_F(fletcher16Fixture, fletcher16_avx2_31bytes)
 {
     if(!have_avx2()) return;
 
-    uint8_t sum1;
-    uint8_t sum2;
+    uint8_t  sum1;
+    uint8_t  sum2;
     uint32_t fletcher16;
 
     sum1 = 0xFF;
@@ -549,8 +549,8 @@ TEST_F(fletcher16Fixture, fletcher16_avx2_63bytes)
 {
     if(!have_avx2()) return;
 
-    uint8_t sum1;
-    uint8_t sum2;
+    uint8_t  sum1;
+    uint8_t  sum2;
     uint32_t fletcher16;
 
     sum1 = 0xFF;
@@ -585,8 +585,8 @@ TEST_F(fletcher16Fixture, fletcher16_avx2_2352bytes)
 {
     if(!have_avx2()) return;
 
-    uint8_t sum1;
-    uint8_t sum2;
+    uint8_t  sum1;
+    uint8_t  sum2;
     uint32_t fletcher16;
 
     sum1 = 0xFF;

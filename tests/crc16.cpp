@@ -10,10 +10,10 @@
 #include "../crc16.h"
 #include "gtest/gtest.h"
 
-#define EXPECTED_CRC16 0x2d6d
-#define EXPECTED_CRC16_15BYTES 0x72a6
-#define EXPECTED_CRC16_31BYTES 0xF49E
-#define EXPECTED_CRC16_63BYTES 0xFBD9
+#define EXPECTED_CRC16           0x2d6d
+#define EXPECTED_CRC16_15BYTES   0x72a6
+#define EXPECTED_CRC16_31BYTES   0xF49E
+#define EXPECTED_CRC16_63BYTES   0xFBD9
 #define EXPECTED_CRC16_2352BYTES 0x23F4
 
 static const uint8_t *buffer;
@@ -38,7 +38,7 @@ protected:
         snprintf(filename, PATH_MAX, "%s/data/random", path);
 
         FILE *file = fopen(filename, "rb");
-        buffer = (const uint8_t *)malloc(1048576);
+        buffer     = (const uint8_t *)malloc(1048576);
         fread((void *)buffer, 1, 1048576, file);
         fclose(file);
 
@@ -63,7 +63,7 @@ protected:
 TEST_F(crc16Fixture, crc16_auto)
 {
     crc16_ctx *ctx = crc16_init();
-    uint16_t crc;
+    uint16_t   crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -76,7 +76,7 @@ TEST_F(crc16Fixture, crc16_auto)
 TEST_F(crc16Fixture, crc16_auto_misaligned)
 {
     crc16_ctx *ctx = crc16_init();
-    uint16_t crc;
+    uint16_t   crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -89,7 +89,7 @@ TEST_F(crc16Fixture, crc16_auto_misaligned)
 TEST_F(crc16Fixture, crc16_auto_15bytes)
 {
     crc16_ctx *ctx = crc16_init();
-    uint16_t crc;
+    uint16_t   crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -102,7 +102,7 @@ TEST_F(crc16Fixture, crc16_auto_15bytes)
 TEST_F(crc16Fixture, crc16_auto_31bytes)
 {
     crc16_ctx *ctx = crc16_init();
-    uint16_t crc;
+    uint16_t   crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -115,7 +115,7 @@ TEST_F(crc16Fixture, crc16_auto_31bytes)
 TEST_F(crc16Fixture, crc16_auto_63bytes)
 {
     crc16_ctx *ctx = crc16_init();
-    uint16_t crc;
+    uint16_t   crc;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -128,7 +128,7 @@ TEST_F(crc16Fixture, crc16_auto_63bytes)
 TEST_F(crc16Fixture, crc16_auto_2352bytes)
 {
     crc16_ctx *ctx = crc16_init();
-    uint16_t crc;
+    uint16_t   crc;
 
     EXPECT_NE(ctx, nullptr);
 

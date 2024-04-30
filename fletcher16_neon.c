@@ -88,8 +88,12 @@ TARGET_WITH_NEON void fletcher16_neon(uint8_t *sum1, uint8_t *sum2, const uint8_
              * processed before s2 must be reduced modulo FLETCHER16_MODULE.
              */
 #ifdef _MSC_VER
-            uint32x4_t v_s2 = {.n128_u32 = {0, 0, 0, s1 * n}};
-            uint32x4_t v_s1 = {.n128_u32 = {0, 0, 0, 0}};
+            uint32x4_t v_s2 = {
+                .n128_u32 = {0, 0, 0, s1 * n}
+            };
+            uint32x4_t v_s1 = {
+                .n128_u32 = {0, 0, 0, 0}
+            };
 #else
             uint32x4_t v_s2 = (uint32x4_t){0, 0, 0, s1 * n};
             uint32x4_t v_s1 = (uint32x4_t){0, 0, 0, 0};
@@ -98,8 +102,7 @@ TARGET_WITH_NEON void fletcher16_neon(uint8_t *sum1, uint8_t *sum2, const uint8_
             uint16x8_t v_column_sum_2 = vdupq_n_u16(0);
             uint16x8_t v_column_sum_3 = vdupq_n_u16(0);
             uint16x8_t v_column_sum_4 = vdupq_n_u16(0);
-            do
-            {
+            do {
                 /*
                  * Load 32 input bytes.
                  */
@@ -108,22 +111,21 @@ TARGET_WITH_NEON void fletcher16_neon(uint8_t *sum1, uint8_t *sum2, const uint8_
                 /*
                  * Add previous block byte sum to v_s2.
                  */
-                v_s2           = vaddq_u32(v_s2, v_s1);
+                v_s2                    = vaddq_u32(v_s2, v_s1);
                 /*
                  * Horizontally add the bytes for s1.
                  */
-                v_s1           = vpadalq_u16(v_s1, vpadalq_u8(vpaddlq_u8(bytes1), bytes2));
+                v_s1                    = vpadalq_u16(v_s1, vpadalq_u8(vpaddlq_u8(bytes1), bytes2));
                 /*
                  * Vertically add the bytes for s2.
                  */
-                v_column_sum_1 = vaddw_u8(v_column_sum_1, vget_low_u8(bytes1));
-                v_column_sum_2 = vaddw_u8(v_column_sum_2, vget_high_u8(bytes1));
-                v_column_sum_3 = vaddw_u8(v_column_sum_3, vget_low_u8(bytes2));
-                v_column_sum_4 = vaddw_u8(v_column_sum_4, vget_high_u8(bytes2));
+                v_column_sum_1          = vaddw_u8(v_column_sum_1, vget_low_u8(bytes1));
+                v_column_sum_2          = vaddw_u8(v_column_sum_2, vget_high_u8(bytes1));
+                v_column_sum_3          = vaddw_u8(v_column_sum_3, vget_low_u8(bytes2));
+                v_column_sum_4          = vaddw_u8(v_column_sum_4, vget_high_u8(bytes2));
                 data += BLOCK_SIZE;
-            }
-            while(--n);
-            v_s2                      = vshlq_n_u32(v_s2, 5);
+            } while(--n);
+            v_s2 = vshlq_n_u32(v_s2, 5);
             /*
              * Multiply-add bytes by [ 32, 31, 30, ... ] for s2.
              */
@@ -198,8 +200,7 @@ TARGET_WITH_NEON void fletcher16_neon(uint8_t *sum1, uint8_t *sum2, const uint8_
             s2 += (s1 += *data++);
             len -= 16;
         }
-        while(len--)
-        { s2 += (s1 += *data++); }
+        while(len--) { s2 += (s1 += *data++); }
         s1 %= FLETCHER16_MODULE;
         s2 %= FLETCHER16_MODULE;
     }

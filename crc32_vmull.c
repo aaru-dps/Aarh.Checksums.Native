@@ -40,14 +40,14 @@
  * always zero q_initial). Guess speculative execution and branch prediction got the better of
  * yet another "optimization tip".
  */
-#define XOR_INITIAL(where)                                                                                             \
+#define XOR_INITIAL(where) \
     ONCE(where = vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(where), vreinterpretq_u32_u64(q_initial))))
 
-TARGET_WITH_NEON FORCE_INLINE void
-fold_1(uint64x2_t *q_crc0, uint64x2_t *q_crc1, uint64x2_t *q_crc2, uint64x2_t *q_crc3)
+TARGET_WITH_NEON FORCE_INLINE void fold_1(uint64x2_t *q_crc0, uint64x2_t *q_crc1, uint64x2_t *q_crc2,
+                                          uint64x2_t *q_crc3)
 {
     uint32_t         ALIGNED_(16) data[4] = {0xc6e41596, 0x00000001, 0x54442bd4, 0x00000001};
-    const uint64x2_t              q_fold4 = vreinterpretq_u64_u32(vld1q_u32(data));
+    const uint64x2_t q_fold4              = vreinterpretq_u64_u32(vld1q_u32(data));
 
     uint64x2_t x_tmp3;
     uint32x4_t ps_crc0, ps_crc3, ps_res;
@@ -67,11 +67,11 @@ fold_1(uint64x2_t *q_crc0, uint64x2_t *q_crc1, uint64x2_t *q_crc2, uint64x2_t *q
     *q_crc3 = vreinterpretq_u64_u32(ps_res);
 }
 
-TARGET_WITH_NEON FORCE_INLINE void
-fold_2(uint64x2_t *q_crc0, uint64x2_t *q_crc1, uint64x2_t *q_crc2, uint64x2_t *q_crc3)
+TARGET_WITH_NEON FORCE_INLINE void fold_2(uint64x2_t *q_crc0, uint64x2_t *q_crc1, uint64x2_t *q_crc2,
+                                          uint64x2_t *q_crc3)
 {
     uint32_t         ALIGNED_(16) data[4] = {0xc6e41596, 0x00000001, 0x54442bd4, 0x00000001};
-    const uint64x2_t              q_fold4 = vreinterpretq_u64_u32(vld1q_u32(data));
+    const uint64x2_t q_fold4              = vreinterpretq_u64_u32(vld1q_u32(data));
 
     uint64x2_t x_tmp3, x_tmp2;
     uint32x4_t ps_crc0, ps_crc1, ps_crc2, ps_crc3, ps_res31, ps_res20;
@@ -79,16 +79,16 @@ fold_2(uint64x2_t *q_crc0, uint64x2_t *q_crc1, uint64x2_t *q_crc2, uint64x2_t *q
     x_tmp3 = *q_crc3;
     x_tmp2 = *q_crc2;
 
-    *q_crc3 = *q_crc1;
-    *q_crc1 = sse2neon_vmull_p64(vget_high_u64(*q_crc1), vget_low_u64(q_fold4));
-    *q_crc3 = sse2neon_vmull_p64(vget_low_u64(*q_crc3), vget_high_u64(q_fold4));
+    *q_crc3  = *q_crc1;
+    *q_crc1  = sse2neon_vmull_p64(vget_high_u64(*q_crc1), vget_low_u64(q_fold4));
+    *q_crc3  = sse2neon_vmull_p64(vget_low_u64(*q_crc3), vget_high_u64(q_fold4));
     ps_crc3  = vreinterpretq_u32_u64(*q_crc3);
     ps_crc1  = vreinterpretq_u32_u64(*q_crc1);
     ps_res31 = veorq_u32(ps_crc3, ps_crc1);
 
-    *q_crc2 = *q_crc0;
-    *q_crc0 = sse2neon_vmull_p64(vget_high_u64(*q_crc0), vget_low_u64(q_fold4));
-    *q_crc2 = sse2neon_vmull_p64(vget_low_u64(*q_crc2), vget_high_u64(q_fold4));
+    *q_crc2  = *q_crc0;
+    *q_crc0  = sse2neon_vmull_p64(vget_high_u64(*q_crc0), vget_low_u64(q_fold4));
+    *q_crc2  = sse2neon_vmull_p64(vget_low_u64(*q_crc2), vget_high_u64(q_fold4));
     ps_crc0  = vreinterpretq_u32_u64(*q_crc0);
     ps_crc2  = vreinterpretq_u32_u64(*q_crc2);
     ps_res20 = veorq_u32(ps_crc0, ps_crc2);
@@ -99,34 +99,34 @@ fold_2(uint64x2_t *q_crc0, uint64x2_t *q_crc1, uint64x2_t *q_crc2, uint64x2_t *q
     *q_crc3 = vreinterpretq_u64_u32(ps_res31);
 }
 
-TARGET_WITH_NEON FORCE_INLINE void
-fold_3(uint64x2_t *q_crc0, uint64x2_t *q_crc1, uint64x2_t *q_crc2, uint64x2_t *q_crc3)
+TARGET_WITH_NEON FORCE_INLINE void fold_3(uint64x2_t *q_crc0, uint64x2_t *q_crc1, uint64x2_t *q_crc2,
+                                          uint64x2_t *q_crc3)
 {
     uint32_t         ALIGNED_(16) data[4] = {0xc6e41596, 0x00000001, 0x54442bd4, 0x00000001};
-    const uint64x2_t              q_fold4 = vreinterpretq_u64_u32(vld1q_u32(data));
+    const uint64x2_t q_fold4              = vreinterpretq_u64_u32(vld1q_u32(data));
 
     uint64x2_t x_tmp3;
     uint32x4_t ps_crc0, ps_crc1, ps_crc2, ps_crc3, ps_res32, ps_res21, ps_res10;
 
     x_tmp3 = *q_crc3;
 
-    *q_crc3 = *q_crc2;
-    *q_crc2 = sse2neon_vmull_p64(vget_high_u64(*q_crc2), vget_low_u64(q_fold4));
-    *q_crc3 = sse2neon_vmull_p64(vget_low_u64(*q_crc3), vget_high_u64(q_fold4));
+    *q_crc3  = *q_crc2;
+    *q_crc2  = sse2neon_vmull_p64(vget_high_u64(*q_crc2), vget_low_u64(q_fold4));
+    *q_crc3  = sse2neon_vmull_p64(vget_low_u64(*q_crc3), vget_high_u64(q_fold4));
     ps_crc2  = vreinterpretq_u32_u64(*q_crc2);
     ps_crc3  = vreinterpretq_u32_u64(*q_crc3);
     ps_res32 = veorq_u32(ps_crc2, ps_crc3);
 
-    *q_crc2 = *q_crc1;
-    *q_crc1 = sse2neon_vmull_p64(vget_high_u64(*q_crc1), vget_low_u64(q_fold4));
-    *q_crc2 = sse2neon_vmull_p64(vget_low_u64(*q_crc2), vget_high_u64(q_fold4));
+    *q_crc2  = *q_crc1;
+    *q_crc1  = sse2neon_vmull_p64(vget_high_u64(*q_crc1), vget_low_u64(q_fold4));
+    *q_crc2  = sse2neon_vmull_p64(vget_low_u64(*q_crc2), vget_high_u64(q_fold4));
     ps_crc1  = vreinterpretq_u32_u64(*q_crc1);
     ps_crc2  = vreinterpretq_u32_u64(*q_crc2);
     ps_res21 = veorq_u32(ps_crc1, ps_crc2);
 
-    *q_crc1 = *q_crc0;
-    *q_crc0 = sse2neon_vmull_p64(vget_high_u64(*q_crc0), vget_low_u64(q_fold4));
-    *q_crc1 = sse2neon_vmull_p64(vget_low_u64(*q_crc1), vget_high_u64(q_fold4));
+    *q_crc1  = *q_crc0;
+    *q_crc0  = sse2neon_vmull_p64(vget_high_u64(*q_crc0), vget_low_u64(q_fold4));
+    *q_crc1  = sse2neon_vmull_p64(vget_low_u64(*q_crc1), vget_high_u64(q_fold4));
     ps_crc0  = vreinterpretq_u32_u64(*q_crc0);
     ps_crc1  = vreinterpretq_u32_u64(*q_crc1);
     ps_res10 = veorq_u32(ps_crc0, ps_crc1);
@@ -137,11 +137,11 @@ fold_3(uint64x2_t *q_crc0, uint64x2_t *q_crc1, uint64x2_t *q_crc2, uint64x2_t *q
     *q_crc3 = vreinterpretq_u64_u32(ps_res32);
 }
 
-TARGET_WITH_NEON FORCE_INLINE void
-fold_4(uint64x2_t *q_crc0, uint64x2_t *q_crc1, uint64x2_t *q_crc2, uint64x2_t *q_crc3)
+TARGET_WITH_NEON FORCE_INLINE void fold_4(uint64x2_t *q_crc0, uint64x2_t *q_crc1, uint64x2_t *q_crc2,
+                                          uint64x2_t *q_crc3)
 {
     uint32_t         ALIGNED_(16) data[4] = {0xc6e41596, 0x00000001, 0x54442bd4, 0x00000001};
-    const uint64x2_t              q_fold4 = vreinterpretq_u64_u32(vld1q_u32(data));
+    const uint64x2_t q_fold4              = vreinterpretq_u64_u32(vld1q_u32(data));
 
     uint64x2_t x_tmp0;
     uint64x2_t x_tmp1;
@@ -184,16 +184,12 @@ fold_4(uint64x2_t *q_crc0, uint64x2_t *q_crc1, uint64x2_t *q_crc2, uint64x2_t *q
     *q_crc3 = vreinterpretq_u64_u32(ps_res3);
 }
 
-TARGET_WITH_NEON FORCE_INLINE void partial_fold(const size_t len,
-                                                uint64x2_t *q_crc0,
-                                                uint64x2_t *q_crc1,
-                                                uint64x2_t *q_crc2,
-                                                uint64x2_t *q_crc3,
-                                                uint64x2_t *q_crc_part)
+TARGET_WITH_NEON FORCE_INLINE void partial_fold(const size_t len, uint64x2_t *q_crc0, uint64x2_t *q_crc1,
+                                                uint64x2_t *q_crc2, uint64x2_t *q_crc3, uint64x2_t *q_crc_part)
 {
     uint32_t         ALIGNED_(16) data[4] = {0xc6e41596, 0x00000001, 0x54442bd4, 0x00000001};
-    const uint64x2_t              q_fold4 = vreinterpretq_u64_u32(vld1q_u32(data));
-    const uint64x2_t              q_mask3 = vreinterpretq_u64_u32(vdupq_n_u32(0x80808080));
+    const uint64x2_t q_fold4              = vreinterpretq_u64_u32(vld1q_u32(data));
+    const uint64x2_t q_mask3              = vreinterpretq_u64_u32(vdupq_n_u32(0x80808080));
 
     uint64x2_t q_shl, q_shr, q_tmp1, q_tmp2, q_tmp3, q_a0_0, q_a0_1;
     uint32x4_t ps_crc3, psa0_0, psa0_1, ps_res;
@@ -205,15 +201,15 @@ TARGET_WITH_NEON FORCE_INLINE void partial_fold(const size_t len,
     q_a0_0 = mm_shuffle_epi8(*q_crc0, q_shl);
 
     *q_crc0 = mm_shuffle_epi8(*q_crc0, q_shr);
-    q_tmp1 = mm_shuffle_epi8(*q_crc1, q_shl);
+    q_tmp1  = mm_shuffle_epi8(*q_crc1, q_shl);
     *q_crc0 = vreinterpretq_u64_u32(vorrq_u32(vreinterpretq_u32_u64(*q_crc0), vreinterpretq_u32_u64(q_tmp1)));
 
     *q_crc1 = mm_shuffle_epi8(*q_crc1, q_shr);
-    q_tmp2 = mm_shuffle_epi8(*q_crc2, q_shl);
+    q_tmp2  = mm_shuffle_epi8(*q_crc2, q_shl);
     *q_crc1 = vreinterpretq_u64_u32(vorrq_u32(vreinterpretq_u32_u64(*q_crc1), vreinterpretq_u32_u64(q_tmp2)));
 
     *q_crc2 = mm_shuffle_epi8(*q_crc2, q_shr);
-    q_tmp3 = mm_shuffle_epi8(*q_crc3, q_shl);
+    q_tmp3  = mm_shuffle_epi8(*q_crc3, q_shl);
     *q_crc2 = vreinterpretq_u64_u32(vorrq_u32(vreinterpretq_u32_u64(*q_crc2), vreinterpretq_u32_u64(q_tmp3)));
 
     *q_crc3     = mm_shuffle_epi8(*q_crc3, q_shr);
@@ -428,16 +424,16 @@ done:
      */
     crc_fold = vreinterpretq_u64_u32(vld1q_u32(crc_k + 4));
 
-    q_crc0 = q_crc3;
-    q_crc3 = (sse2neon_vmull_p64(vget_low_u64((q_crc3)), vget_low_u64((crc_fold))));
+    q_crc0            = q_crc3;
+    q_crc3            = (sse2neon_vmull_p64(vget_low_u64((q_crc3)), vget_low_u64((crc_fold))));
     uint8x16_t tmp[2] = {vreinterpretq_u8_u64(q_crc0), vdupq_n_u8(0)};
-    q_crc0 = vreinterpretq_u64_u8(vld1q_u8(((uint8_t const *)tmp) + 8));
-    q_crc3 = vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(q_crc3), vreinterpretq_u32_u64(q_crc0)));
+    q_crc0            = vreinterpretq_u64_u8(vld1q_u8(((uint8_t const *)tmp) + 8));
+    q_crc3            = vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(q_crc3), vreinterpretq_u32_u64(q_crc0)));
 
-    q_crc0 = q_crc3;
+    q_crc0              = q_crc3;
     uint8x16_t tmp_1[2] = {vdupq_n_u8(0), vreinterpretq_u8_u64(q_crc3)};
-    q_crc3 = vreinterpretq_u64_u8(vld1q_u8(((uint8_t const *)tmp_1) + (16 - 4)));
-    q_crc3 = (sse2neon_vmull_p64(vget_low_u64((q_crc3)), vget_high_u64((crc_fold))));
+    q_crc3              = vreinterpretq_u64_u8(vld1q_u8(((uint8_t const *)tmp_1) + (16 - 4)));
+    q_crc3              = (sse2neon_vmull_p64(vget_low_u64((q_crc3)), vget_high_u64((crc_fold))));
     q_crc3 = vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(q_crc3), vreinterpretq_u32_u64(q_crc0)));
     q_crc3 = vreinterpretq_u64_u32(vandq_u32(vreinterpretq_u32_u64(q_crc3), vreinterpretq_u32_u64(q_mask2)));
 

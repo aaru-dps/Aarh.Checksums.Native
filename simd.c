@@ -56,7 +56,7 @@
  *
  * @return None.
  */
-static void cpuid(int info, unsigned* eax, unsigned* ebx, unsigned* ecx, unsigned* edx)
+static void cpuid(int info, unsigned *eax, unsigned *ebx, unsigned *ecx, unsigned *edx)
 {
 #ifdef _MSC_VER
     unsigned int registers[4];
@@ -99,7 +99,7 @@ static void cpuid(int info, unsigned* eax, unsigned* ebx, unsigned* ecx, unsigne
  *
  * @return None.
  */
-static void cpuidex(int info, int count, unsigned* eax, unsigned* ebx, unsigned* ecx, unsigned* edx)
+static void cpuidex(int info, int count, unsigned *eax, unsigned *ebx, unsigned *ecx, unsigned *edx)
 {
 #ifdef _MSC_VER
     unsigned int registers[4];
@@ -264,8 +264,7 @@ int have_crc32_apple()
  *
  * @return true if the current processor supports cryptographic instructions, false otherwise.
  */
-int have_crypto_apple()
-{ return 0; }
+int have_crypto_apple() { return 0; }
 
 #endif
 
@@ -273,7 +272,7 @@ int have_crypto_apple()
 
 int have_neon(void)
 {
-    return 1; // ARMv8-A made it mandatory
+    return 1;  // ARMv8-A made it mandatory
 }
 
 /**

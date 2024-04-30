@@ -10,10 +10,10 @@
 #include "../fletcher32.h"
 #include "gtest/gtest.h"
 
-#define EXPECTED_FLETCHER32 0x211261f5
-#define EXPECTED_FLETCHER32_15BYTES 0x34CD067C
-#define EXPECTED_FLETCHER32_31BYTES 0xD8D20EA9
-#define EXPECTED_FLETCHER32_63BYTES 0xD8432080
+#define EXPECTED_FLETCHER32           0x211261f5
+#define EXPECTED_FLETCHER32_15BYTES   0x34CD067C
+#define EXPECTED_FLETCHER32_31BYTES   0xD8D20EA9
+#define EXPECTED_FLETCHER32_63BYTES   0xD8432080
 #define EXPECTED_FLETCHER32_2352BYTES 0xCB3E7352
 
 static const uint8_t *buffer;
@@ -38,7 +38,7 @@ protected:
         snprintf(filename, PATH_MAX, "%s/data/random", path);
 
         FILE *file = fopen(filename, "rb");
-        buffer = (const uint8_t *)malloc(1048576);
+        buffer     = (const uint8_t *)malloc(1048576);
         fread((void *)buffer, 1, 1048576, file);
         fclose(file);
 
@@ -63,7 +63,7 @@ protected:
 TEST_F(fletcher32Fixture, fletcher32_auto)
 {
     fletcher32_ctx *ctx = fletcher32_init();
-    uint32_t       fletcher;
+    uint32_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -76,7 +76,7 @@ TEST_F(fletcher32Fixture, fletcher32_auto)
 TEST_F(fletcher32Fixture, fletcher32_auto_misaligned)
 {
     fletcher32_ctx *ctx = fletcher32_init();
-    uint32_t       fletcher;
+    uint32_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -89,7 +89,7 @@ TEST_F(fletcher32Fixture, fletcher32_auto_misaligned)
 TEST_F(fletcher32Fixture, fletcher32_auto_15bytes)
 {
     fletcher32_ctx *ctx = fletcher32_init();
-    uint32_t       fletcher;
+    uint32_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -102,7 +102,7 @@ TEST_F(fletcher32Fixture, fletcher32_auto_15bytes)
 TEST_F(fletcher32Fixture, fletcher32_auto_31bytes)
 {
     fletcher32_ctx *ctx = fletcher32_init();
-    uint32_t       fletcher;
+    uint32_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -115,7 +115,7 @@ TEST_F(fletcher32Fixture, fletcher32_auto_31bytes)
 TEST_F(fletcher32Fixture, fletcher32_auto_63bytes)
 {
     fletcher32_ctx *ctx = fletcher32_init();
-    uint32_t       fletcher;
+    uint32_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -128,7 +128,7 @@ TEST_F(fletcher32Fixture, fletcher32_auto_63bytes)
 TEST_F(fletcher32Fixture, fletcher32_auto_2352bytes)
 {
     fletcher32_ctx *ctx = fletcher32_init();
-    uint32_t       fletcher;
+    uint32_t        fletcher;
 
     EXPECT_NE(ctx, nullptr);
 

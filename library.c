@@ -20,5 +20,4 @@
 
 #include "library.h"
 
-AARU_EXPORT uint64_t AARU_CALL get_acn_version()
-{ return AARU_CHECKUMS_NATIVE_VERSION; }
+AARU_EXPORT uint64_t AARU_CALL get_acn_version() { return AARU_CHECKUMS_NATIVE_VERSION; }

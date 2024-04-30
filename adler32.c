@@ -147,8 +147,7 @@ AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t *sum1, uint16_t *sum2, const
     {
         len -= NMAX;
         n = NMAX / 16; /* NMAX is divisible by 16 */
-        do
-        {
+        do {
             s1 += data[0];
             s2 += s1;
             s1 += data[0 + 1];
@@ -184,8 +183,7 @@ AARU_EXPORT void AARU_CALL adler32_slicing(uint16_t *sum1, uint16_t *sum2, const
 
             /* 16 sums unrolled */
             data += 16;
-        }
-        while(--n);
+        } while(--n);
         s1 %= ADLER_MODULE;
         s2 %= ADLER_MODULE;
     }

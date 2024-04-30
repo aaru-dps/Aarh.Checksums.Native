@@ -64,11 +64,11 @@ AARU_EXPORT int AARU_CALL crc16_ccitt_update(crc16_ccitt_ctx *ctx, const uint8_t
 
     if(!ctx || !data) return -1;
 
-    uint16_t crc;
-    const uint8_t *current_char = data;
-    const size_t unroll           = 4;
-    const size_t bytes_at_once    = 8 * unroll;
-    uintptr_t    unaligned_length = (4 - (((uintptr_t)current_char) & 3)) & 3;
+    uint16_t       crc;
+    const uint8_t *current_char     = data;
+    const size_t   unroll           = 4;
+    const size_t   bytes_at_once    = 8 * unroll;
+    uintptr_t      unaligned_length = (4 - (((uintptr_t)current_char) & 3)) & 3;
 
     crc = ctx->crc;
 

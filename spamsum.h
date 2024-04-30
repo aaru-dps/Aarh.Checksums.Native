@@ -19,12 +19,12 @@
 #ifndef AARU_CHECKSUMS_NATIVE_SPAMSUM_H
 #define AARU_CHECKSUMS_NATIVE_SPAMSUM_H
 
-#define SPAMSUM_LENGTH 64
-#define NUM_BLOCKHASHES 31
-#define ROLLING_WINDOW 7
-#define HASH_INIT 0x28021967
-#define HASH_PRIME 0x01000193
-#define MIN_BLOCKSIZE 3
+#define SPAMSUM_LENGTH   64
+#define NUM_BLOCKHASHES  31
+#define ROLLING_WINDOW   7
+#define HASH_INIT        0x28021967
+#define HASH_PRIME       0x01000193
+#define MIN_BLOCKSIZE    3
 #define FUZZY_MAX_RESULT ((2 * SPAMSUM_LENGTH) + 20)
 
 typedef struct
@@ -55,9 +55,9 @@ typedef struct
 } spamsum_ctx;
 
 AARU_EXPORT spamsum_ctx *AARU_CALL spamsum_init(void);
-AARU_EXPORT int AARU_CALL spamsum_update(spamsum_ctx *ctx, const uint8_t *data, uint32_t len);
-AARU_EXPORT int AARU_CALL spamsum_final(spamsum_ctx *ctx, uint8_t *result);
-AARU_EXPORT void AARU_CALL spamsum_free(spamsum_ctx *ctx);
+AARU_EXPORT int AARU_CALL          spamsum_update(spamsum_ctx *ctx, const uint8_t *data, uint32_t len);
+AARU_EXPORT int AARU_CALL          spamsum_final(spamsum_ctx *ctx, uint8_t *result);
+AARU_EXPORT void AARU_CALL         spamsum_free(spamsum_ctx *ctx);
 
 FORCE_INLINE void fuzzy_engine_step(spamsum_ctx *ctx, uint8_t c);
 
@@ -67,4 +67,4 @@ FORCE_INLINE void fuzzy_try_reduce_blockhash(spamsum_ctx *ctx);
 
 FORCE_INLINE void fuzzy_try_fork_blockhash(spamsum_ctx *ctx);
 
-#endif // AARU_CHECKSUMS_NATIVE_SPAMSUM_H
+#endif  // AARU_CHECKSUMS_NATIVE_SPAMSUM_H

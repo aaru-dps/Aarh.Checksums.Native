@@ -10,10 +10,10 @@
 #include "../spamsum.h"
 #include "gtest/gtest.h"
 
-#define EXPECTED_SPAMSUM "24576:3dvzuAsHTQ16pc7O1Q/gS9qze+Swwn9s6IX:8/TQQpaVqze+JN6IX"
-#define EXPECTED_SPAMSUM_15BYTES "3:Ac4E9t:Ac4E9t"
-#define EXPECTED_SPAMSUM_31BYTES "3:Ac4E9E5+S09qn:Ac4E9EgSsq"
-#define EXPECTED_SPAMSUM_63BYTES "3:Ac4E9E5+S09q2kABV9:Ac4E9EgSs7kW9"
+#define EXPECTED_SPAMSUM           "24576:3dvzuAsHTQ16pc7O1Q/gS9qze+Swwn9s6IX:8/TQQpaVqze+JN6IX"
+#define EXPECTED_SPAMSUM_15BYTES   "3:Ac4E9t:Ac4E9t"
+#define EXPECTED_SPAMSUM_31BYTES   "3:Ac4E9E5+S09qn:Ac4E9EgSsq"
+#define EXPECTED_SPAMSUM_63BYTES   "3:Ac4E9E5+S09q2kABV9:Ac4E9EgSs7kW9"
 #define EXPECTED_SPAMSUM_2352BYTES "48:pasCLoANDXmjCz1p2OpPm+Gek3xmZfJJ5DD4BacmmlodQMQa/58Z:csK1Nxz7XFGeJS/flHMQu2Z"
 
 static const uint8_t *buffer;
@@ -38,7 +38,7 @@ protected:
         snprintf(filename, PATH_MAX, "%s/data/random", path);
 
         FILE *file = fopen(filename, "rb");
-        buffer = (const uint8_t *)malloc(1048576);
+        buffer     = (const uint8_t *)malloc(1048576);
         fread((void *)buffer, 1, 1048576, file);
         fclose(file);
 

@@ -26,7 +26,7 @@
 #endif
 
 #if defined(_WIN32)
-#define AARU_CALL __stdcall
+#define AARU_CALL   __stdcall
 #define AARU_EXPORT EXTERNC __declspec(dllexport)
 #define AARU_LOCAL
 #ifndef PATH_MAX
@@ -36,11 +36,11 @@
 #define AARU_CALL
 #if defined(__APPLE__)
 #define AARU_EXPORT EXTERNC __attribute__((visibility("default")))
-#define AARU_LOCAL __attribute__((visibility("hidden")))
+#define AARU_LOCAL  __attribute__((visibility("hidden")))
 #else
 #if __GNUC__ >= 4
 #define AARU_EXPORT EXTERNC __attribute__((visibility("default")))
-#define AARU_LOCAL __attribute__((visibility("hidden")))
+#define AARU_LOCAL  __attribute__((visibility("hidden")))
 #else
 #define AARU_EXPORT EXTERNC
 #define AARU_LOCAL
@@ -60,4 +60,4 @@
 
 AARU_EXPORT uint64_t AARU_CALL get_acn_version();
 
-#endif // AARU_CHECKSUMS_NATIVE_LIBRARY_H
+#endif  // AARU_CHECKSUMS_NATIVE_LIBRARY_H

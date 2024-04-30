@@ -92,8 +92,8 @@ AARU_EXPORT void AARU_CALL spamsum_free(spamsum_ctx *ctx)
     if(ctx) free(ctx);
 }
 
-#define ROLL_SUM(ctx) ((ctx)->roll.h1 + (ctx)->roll.h2 + (ctx)->roll.h3)
-#define SUM_HASH(c, h) (((h)*HASH_PRIME) ^ (c));
+#define ROLL_SUM(ctx)    ((ctx)->roll.h1 + (ctx)->roll.h2 + (ctx)->roll.h3)
+#define SUM_HASH(c, h)   (((h) * HASH_PRIME) ^ (c));
 #define SSDEEP_BS(index) (MIN_BLOCKSIZE << (index))
 
 FORCE_INLINE void fuzzy_engine_step(spamsum_ctx *ctx, uint8_t c)
@@ -107,7 +107,7 @@ FORCE_INLINE void fuzzy_engine_step(spamsum_ctx *ctx, uint8_t c)
 
     for(i = ctx->bh_start; i < ctx->bh_end; ++i)
     {
-        ctx->bh[i].h = SUM_HASH(c, ctx->bh[i].h);
+        ctx->bh[i].h      = SUM_HASH(c, ctx->bh[i].h);
         ctx->bh[i].half_h = SUM_HASH(c, ctx->bh[i].half_h);
     }
 
@@ -126,7 +126,7 @@ FORCE_INLINE void fuzzy_engine_step(spamsum_ctx *ctx, uint8_t c)
         if(0 == ctx->bh[i].d_len) fuzzy_try_fork_blockhash(ctx);
 
         ctx->bh[i].digest[ctx->bh[i].d_len] = b64[ctx->bh[i].h % 64];
-        ctx->bh[i].half_digest = b64[ctx->bh[i].half_h % 64];
+        ctx->bh[i].half_digest              = b64[ctx->bh[i].half_h % 64];
 
         if(ctx->bh[i].d_len < SPAMSUM_LENGTH - 1)
         {
@@ -137,7 +137,7 @@ FORCE_INLINE void fuzzy_engine_step(spamsum_ctx *ctx, uint8_t c)
              * last few pieces of the message into a single piece
              * */
             ctx->bh[i].digest[++ctx->bh[i].d_len] = 0;
-            ctx->bh[i].h = HASH_INIT;
+            ctx->bh[i].h                          = HASH_INIT;
 
             if(ctx->bh[i].d_len >= SPAMSUM_LENGTH / 2) continue;
 
@@ -193,11 +193,11 @@ FORCE_INLINE void fuzzy_try_fork_blockhash(spamsum_ctx *ctx)
 
     // assert(ctx->bh_end != 0);
 
-    uint32_t obh = ctx->bh_end - 1;
-    uint32_t nbh = ctx->bh_end;
-    ctx->bh[nbh].h      = ctx->bh[obh].h;
-    ctx->bh[nbh].half_h = ctx->bh[obh].half_h;
-    ctx->bh[nbh].digest[0] = 0;
+    uint32_t obh             = ctx->bh_end - 1;
+    uint32_t nbh             = ctx->bh_end;
+    ctx->bh[nbh].h           = ctx->bh[obh].h;
+    ctx->bh[nbh].half_h      = ctx->bh[obh].half_h;
+    ctx->bh[nbh].digest[0]   = 0;
     ctx->bh[nbh].half_digest = 0;
     ctx->bh[nbh].d_len       = 0;
     ++ctx->bh_end;
@@ -297,7 +297,8 @@ AARU_EXPORT int AARU_CALL spamsum_final(spamsum_ctx *ctx, uint8_t *result)
         ++bi;
         i = (int)ctx->bh[bi].d_len;
 
-        if(i <= remain);
+        if(i <= remain)
+            ;
 
         memcpy(result, ctx->bh[bi].digest, (size_t)i);
         result += i;
@@ -307,7 +308,7 @@ AARU_EXPORT int AARU_CALL spamsum_final(spamsum_ctx *ctx, uint8_t *result)
         {
             // assert(remain > 0);
 
-            h = ctx->bh[bi].half_h;
+            h       = ctx->bh[bi].half_h;
             *result = b64[h % 64];
 
             if(i < 3 || *result != result[-1] || *result != result[-2] || *result != result[-3])

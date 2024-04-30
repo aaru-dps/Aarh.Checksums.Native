@@ -75,7 +75,7 @@ AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx *ctx, const uint8_t *
     }
 #endif
 
-#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) || \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
     if(have_avx2())
     {
@@ -129,8 +129,7 @@ AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx *ctx, const uint8_t *
     {
         len -= NMAX;
         n = NMAX / 6; /* NMAX is divisible by 6 */
-        do
-        {
+        do {
             sum1 += data[0];
             sum2 += sum1;
             sum1 += data[0 + 1];
@@ -146,8 +145,7 @@ AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx *ctx, const uint8_t *
 
             /* 6 sums unrolled */
             data += 6;
-        }
-        while(--n);
+        } while(--n);
         sum1 %= FLETCHER16_MODULE;
         sum2 %= FLETCHER16_MODULE;
     }

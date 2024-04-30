@@ -10,10 +10,10 @@
 #include "../adler32.h"
 #include "gtest/gtest.h"
 
-#define EXPECTED_ADLER32 0x3728d186
-#define EXPECTED_ADLER32_15BYTES 0x34DC067D
-#define EXPECTED_ADLER32_31BYTES 0xD8F10EAA
-#define EXPECTED_ADLER32_63BYTES 0xD8AC2081
+#define EXPECTED_ADLER32           0x3728d186
+#define EXPECTED_ADLER32_15BYTES   0x34DC067D
+#define EXPECTED_ADLER32_31BYTES   0xD8F10EAA
+#define EXPECTED_ADLER32_63BYTES   0xD8AC2081
 #define EXPECTED_ADLER32_2352BYTES 0xECD1738B
 
 static const uint8_t *buffer;
@@ -38,7 +38,7 @@ protected:
         snprintf(filename, PATH_MAX, "%s/data/random", path);
 
         FILE *file = fopen(filename, "rb");
-        buffer = (const uint8_t *)malloc(1048576);
+        buffer     = (const uint8_t *)malloc(1048576);
         fread((void *)buffer, 1, 1048576, file);
         fclose(file);
 
@@ -63,7 +63,7 @@ protected:
 TEST_F(adler32Fixture, adler32_auto)
 {
     adler32_ctx *ctx = adler32_init();
-    uint32_t    adler32;
+    uint32_t     adler32;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -92,7 +92,7 @@ TEST_F(adler32Fixture, adler32_slicing)
 TEST_F(adler32Fixture, adler32_auto_misaligned)
 {
     adler32_ctx *ctx = adler32_init();
-    uint32_t    adler32;
+    uint32_t     adler32;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -121,7 +121,7 @@ TEST_F(adler32Fixture, adler32_slicing_misaligned)
 TEST_F(adler32Fixture, adler32_auto_15bytes)
 {
     adler32_ctx *ctx = adler32_init();
-    uint32_t    adler32;
+    uint32_t     adler32;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -150,7 +150,7 @@ TEST_F(adler32Fixture, adler32_slicing_15bytes)
 TEST_F(adler32Fixture, adler32_auto_31bytes)
 {
     adler32_ctx *ctx = adler32_init();
-    uint32_t    adler32;
+    uint32_t     adler32;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -179,7 +179,7 @@ TEST_F(adler32Fixture, adler32_slicing_31bytes)
 TEST_F(adler32Fixture, adler32_auto_63bytes)
 {
     adler32_ctx *ctx = adler32_init();
-    uint32_t    adler32;
+    uint32_t     adler32;
 
     EXPECT_NE(ctx, nullptr);
 
@@ -208,7 +208,7 @@ TEST_F(adler32Fixture, adler32_slicing_63bytes)
 TEST_F(adler32Fixture, adler32_auto_2352bytes)
 {
     adler32_ctx *ctx = adler32_init();
-    uint32_t    adler32;
+    uint32_t     adler32;
 
     EXPECT_NE(ctx, nullptr);
 

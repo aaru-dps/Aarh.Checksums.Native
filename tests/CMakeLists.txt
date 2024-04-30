@@ -1,6 +1,6 @@
-if("${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR "${AARU_BUILD_PACKAGE}" MATCHES 1)
-    return()
-endif()
+if ("${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR "${AARU_BUILD_PACKAGE}" MATCHES 1)
+  return()
+endif ()
 
 # 'Google_test' is the subproject name
 project(tests)
@@ -10,7 +10,7 @@ add_subdirectory(lib)
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/random
-     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
 
 # 'Google_Tests_run' is the target name
 # 'test1.cpp tests2.cpp' are source files with tests

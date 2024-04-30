@@ -82,7 +82,7 @@ TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t previous_crc, const u
     }
 
     data = (const uint8_t *)buf8;
-#else // AARCH64
+#else  // AARCH64
     while(len && ((uintptr_t)data & 3))
     {
         c = __crc32b(c, *data++);
@@ -110,8 +110,7 @@ TARGET_ARMV8_WITH_CRC uint32_t armv8_crc32_little(uint32_t previous_crc, const u
     data = (const uint8_t *)buf4;
 #endif
 
-    while(len--)
-    { c = __crc32b(c, *data++); }
+    while(len--) { c = __crc32b(c, *data++); }
     return c;
 }
 

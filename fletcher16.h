@@ -21,7 +21,7 @@
 
 #define FLETCHER16_MODULE 0xFF
 /* NMAX is the largest n such that 255n(n+1)/2 + (n+1)(FLETCHER16_MODULE-1) <= 2^32-1 */
-#define NMAX 5802
+#define NMAX              5802
 
 typedef struct
 {
@@ -30,22 +30,25 @@ typedef struct
 } fletcher16_ctx;
 
 AARU_EXPORT fletcher16_ctx *AARU_CALL fletcher16_init();
-AARU_EXPORT int AARU_CALL fletcher16_update(fletcher16_ctx *ctx, const uint8_t *data, uint32_t len);
-AARU_EXPORT int AARU_CALL fletcher16_final(fletcher16_ctx *ctx, uint16_t *checksum);
-AARU_EXPORT void AARU_CALL fletcher16_free(fletcher16_ctx *ctx);
+AARU_EXPORT int AARU_CALL             fletcher16_update(fletcher16_ctx *ctx, const uint8_t *data, uint32_t len);
+AARU_EXPORT int AARU_CALL             fletcher16_final(fletcher16_ctx *ctx, uint16_t *checksum);
+AARU_EXPORT void AARU_CALL            fletcher16_free(fletcher16_ctx *ctx);
 
-#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) ||            \
+#if defined(__x86_64__) || defined(__amd64) || defined(_M_AMD64) || defined(_M_X64) || defined(__I386__) || \
     defined(__i386__) || defined(__THW_INTEL) || defined(_M_IX86)
 
-AARU_EXPORT TARGET_WITH_AVX2 void AARU_CALL  fletcher16_avx2(uint8_t* sum1, uint8_t* sum2, const uint8_t* data, long len);
-AARU_EXPORT TARGET_WITH_SSSE3 void AARU_CALL fletcher16_ssse3(uint8_t* sum1, uint8_t* sum2, const uint8_t* data, long len);
+AARU_EXPORT TARGET_WITH_AVX2 void AARU_CALL  fletcher16_avx2(uint8_t *sum1, uint8_t *sum2, const uint8_t *data,
+                                                             long len);
+AARU_EXPORT TARGET_WITH_SSSE3 void AARU_CALL fletcher16_ssse3(uint8_t *sum1, uint8_t *sum2, const uint8_t *data,
+                                                              long len);
 
 #endif
 
 #if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 
-AARU_EXPORT TARGET_WITH_NEON void AARU_CALL fletcher16_neon(uint8_t* sum1, uint8_t* sum2, const uint8_t* data, uint32_t len);
+AARU_EXPORT TARGET_WITH_NEON void AARU_CALL fletcher16_neon(uint8_t *sum1, uint8_t *sum2, const uint8_t *data,
+                                                            uint32_t len);
 
 #endif
 
-#endif // AARU_CHECKSUMS_NATIVE_FLETCHER16_H
+#endif  // AARU_CHECKSUMS_NATIVE_FLETCHER16_H

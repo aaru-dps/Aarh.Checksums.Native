@@ -49,8 +49,8 @@
  * @param data Pointer to the data buffer.
  * @param len Length of the data buffer in bytes.
  */
-AARU_EXPORT TARGET_WITH_SSSE3 void AARU_CALL
-fletcher16_ssse3(uint8_t *sum1, uint8_t *sum2, const uint8_t *data, long len)
+AARU_EXPORT TARGET_WITH_SSSE3 void AARU_CALL fletcher16_ssse3(uint8_t *sum1, uint8_t *sum2, const uint8_t *data,
+                                                              long len)
 {
     uint32_t s1 = *sum1;
     uint32_t s2 = *sum2;
@@ -79,8 +79,7 @@ fletcher16_ssse3(uint8_t *sum1, uint8_t *sum2, const uint8_t *data, long len)
             __m128i       v_ps = _mm_set_epi32(0, 0, 0, s1 * n);
             __m128i       v_s2 = _mm_set_epi32(0, 0, 0, s2);
             __m128i       v_s1 = _mm_set_epi32(0, 0, 0, 0);
-            do
-            {
+            do {
                 /*
                  * Load 32 input bytes.
                  */
@@ -89,21 +88,20 @@ fletcher16_ssse3(uint8_t *sum1, uint8_t *sum2, const uint8_t *data, long len)
                 /*
                  * Add previous block byte sum to v_ps.
                  */
-                v_ps = _mm_add_epi32(v_ps, v_s1);
+                v_ps                 = _mm_add_epi32(v_ps, v_s1);
                 /*
                  * Horizontally add the bytes for s1, multiply-adds the
                  * bytes by [ 32, 31, 30, ... ] for s2.
                  */
-                v_s1 = _mm_add_epi32(v_s1, _mm_sad_epu8(bytes1, zero));
-                const __m128i mad1 = _mm_maddubs_epi16(bytes1, tap1);
-                v_s2 = _mm_add_epi32(v_s2, _mm_madd_epi16(mad1, ones));
-                v_s1 = _mm_add_epi32(v_s1, _mm_sad_epu8(bytes2, zero));
-                const __m128i mad2 = _mm_maddubs_epi16(bytes2, tap2);
-                v_s2 = _mm_add_epi32(v_s2, _mm_madd_epi16(mad2, ones));
+                v_s1                 = _mm_add_epi32(v_s1, _mm_sad_epu8(bytes1, zero));
+                const __m128i mad1   = _mm_maddubs_epi16(bytes1, tap1);
+                v_s2                 = _mm_add_epi32(v_s2, _mm_madd_epi16(mad1, ones));
+                v_s1                 = _mm_add_epi32(v_s1, _mm_sad_epu8(bytes2, zero));
+                const __m128i mad2   = _mm_maddubs_epi16(bytes2, tap2);
+                v_s2                 = _mm_add_epi32(v_s2, _mm_madd_epi16(mad2, ones));
                 data += BLOCK_SIZE;
-            }
-            while(--n);
-            v_s2               = _mm_add_epi32(v_s2, _mm_slli_epi32(v_ps, 5));
+            } while(--n);
+            v_s2 = _mm_add_epi32(v_s2, _mm_slli_epi32(v_ps, 5));
             /*
              * Sum epi32 ints v_s1(s2) and accumulate in s1(s2).
              */
@@ -150,8 +148,7 @@ fletcher16_ssse3(uint8_t *sum1, uint8_t *sum2, const uint8_t *data, long len)
             s2 += (s1 += *data++);
             len -= 16;
         }
-        while(len--)
-        { s2 += (s1 += *data++); }
+        while(len--) { s2 += (s1 += *data++); }
         s1 %= FLETCHER16_MODULE;
         s2 %= FLETCHER16_MODULE;
     }

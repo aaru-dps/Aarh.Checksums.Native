@@ -92,7 +92,6 @@ AARU_EXPORT int AARU_CALL fletcher32_update(fletcher32_ctx *ctx, const uint8_t *
     }
 #endif
 
-
     uint32_t sum1 = ctx->sum1;
     uint32_t sum2 = ctx->sum2;
     unsigned n;
@@ -130,8 +129,7 @@ AARU_EXPORT int AARU_CALL fletcher32_update(fletcher32_ctx *ctx, const uint8_t *
     {
         len -= NMAX;
         n = NMAX / 16; /* NMAX is divisible by 16 */
-        do
-        {
+        do {
             sum1 += data[0];
             sum2 += sum1;
             sum1 += data[0 + 1];
@@ -167,8 +165,7 @@ AARU_EXPORT int AARU_CALL fletcher32_update(fletcher32_ctx *ctx, const uint8_t *
 
             /* 16 sums unrolled */
             data += 16;
-        }
-        while(--n);
+        } while(--n);
         sum1 %= FLETCHER32_MODULE;
         sum2 %= FLETCHER32_MODULE;
     }
